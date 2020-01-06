@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-//     a.setTheme("light");
+    a.setTheme("light");
     a.setOrganizationName("deepin");
     a.setApplicationName("dtk application");
     a.setApplicationVersion("1.0");
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     Server ser;
     DMainWindow w;
-    w.setMinimumSize(400, 400);
+    w.setMinimumSize(500, 500);
     w.show();
 
     Dtk::Widget::moveToCenter(&w);
