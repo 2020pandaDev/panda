@@ -5,6 +5,7 @@
 #include "serverthread.h"
 #include <QTcpSocket>
 #include "ctcpsv.h"
+#include "worker.h"
 class Server : public QObject
 {
     Q_OBJECT
@@ -15,10 +16,7 @@ public:
     ServerThread* createUserThread(QTcpSocket*);
     void incomingConnection(qintptr socketDescriptor);
    /*******************/
-   ServerThread* m_thread;
    CTcpSv* m_ctcpsv;
-
-
 
 signals:
 

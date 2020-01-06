@@ -11,9 +11,10 @@ public:
     qintptr  m_socketDescriptor;
     QTcpSocket * m_tcpSocket;
     QByteArray m_recData;
-public slots:
-    void read();
 
+
+signals:
+    void work1();
 
 };
 
