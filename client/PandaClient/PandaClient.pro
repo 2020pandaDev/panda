@@ -9,8 +9,11 @@ CONFIG +=c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = chatPrivate
+TARGET = PandaClient
 TEMPLATE = app
+
+CONFIG += c++11 link_pkgconfig
+PKGCONFIG += dtkwidget
 
 OTHER_FILES += myapp.rc
 
@@ -31,20 +34,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        widget.cpp \
-    tcpserver.cpp \
-    tcpclient.cpp \
-    chat.cpp
+           widget.cpp \
+           tcpserver.cpp \
+           tcpclient.cpp \
+           chat.cpp\
+           m_loginregister.cpp\
+           client.cpp\
+           login.cpp\
+           clabel.cpp
 
 HEADERS  += widget.h \
-    tcpserver.h \
-    tcpclient.h \
-    chat.h
+            tcpserver.h \
+            tcpclient.h \
+            chat.h\
+            m_loginregister.h\
+            client.h\
+            login.h\
+            clabel.h
 
 FORMS    += widget.ui \
-    tcpserver.ui \
-    tcpclient.ui \
-    chat.ui
+            tcpserver.ui \
+            tcpclient.ui \
+            chat.ui
 
 RESOURCES += \
     images.qrc

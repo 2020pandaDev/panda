@@ -1,5 +1,14 @@
 <RCC>
     <qresource prefix="/">
+        <file>images/under.png</file>
+        <file>images/send.png</file>
+        <file>images/save.png</file>
+        <file>images/italic.png</file>
+        <file>images/color.png</file>
+        <file>images/clear.png</file>
+        <file>images/bold.png</file>
+        <file>images/myicon.ico</file>
+        <file>images/table.png</file>
         <file>images/logo.svg</file>
         <file>images/login/login_2.gif</file>
         <file>images/login/login_1.gif</file>
