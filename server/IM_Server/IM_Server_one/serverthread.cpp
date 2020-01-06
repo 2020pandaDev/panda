@@ -28,8 +28,9 @@ void ServerThread::run()
     });
 
 
+
        m_tcpSocket->write("ni hao");
-       m_tcpSocket->flush()
+       m_tcpSocket->flush();
 
 
 //       m_tcpSocket->disconnectFromHost(); // 这个函数是异步执行的
@@ -38,7 +39,13 @@ void ServerThread::run()
 
 }
 
-
+//void ServerThread::read()
+//{
+//    QTcpSocket *socket = qobject_cast<QTcpSocket*>(sender());
+//    m_recData = socket->readAll();
+//     qDebug()<<"thread read:"<<currentThreadId();
+//    qDebug()<<"m_recData solt :"<<m_recData;
+//}
 
 
 

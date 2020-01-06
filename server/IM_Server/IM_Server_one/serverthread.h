@@ -11,10 +11,11 @@ public:
     qintptr  m_socketDescriptor;
     QTcpSocket * m_tcpSocket;
     QByteArray m_recData;
+
+
 signals:
     void work1();
-public slots:
-    void read();
+
 };
 
 #endif // SERVERTHREAD_H

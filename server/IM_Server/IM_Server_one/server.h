@@ -17,9 +17,7 @@ public:
     void incomingConnection(qintptr socketDescriptor);
    /*******************/
    CTcpSv* m_ctcpsv;
-   ServerThread* m_thread
 
-private:
 signals:
 
 public slots:
