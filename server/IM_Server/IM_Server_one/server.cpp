@@ -4,7 +4,6 @@ Server::Server(QObject *parent) : QObject(parent)
 {
     m_ctcpsv =new CTcpSv(this);
     m_ctcpsv->listen(QHostAddress::Any,6565);
-
     connect(m_ctcpsv,&CTcpSv::sendSocket,this,&Server::incomingConnection);
 }
 
