@@ -18,7 +18,7 @@ public:
    ServerThread* m_thread;
    CTcpSv* m_ctcpsv;
 
-
+private:
 
 signals:
 
