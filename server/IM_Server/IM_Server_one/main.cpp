@@ -1,6 +1,7 @@
 #include <DApplication>
 #include <DMainWindow>
 #include <DWidgetUtil>
+#include "mysql.h"
 #include "server.h"
 DWIDGET_USE_NAMESPACE
 
@@ -21,6 +22,8 @@ int main(int argc, char *argv[])
     DMainWindow w;
     w.setMinimumSize(500, 500);
     w.show();
+
+
 
     Dtk::Widget::moveToCenter(&w);
 
