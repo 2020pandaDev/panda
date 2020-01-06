@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/logo.svg</file>
+        <file>images/login/login_2.gif</file>
+        <file>images/login/login_1.gif</file>
+        <file>images/background/background.jpg</file>
+        <file>images/cancel1.png</file>
+        <file>images/del.png</file>
+        <file>images/flip.png</file>
+        <file>images/member.png</file>
+        <file>images/ok2.png</file>
+        <file>images/password.png</file>
+        <file>images/ok.png</file>
+        <file>images/panda.png</file>
+    </qresource>
+</RCC>
