@@ -17,12 +17,12 @@ void Worker::dowork()
 
 void Worker::registe(QStringList &registerInfo)
 {
-    QString username=registerInfo.at(1);
-    QString password=registerInfo.at(2);
+    QString username=registerInfo.at(0);
+    QString password=registerInfo.at(1);
 
     MySql sql("user.db","QSQLITE","todb");
 
-    //QMap<QString ,QString> userinfo;
+    QMap<QString ,QString> userinfo;
     userinfo.insert("user_name",username);
     userinfo.insert("user_password",password);
 
@@ -34,7 +34,7 @@ void Worker::registe(QStringList &registerInfo)
         userinfo.insert("user_online","online");
         userinfo.insert("user_link","notlink");
         userinfo.insert("user_Verification","notlink");
-        //sql.MyInsert(userinfo);
+        sql.MyInsert(userinfo);
 
         QMessageBox msg;
         msg.setToolTip("注册成功");
