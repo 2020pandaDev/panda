@@ -3,16 +3,10 @@
 MySql::MySql(const QString& pathAndDataBaseName,const QString& driver_Name,const QString& connection_Name)
 
 {
-
-
-
     dbDir = pathAndDataBaseName;
     connectionName = connection_Name;
     driverName = driver_Name;
     db = QSqlDatabase::addDatabase(driverName,connectionName);  //创建一个SQLite数据库连接//
-
-
-
 }
 
 MySql::~MySql()
@@ -29,9 +23,6 @@ void MySql::closeDb()
     }
 }
 
-
-
-
 bool MySql::CreateConnection()
 {
 
@@ -42,8 +33,6 @@ bool MySql::CreateConnection()
         qDebug() << "无法建立数据库连接";
         return false;
     }
-
-
 
     return true;
 }
@@ -67,7 +56,6 @@ bool MySql::createTable()
     }
 
 }
-
 
 bool MySql::MyInsert(UserInfo& InputUserInfo)
 {
@@ -129,9 +117,6 @@ bool MySql::MySelect(UserInfo& OutputUserInfo)
         qDebug() << query.value(1).toString() << " ";
         qDebug() << "\n";
     }
-
-
-
 //	query.next();
 //	OutputUserInfo.user_id = query.value(0).toString();
 //	OutputUserInfo.user_name = query.value(1).toString();
@@ -141,9 +126,6 @@ bool MySql::MySelect(UserInfo& OutputUserInfo)
 
     return true;
 }
-
-
-
 
 bool MySql::MyDelete(UserInfo& InputUserInfo)
 {
