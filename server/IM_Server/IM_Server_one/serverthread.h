@@ -11,7 +11,7 @@ public:
     qintptr  m_socketDescriptor;
     QTcpSocket * m_tcpSocket;
     QByteArray m_recData;
-    static QMap<QString,QTcpSocket*>* userSocket ;
+    static QMap<QString,QTcpSocket*> userSocket ;
 
 
 

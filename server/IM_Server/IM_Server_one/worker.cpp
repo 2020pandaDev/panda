@@ -2,6 +2,7 @@
 #include <mysql.h>
 #include <QMap>
 #include <QMessageBox>
+#include "serverthread.h"
 
 Worker::Worker(QObject *parent) : QObject(parent)
 {
@@ -43,6 +44,15 @@ void Worker::registe(QStringList &registerInfo)
         msg.setToolTip("已注册");
 
     }
+}
+
+void Worker::privateChat(QVariantMap& chatMessage)
+{
+    QString userName= chatMessage["userName"].toString();
+    QByteArray message= chatMessage["Msg"].toString().toLatin1().data();
+    QTcpSocket* socket = ServerThread::userSocket["recvUsrName"];
+    socket->write(message);
+
 }
 
 
