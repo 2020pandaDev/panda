@@ -30,7 +30,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::DirectConnection);
     connect(thread, SIGNAL(work1()), worker, SLOT(dowork()), Qt::DirectConnection);
     connect(thread, SIGNAL(regist()), worker, SLOT(registe()), Qt::DirectConnection);
-    connect(thread, SIGNAL(login()), worker, SLOT(loginIn()), Qt::DirectConnection);
+    connect(thread, SIGNAL(login(QStringList &)), worker, SLOT(loginIn(QStringList &)), Qt::DirectConnection);
     connect(thread, SIGNAL(dowithCAPTCHA()), worker, SLOT(doingCAPTCHA()), Qt::DirectConnection);
 //    connect(thread, SIGNAL(work1()), worker, SLOT(dowork()), Qt::DirectConnection);
 //    connect(thread, SIGNAL(work1()), worker, SLOT(dowork()), Qt::DirectConnection);

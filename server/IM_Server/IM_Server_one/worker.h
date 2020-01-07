@@ -17,6 +17,7 @@ signals:
 public slots:
     void dowork();
     void registe(QStringList & registerInfo);
+    void loginIn(QStringList & userInfoList);
     void privateChat(QVariantMap&);
 	void doingCAPTCHA(QStringList &CAPTCHAInfo);
 private:

@@ -47,6 +47,7 @@ bool MySql::CreateConnection()
 bool MySql::createTable()
 {
     QSqlQuery query(db);
+    db.open();
     bool success =query.exec("create table t_user(user_id text primary key,"
                     " user_name text, user_password text, user_ip text, "
                     "user_port text, user_online text, user_link text,user_Verification text);");   //新建一张表，访问已有.bd时，执行该语句也不受影响//
