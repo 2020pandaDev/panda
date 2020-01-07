@@ -11,7 +11,7 @@ public:
     qintptr  m_socketDescriptor;
     QTcpSocket * m_tcpSocket;
     QByteArray m_recData;
-    static QMap<QString,QTcpSocket*> userSocket ;
+    static QMap<QString,QTcpSocket*> userSocket;
 
 
 
@@ -19,7 +19,7 @@ signals:
     void work1();
     void regist(QStringList&);
     void login(QStringList&);
-    void chat(QMap<QString,QTcpSocket*>*);
+    void chat(QMap<QString,QTcpSocket*>);
     void assist();
 
 };
