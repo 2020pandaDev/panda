@@ -1,14 +1,17 @@
 #include "mysql.h"
+#include "QThread"
 
-MySql::MySql(const QString& pathAndDataBaseName,const QString& driver_Name,const QString& connection_Name)
+MySql* MySql:: m_pInstance = nullptr;
+QMutex MySql::m_Mutex;
 
+
+MySql::MySql(const QString &pathAndDataBaseName, const QString &driver_Name, const QString &connection_Name, QObject *parent):QObject (parent)
 {
 
-    dbDir = pathAndDataBaseName;
-    connectionName = connection_Name;
-    driverName = driver_Name;
-
-    db = QSqlDatabase::contains("qt_sql_default_connection") ? QSqlDatabase::database("qt_sql_default_connection") : QSqlDatabase::addDatabase(driver_Name, connectionName);
+        dbDir = pathAndDataBaseName;
+        connectionName = connection_Name;
+        driverName = driver_Name;
+        db = QSqlDatabase::addDatabase(driverName,connectionName);  //创建一个SQLite数据库/
 }
 
 MySql::~MySql()
@@ -46,6 +49,7 @@ bool MySql::CreateConnection()
 
 bool MySql::createTable()
 {
+    qDebug()<<"createTable thread:"<<QThread::currentThreadId();
     QSqlQuery query(db);
     bool success =query.exec("create table IF NOT EXISTS t_user(user_id text primary key,"
                     " user_name text, user_password text, user_ip text, "
@@ -68,7 +72,7 @@ bool MySql::createTable()
 bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)
 {
 
-
+  qDebug() << "mysql thread:" <<QThread::currentThreadId();
     QSqlQuery query(db);
     query.prepare("insert into t_user(user_id,"
                   " user_name, user_password, user_ip , "
@@ -256,4 +260,22 @@ bool MySql::loguser(QString name, QString passward) //登录判断用户与密�
     if(record == 0)
         return false;
     return true;
+}
+
+
+MySql *MySql::getInstance()
+{
+    if (m_pInstance == nullptr)
+            {
+
+               QMutexLocker mlocker(&m_Mutex);  //双检索，支持多线程
+               if (m_pInstance == nullptr)
+               {
+                    m_pInstance = new MySql("./us.db","QSQLITE","t_user");
+
+               }
+
+            }
+          return m_pInstance;
+
 }

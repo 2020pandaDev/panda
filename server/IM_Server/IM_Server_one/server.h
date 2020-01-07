@@ -16,7 +16,7 @@ public:
     ServerThread* createUserThread(QTcpSocket*);
     void incomingConnection(qintptr socketDescriptor);
    /*******************/
-   CTcpSv* m_ctcpsv;
+   CTcpSv* m_ctcpsv = nullptr;
 
 
 signals:
