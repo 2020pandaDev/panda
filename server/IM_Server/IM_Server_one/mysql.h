@@ -51,7 +51,8 @@ public:
     bool MyDelete(const QMap<QString,QString>& InputUserInfo);       //删除//
     bool MyUpdate(const QMap<QString,QString>& InputUserInfo);       //更新//
 
-};
 
+
+};
 
 #endif // MYSQL_H
