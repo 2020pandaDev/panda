@@ -8,7 +8,7 @@ TARGET = IM_Server_one
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += dtkwidget
-
+QT += sql
 SOURCES += \
         main.cpp \
     server.cpp \
