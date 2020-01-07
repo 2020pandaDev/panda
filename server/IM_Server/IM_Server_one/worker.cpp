@@ -33,8 +33,8 @@ void Worker::registe(QStringList &registerInfo)
         userinfo.insert("user_online","online");
         userinfo.insert("user_link","notlink");
         userinfo.insert("user_Verification","notlink");
-
         //sql.MyInsert(userinfo);
+
         QMessageBox msg;
         msg.setToolTip("注册成功");
     }
