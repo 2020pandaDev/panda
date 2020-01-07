@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network dbus
+QT       += sql
 CONFIG +=c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -41,7 +42,9 @@ SOURCES += main.cpp\
            m_loginregister.cpp\
            client.cpp\
            login.cpp\
-           clabel.cpp
+           clabel.cpp \
+    myapp.cpp \
+    clientsocket.cpp
 
 HEADERS  += widget.h \
             tcpserver.h \
@@ -50,7 +53,10 @@ HEADERS  += widget.h \
             m_loginregister.h\
             client.h\
             login.h\
-            clabel.h
+            clabel.h \
+    myapp.h \
+    clientsocket.h \
+    unit.h
 
 FORMS    += widget.ui \
             tcpserver.ui \

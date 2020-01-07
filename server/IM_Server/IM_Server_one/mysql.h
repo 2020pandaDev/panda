@@ -9,6 +9,9 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QtCore/QMutex>
+#include <QDir>
+#include <QDebug>
 #include <QList>
 #include <QMap>
 #include <QStringList>

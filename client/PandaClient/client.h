@@ -3,6 +3,7 @@
 
 #include <DMainWindow>
 #include <QTcpSocket>
+#include <login.h>
 DWIDGET_USE_NAMESPACE
 class client : public DMainWindow
 {
@@ -20,6 +21,8 @@ public slots:
 private:
     bool isconnetion; //判断是否连接到服务器的标志位
     QTcpSocket *m_tcpsocket; //发送消息套接字
+    int m_Id;
+    Login *m_login; //登陆界面指针
 public:
     void initClientSocket(const QString &hostName, quint16 port);
     void connected();
