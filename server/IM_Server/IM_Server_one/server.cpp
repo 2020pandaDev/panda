@@ -29,7 +29,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     //信号与槽函数在同一个线程，则用直连方式Qt::DirectConnection，若信号是跨线程的，则使用排队连接方式
     QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::DirectConnection);
     connect(thread, SIGNAL(work1()), worker, SLOT(dowork()), Qt::DirectConnection);
-    connect(thread, SIGNAL(regist()), worker, SLOT(registe()), Qt::DirectConnection);
+    connect(thread, SIGNAL(regist(QStringList &)), worker, SLOT(registe(QStringList &)), Qt::DirectConnection);
     connect(thread, SIGNAL(login(QStringList &)), worker, SLOT(loginIn(QStringList &)), Qt::DirectConnection);
     connect(thread, SIGNAL(dowithCAPTCHA()), worker, SLOT(doingCAPTCHA()), Qt::DirectConnection);
 //    connect(thread, SIGNAL(work1()), worker, SLOT(dowork()), Qt::DirectConnection);
