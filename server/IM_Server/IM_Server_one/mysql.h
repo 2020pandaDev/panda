@@ -32,6 +32,8 @@ private:
     QString driverName;
     QSqlDatabase db;
 
+    QSqlQuery *query;  //login查询sql语句
+
 
 public:
 
@@ -52,6 +54,7 @@ public:
     bool MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo);
     bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);
 
+    bool loguser(QString name, QString passward);
 
 };
 
