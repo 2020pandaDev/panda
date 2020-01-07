@@ -54,13 +54,22 @@ void Worker::privateChat(QVariantMap& chatMessage)
 
 void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 {
-    QString username=CAPTCHAInfo.at(1);
-    QString captcha=CAPTCHAInfo.at(2);
+    QString username=CAPTCHAInfo.at(0);
+    QString captcha=CAPTCHAInfo.at(1);
 
     MySql sql("user.db","QSQLITE","todb");
+    if (!sql.CreateConnection())
+    {
+        qDebug() << "数据库连接失败!";
 
-    QSqlQuery query;
-    if(query.exec(username)){
+    }
+
+    QMap<QString ,QString> userinfo;
+    userinfo.insert("user_name",username);
+    userinfo.insert("user_verification",captcha);
+
+    if(sql.MySelect(userinfo)){
+        qDebug() << "有用户请求帮助!";
         userVerification.insert("user_name",username);
         userVerification.insert("user_verification",captcha);
 
@@ -69,6 +78,7 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
         msg.setToolTip("有用户请求帮助");
     }
     else {
+        qDebug() << "用户请求失败!";
         QMessageBox msg;
         msg.setToolTip("用户请求失败");
 
