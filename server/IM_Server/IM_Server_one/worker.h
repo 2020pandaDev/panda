@@ -17,6 +17,7 @@ signals:
 public slots:
     void dowork();
     void registe(QStringList & registerInfo);
+    void privateChat(QVariantMap&);
 private:
     QMap<QString ,QString> userinfo;
 };
