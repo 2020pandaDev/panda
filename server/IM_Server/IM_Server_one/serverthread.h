@@ -12,7 +12,8 @@ public:
     QTcpSocket * m_tcpSocket;
     QByteArray m_recData;
     static QMap<QString,QTcpSocket*> userSocket;
-
+    QVariantMap* recData;
+    QVariantMap* sendData;
 
 
 signals:

@@ -17,8 +17,8 @@ void Worker::dowork()
 
 void Worker::registe(QStringList &registerInfo)
 {
-    QString username=registerInfo.at(0);
-    QString password=registerInfo.at(1);
+    QString username = registerInfo.at(0);
+    QString password = registerInfo.at(1);
 
     MySql sql("user.db","QSQLITE","todb");
 
@@ -42,7 +42,6 @@ void Worker::registe(QStringList &registerInfo)
     else {
         QMessageBox msg;
         msg.setToolTip("已注册");
-
     }
 }
 

@@ -24,12 +24,12 @@ public:
     QMap<QString, QVariant> getSendStr();
 
 signals:
-    void sendPreInfo(QVariantMap preInfo);
-    void sendInfo(QVariantMap info);
+    void sendBytInfo(QByteArray BytInfo);
+    void sendMapInfo(QVariantMap Mapinfo);
 
 public slots:
-    void getServerData(QByteArray returnData);
-    void getPreServerData(QByteArray returnData);
+    void getServerData(QByteArray returnData);//emit  info
+    void getPreServerData(QMap<QString,QVariant>&str);//emit  prinfo
 };
 
 #endif // DATAPARSING_H

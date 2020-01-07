@@ -12,8 +12,8 @@ QMap<QString,QTcpSocket*> ServerThread::userSocket;
 
 void ServerThread::run()
 {
-    QVariantMap* recData = new  QVariantMap();
-    QVariantMap* sendData = new  QVariantMap();
+    recData = new  QVariantMap();
+    sendData = new  QVariantMap();
 
     m_tcpSocket = new QTcpSocket();
 
