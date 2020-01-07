@@ -20,28 +20,25 @@ void Worker::registe(QStringList &registerInfo)
     QString username = registerInfo.at(0);
     QString password = registerInfo.at(1);
 
-    MySql sql("user.db","QSQLITE","todb");
+    MySql *sql =new MySql("user.db","QSQLITE","todb");
 
     QMap<QString ,QString> userinfo;
     userinfo.insert("user_name",username);
     userinfo.insert("user_password",password);
 
-    QSqlQuery query;
-    if(query.exec(username)){
+
+    if(sql->MySelect(userinfo)){
         userinfo.insert("user_id","0");
         userinfo.insert("user_ip","100.22.11.11");
         userinfo.insert("user_port","4455");
         userinfo.insert("user_online","online");
         userinfo.insert("user_link","notlink");
         userinfo.insert("user_Verification","notlink");
-        sql.MyInsert(userinfo);
-
-        QMessageBox msg;
-        msg.setToolTip("注册成功");
+        sql->MyInsert(userinfo);
+        qDebug()<<" insert success";
     }
     else {
-        QMessageBox msg;
-        msg.setToolTip("已注册");
+        qDebug()<<"fail";
     }
 }
 
@@ -53,12 +50,6 @@ void Worker::privateChat(QVariantMap& chatMessage)
     socket->write(message);
 
 }
-
-
-
-
-
-
 
 
 void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)

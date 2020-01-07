@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <mysql.h>
 
 
 class Worker : public QObject
@@ -23,6 +24,8 @@ public slots:
 private:
     QMap<QString ,QString> userinfo;
     QMap<QString ,QString> userVerification;
+    MySql *sql;
+
 };
 
 #endif // WORKER_H
