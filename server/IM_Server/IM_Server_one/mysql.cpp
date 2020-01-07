@@ -7,6 +7,7 @@ MySql::MySql(const QString& pathAndDataBaseName,const QString& driver_Name,const
     connectionName = connection_Name;
     driverName = driver_Name;
     db = QSqlDatabase::addDatabase(driverName,connectionName);  //创建一个SQLite数据库连接//
+
 }
 
 MySql::~MySql()
@@ -33,13 +34,12 @@ bool MySql::CreateConnection()
         qDebug() << "无法建立数据库连接";
         return false;
     }
-
     return true;
 }
 
 bool MySql::createTable()
 {
-    QSqlQuery query(QSqlDatabase::database(connectionName));
+    QSqlQuery query(db);
     bool success =query.exec("create table t_user(user_id text primary key,"
                     " user_name text, user_password text, user_ip text, "
                     "user_port text, user_online text, user_link text,user_Verification text);");   //新建一张表，访问已有.bd时，执行该语句也不受影响//
@@ -57,25 +57,24 @@ bool MySql::createTable()
 
 }
 
-bool MySql::MyInsert(UserInfo& InputUserInfo)
+bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)
 {
 
 
-    QSqlQuery query(QSqlDatabase::database(connectionName));
+    QSqlQuery query(db);
     query.prepare("insert into student(user_id,"
                   " user_name, user_password, user_ip , "
                   "user_port, user_online, user_link,user_Verification)"
         "values(:id,:name,:password,:ip,:port,:online,:link,:Verification)");
 
-
-    query.bindValue(":id",InputUserInfo.user_id);
-    query.bindValue(":name",InputUserInfo.user_name);
-    query.bindValue(":password",InputUserInfo.user_password);
-    query.bindValue(":ip",InputUserInfo.user_ip);
-    query.bindValue(":port",InputUserInfo.user_port);
-    query.bindValue(":online",InputUserInfo.user_online);
-    query.bindValue(":link",InputUserInfo.user_link);
-    query.bindValue(":Verification",InputUserInfo.user_Verification);
+    query.bindValue(":id",InputUserInfo["user_id"]);
+    query.bindValue(":name",InputUserInfo["user_name"]);
+    query.bindValue(":password",InputUserInfo["user_password"]);
+    query.bindValue(":ip",InputUserInfo["user_ip"]);
+    query.bindValue(":port",InputUserInfo["user_port"]);
+    query.bindValue(":online",InputUserInfo["user_online"]);
+    query.bindValue(":link",InputUserInfo["user_link"]);
+    query.bindValue(":Verification",InputUserInfo["user_Verification"]);
 
 
     bool success=query.exec();
@@ -89,50 +88,93 @@ bool MySql::MyInsert(UserInfo& InputUserInfo)
 
 }
 
-QList<QStringList> MySql::selectDataFromBase()
+bool MyInsertDataBase(const QMap<QString,QString>& userInfo)
 {
-    QSqlQuery query("select * from t_user where user_name = :name");
+
+    QString user_id = userInfo.value("user_id");
+    QString user_name = userInfo.value("user_name");
+    QString user_password = userInfo.value("user_password");
+    QString user_ip = userInfo.value("user_ip");
+    QString user_port = userInfo.value("user_port");
+    QString user_online = userInfo.value("user_online");
+    QString user_link = userInfo.value("user_link");
+    QString user_Verification = userInfo.value("user_Verification");
+
+    QString sql = QString("insert into student(user_id,"
+                          " user_name, user_password, user_ip , "
+                          "user_port, user_online, user_link,user_Verification)"
+                "values('%1','%2','%3','%4','%5','%6','%7','%8')").arg(user_id).arg(user_name).arg(user_password).arg(user_ip).arg(user_port).arg(user_online).arg(user_link).arg(user_Verification);
+    QSqlQuery query;
+    bool ok = query.exec(sql);
+    if(!ok)
+    {
+        return false;
+    }
+
+    return true;
 
 }
 
-bool MySql::MySelect(UserInfo& OutputUserInfo)
+QList<QStringList> MySql::selectDataFromBase(const QMap<QString,QString>& InputUserInfo)
+{
+    QSqlQuery query(db);
+    query.prepare("select * from t_user where user_name = :name");
+    query.bindValue(":name",InputUserInfo["user_name"]);
+
+    query.exec();
+
+    QList<QStringList> userInfo;
+
+    while(query.next()){
+
+        QStringList rowData;
+
+        rowData << query.value(0).toString();
+        rowData << query.value(1).toString();
+        rowData << query.value(2).toString();
+        rowData << query.value(3).toString();
+        rowData << query.value(4).toString();
+        rowData << query.value(5).toString();
+        rowData << query.value(6).toString();
+        rowData << query.value(7).toString();
+
+        userInfo.append(rowData);
+    }
+    return userInfo;
+}
+
+bool MySql::MySelect(const QMap<QString,QString>& OutputUserInfo)
 {
 
 
     QSqlQuery query(db);
     query.prepare("select * from t_user where user_name = :name");
-    query.bindValue(":name",OutputUserInfo.user_name);
+    query.bindValue(":name",OutputUserInfo["user_name"]);
     if (!query.exec())
     {
         return false;
     }
 
-    QSqlRecord rec = query.record();
-    qDebug() << QObject::tr("t_user表字段数：" ) << rec.count();
+//    QSqlRecord rec = query.record();
+//    qDebug() << QObject::tr("t_user表字段数：" ) << rec.count();
 
-    while(query.next())
-    {
-
-        qDebug() << query.value(1).toString() << " ";
-        qDebug() << query.value(1).toString() << " ";
-        qDebug() << "\n";
-    }
-//	query.next();
-//	OutputUserInfo.user_id = query.value(0).toString();
-//	OutputUserInfo.user_name = query.value(1).toString();
-//	OutputUserInfo.user_password = query.value(2).toString();//未完，带完善
-
-
+//    if( rec.count())
+//    {
+//        return false;
+//    }
 
     return true;
 }
 
-bool MySql::MyDelete(UserInfo& InputUserInfo)
+
+
+
+bool MySql::MyDelete(const QMap<QString,QString>& InputUserInfo)
 {
 
     QSqlQuery query(db);
-    query.prepare("delete from t_user where id = :id");
-    query.bindValue(":id",InputUserInfo.user_id);
+    query.prepare("delete from student where id = :id");
+    query.bindValue(":id",InputUserInfo["user_id"]);
     if (!query.exec())
     {
         return false;
@@ -142,7 +184,7 @@ bool MySql::MyDelete(UserInfo& InputUserInfo)
     return true;
 }
 
-bool MySql::MyUpdate(UserInfo& InputUserInfo)
+bool MySql::MyUpdate(const QMap<QString,QString>& InputUserInfo)
 {
 
 
