@@ -9,16 +9,12 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
-#include <QtCore/QMutex>
-#include <QDir>
-#include <QDebug>
 #include <QList>
 #include <QMap>
 #include <QStringList>
 #include <QVariantMap>
 #include <QMessageBox>
 #include <QTextCodec>
-
 
 //待存放的数据结构//
 class MySql
