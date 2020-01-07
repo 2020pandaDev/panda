@@ -30,7 +30,7 @@ void ServerThread::run()
         QStringList yzm= {"ssss","09541"};
         emit work1();
         emit regist(ss);
-        emit login(ss);
+    //    emit login(ss);
         emit dowithCAPTCHA(yzm);
     });
     m_tcpSocket->write("ni hao");
