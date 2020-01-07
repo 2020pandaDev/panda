@@ -8,7 +8,7 @@ ServerThread::ServerThread(qintptr socketDescriptor)
     m_socketDescriptor = socketDescriptor;
     qDebug() << "main thread:" << currentThreadId();
 }
-QMap<QString,QTcpSocket*>* ServerThread::userSocket = new QMap<QString,QTcpSocket*>();
+QMap<QString,QTcpSocket*> ServerThread::userSocket;
 
 void ServerThread::run()
 {
@@ -30,14 +30,13 @@ void ServerThread::run()
         emit work1();
         emit regist(ss);
         emit login(ss);
-
     });
     m_tcpSocket->write("ni hao");
     m_tcpSocket->flush();
 
     if(true){
-        userSocket->insert("user",m_tcpSocket);
-        emit chat(userSocket);
+       userSocket.insert("user",m_tcpSocket);
+
     }
 
 //       m_tcpSocket->disconnectFromHost(); // 这个函数是异步执行的
