@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QObject>
 #include <QThread>
+#include <QString>
+
 
 class Worker : public QObject
 {
@@ -14,6 +16,9 @@ signals:
 
 public slots:
     void dowork();
+    void registe(QStringList & registerInfo);
+private:
+    QMap<QString ,QString> userinfo;
 };
 
 #endif // WORKER_H
