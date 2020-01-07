@@ -3,6 +3,7 @@
 MySql::MySql(const QString& pathAndDataBaseName,const QString& driver_Name,const QString& connection_Name)
 
 {
+
     dbDir = pathAndDataBaseName;
     connectionName = connection_Name;
     driverName = driver_Name;
@@ -24,6 +25,9 @@ void MySql::closeDb()
     }
 }
 
+
+
+
 bool MySql::CreateConnection()
 {
 
@@ -31,9 +35,12 @@ bool MySql::CreateConnection()
     db.setDatabaseName(dbDir);                                //数据库连接命名//
     if (!db.open())                                            //如果.db文件不存在，自动新建.db文件并打开//
     {
-        qDebug() << "无法建立数据库连接";
+        qDebug() << QString(QObject::tr("无法建立数据库连接"));
         return false;
     }
+
+
+
     return true;
 }
 
@@ -57,15 +64,17 @@ bool MySql::createTable()
 
 }
 
+
 bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)
 {
 
 
     QSqlQuery query(db);
-    query.prepare("insert into student(user_id,"
+    query.prepare("insert into t_user(user_id,"
                   " user_name, user_password, user_ip , "
                   "user_port, user_online, user_link,user_Verification)"
         "values(:id,:name,:password,:ip,:port,:online,:link,:Verification)");
+
 
     query.bindValue(":id",InputUserInfo["user_id"]);
     query.bindValue(":name",InputUserInfo["user_name"]);
@@ -84,43 +93,18 @@ bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)
        qDebug() << lastError.driverText() << QString(QObject::tr("插入失败"));
        return false;
    }
+   qDebug() << QString(QObject::tr("插入成功"));
     return true;
 
 }
 
-bool MyInsertDataBase(const QMap<QString,QString>& userInfo)
-{
 
-    QString user_id = userInfo.value("user_id");
-    QString user_name = userInfo.value("user_name");
-    QString user_password = userInfo.value("user_password");
-    QString user_ip = userInfo.value("user_ip");
-    QString user_port = userInfo.value("user_port");
-    QString user_online = userInfo.value("user_online");
-    QString user_link = userInfo.value("user_link");
-    QString user_Verification = userInfo.value("user_Verification");
-
-    QString sql = QString("insert into student(user_id,"
-                          " user_name, user_password, user_ip , "
-                          "user_port, user_online, user_link,user_Verification)"
-                "values('%1','%2','%3','%4','%5','%6','%7','%8')").arg(user_id).arg(user_name).arg(user_password).arg(user_ip).arg(user_port).arg(user_online).arg(user_link).arg(user_Verification);
-    QSqlQuery query;
-    bool ok = query.exec(sql);
-    if(!ok)
-    {
-        return false;
-    }
-
-    return true;
-
-}
 
 QList<QStringList> MySql::selectDataFromBase(const QMap<QString,QString>& InputUserInfo)
 {
     QSqlQuery query(db);
     query.prepare("select * from t_user where user_name = :name");
     query.bindValue(":name",InputUserInfo["user_name"]);
-
     query.exec();
 
     QList<QStringList> userInfo;
@@ -173,14 +157,15 @@ bool MySql::MyDelete(const QMap<QString,QString>& InputUserInfo)
 {
 
     QSqlQuery query(db);
-    query.prepare("delete from student where id = :id");
+    query.prepare("delete from t_user where id = :id");
     query.bindValue(":id",InputUserInfo["user_id"]);
     if (!query.exec())
     {
+        qDebug() << QString(QObject::tr("删除失败"));
         return false;
     }
 
-
+    qDebug() << QString(QObject::tr("删除成功"));
     return true;
 }
 
@@ -201,3 +186,66 @@ bool MySql::MyUpdate(const QMap<QString,QString>& InputUserInfo)
     return true;
 }
 
+
+bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
+{
+
+
+    QSqlQuery query(db);
+    query.prepare("update t_user set user_id = :id ,"
+                  " user_name = :name, user_password = :password, user_ip = :ip, "
+                  "user_port = :port, user_online = :online, "
+                  "user_link = :link,user_Verification = :Verification where user_name = :findName");
+
+
+    query.bindValue(":id",InputUserInfo["user_id"]);
+    query.bindValue(":name",InputUserInfo["user_name"]);
+    query.bindValue(":password",InputUserInfo["user_password"]);
+    query.bindValue(":ip",InputUserInfo["user_ip"]);
+    query.bindValue(":port",InputUserInfo["user_port"]);
+    query.bindValue(":online",InputUserInfo["user_online"]);
+    query.bindValue(":link",InputUserInfo["user_link"]);
+    query.bindValue(":Verification",InputUserInfo["user_Verification"]);
+    query.bindValue(":findName",InputUserInfo["user_name"]);
+
+
+    bool success=query.exec();
+   if(!success)
+   {
+       QSqlError lastError = query.lastError();
+       qDebug() << lastError.driverText() << QString(QObject::tr("更新失败"));
+       return false;
+   }
+    qDebug() << QString(QObject::tr("更新成功"));
+    return true;
+
+}
+
+
+bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
+{
+
+
+    QSqlQuery query(db);
+    query.prepare("update t_user set user_id = :id ,"
+                  " user_name = :name, user_password = :password, user_ip = :ip, "
+                  "user_port = :port, user_online = :online, "
+                  "user_link = :link,user_Verification = :Verification where user_name = :findName");
+
+
+    query.bindValue(":name",InputUserInfo["user_name"]);
+    query.bindValue(":Verification",InputUserInfo["user_Verification"]);
+    query.bindValue(":findName",InputUserInfo["user_name"]);
+
+
+    bool success=query.exec();
+   if(!success)
+   {
+       QSqlError lastError = query.lastError();
+       qDebug() << lastError.driverText() << QString(QObject::tr("更新失败"));
+       return false;
+   }
+    qDebug() << QString(QObject::tr("更新成功"));
+    return true;
+
+}

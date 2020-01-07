@@ -9,16 +9,12 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
-#include <QtCore/QMutex>
-#include <QDir>
-#include <QDebug>
 #include <QList>
 #include <QMap>
 #include <QStringList>
 #include <QVariantMap>
 #include <QMessageBox>
 #include <QTextCodec>
-
 
 //待存放的数据结构//
 class MySql
@@ -53,7 +49,8 @@ public:
 
     bool MyDelete(const QMap<QString,QString>& InputUserInfo);       //删除//
     bool MyUpdate(const QMap<QString,QString>& InputUserInfo);       //更新//
-
+    bool MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo);
+    bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);
 
 
 };
