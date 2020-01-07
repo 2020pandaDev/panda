@@ -15,7 +15,8 @@ SOURCES += \
     serverthread.cpp \
     ctcpsv.cpp \
     mysql.cpp \
-    worker.cpp
+    worker.cpp \
+    dataparsing.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -24,4 +25,5 @@ HEADERS += \
     serverthread.h \
     ctcpsv.h \
     mysql.h \
-    worker.h
+    worker.h \
+    dataparsing.h
