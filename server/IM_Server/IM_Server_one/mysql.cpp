@@ -7,8 +7,8 @@ MySql::MySql(const QString& pathAndDataBaseName,const QString& driver_Name,const
     dbDir = pathAndDataBaseName;
     connectionName = connection_Name;
     driverName = driver_Name;
-    db = QSqlDatabase::addDatabase(driverName,connectionName);  //创建一个SQLite数据库连接//
 
+    db = QSqlDatabase::contains("qt_sql_default_connection") ? QSqlDatabase::database("qt_sql_default_connection") : QSqlDatabase::addDatabase(driver_Name, connectionName);
 }
 
 MySql::~MySql()
@@ -47,8 +47,7 @@ bool MySql::CreateConnection()
 bool MySql::createTable()
 {
     QSqlQuery query(db);
-    db.open();
-    bool success =query.exec("create table t_user(user_id text primary key,"
+    bool success =query.exec("create table IF NOT EXISTS t_user(user_id text primary key,"
                     " user_name text, user_password text, user_ip text, "
                     "user_port text, user_online text, user_link text,user_Verification text);");   //新建一张表，访问已有.bd时，执行该语句也不受影响//
 
@@ -225,27 +224,22 @@ bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
 
 bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
 {
-
-
     QSqlQuery query(db);
-    query.prepare("update t_user set user_id = :id ,"
-                  " user_name = :name, user_password = :password, user_ip = :ip, "
-                  "user_port = :port, user_online = :online, "
-                  "user_link = :link,user_Verification = :Verification where user_name = :findName");
 
+    query.prepare("update t_user set user_Verification = :Verification where user_name = :findName");
 
     query.bindValue(":name",InputUserInfo["user_name"]);
-    query.bindValue(":Verification",InputUserInfo["user_Verification"]);
+    query.bindValue(":Verification",InputUserInfo["user_verification"]);
+    query.bindValue(":Verification",InputUserInfo["user_verification"]);
     query.bindValue(":findName",InputUserInfo["user_name"]);
 
-
     bool success=query.exec();
-   if(!success)
-   {
+    if(!success)
+    {
        QSqlError lastError = query.lastError();
        qDebug() << lastError.driverText() << QString(QObject::tr("更新失败"));
        return false;
-   }
+    }
     qDebug() << QString(QObject::tr("更新成功"));
     return true;
 
