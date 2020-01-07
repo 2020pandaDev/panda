@@ -1,7 +1,11 @@
+/*
+ *           huopeng
+ */
 #include "client.h"
 #include <QDateTime>
 #include <QDebug>
 #include <QMessageBox>
+
 
 client::client(QWidget *parent) : DMainWindow(parent)
 {
@@ -54,6 +58,7 @@ void client::sendysend()
         qDebug()<<localDispalyMessage;
     }
 }
+
 
 //处理成功连接到服务器的槽
 void client::slot_connected()

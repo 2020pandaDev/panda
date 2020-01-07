@@ -46,8 +46,7 @@ private:
 private:
     QGridLayout *m_gridLayout;
     QLabel *m_userPng_label;
-    QLineEdit *m_usrName_lineEdit;
-    QLineEdit *m_password_lineEdit;
+
     QLabel *m_registerAccount_label;
     QLabel *m_findPassword_label;
 
@@ -56,7 +55,9 @@ private:
     DSuggestButton *m_login_suggestButton;
 
     QVBoxLayout *center_layout;
-
+public:
+    QLineEdit *m_usrName_lineEdit;
+    QLineEdit *m_password_lineEdit;
 
 
 };
