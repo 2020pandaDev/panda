@@ -21,6 +21,7 @@ signals:
     void login(QStringList&);
     void chat(QMap<QString,QTcpSocket*>);
     void assist();
+    void dowithCAPTCHA(QStringList&);
 
 };
 

@@ -55,4 +55,26 @@ void Worker::privateChat(QVariantMap& chatMessage)
 
 }
 
+void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
+{
+    QString username=CAPTCHAInfo.at(1);
+    QString captcha=CAPTCHAInfo.at(2);
+
+    MySql sql("user.db","QSQLITE","todb");
+
+    QSqlQuery query;
+    if(query.exec(username)){
+        userVerification.insert("user_name",username);
+        userVerification.insert("user_verification",captcha);
+
+        sql.MyUpdateVerification(userVerification);
+        QMessageBox msg;
+        msg.setToolTip("有用户请求帮助");
+    }
+    else {
+        QMessageBox msg;
+        msg.setToolTip("用户请求失败");
+
+    }
+}
 

@@ -18,8 +18,10 @@ public slots:
     void dowork();
     void registe(QStringList & registerInfo);
     void privateChat(QVariantMap&);
+	void doingCAPTCHA(QStringList &CAPTCHAInfo);
 private:
     QMap<QString ,QString> userinfo;
+    QMap<QString ,QString> userVerification;
 };
 
 #endif // WORKER_H
