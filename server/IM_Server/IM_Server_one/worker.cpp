@@ -68,13 +68,15 @@ void Worker::registe(QStringList &registerInfo)
 {
     QString username=registerInfo.at(0);
     QString password=registerInfo.at(1);
+    MySql::getInstance()->CreateConnection();
+    MySql::getInstance()->createTable();
 
     QMap<QString ,QString> userinfo;
-    userinfo.insert("user_name",username);
+    userinfo.insert("user_name","bella");
     userinfo.insert("user_password",password);
 
     if(MySql::getInstance()->MySelect(userinfo)){
-        userinfo.insert("user_id","0");
+        userinfo.insert("user_id","1");
         userinfo.insert("user_ip","100.22.11.11");
         userinfo.insert("user_port","4455");
         userinfo.insert("user_online","online");

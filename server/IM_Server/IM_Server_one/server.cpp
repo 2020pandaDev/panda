@@ -1,6 +1,8 @@
 #include "server.h"
 #include "worker.h"
 #include "mysql.h"
+
+
 Server::Server(QObject *parent) : QObject(parent)
 {
     m_ctcpsv =new CTcpSv(this);
