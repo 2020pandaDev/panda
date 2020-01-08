@@ -19,7 +19,7 @@ public slots:
     void sendByteData(QByteArray&);
 
 signals:
-    void work();
+    void work(QByteArray&);
     void dataPaser();
     void regist(QStringList&);
     void login(QStringList&);
