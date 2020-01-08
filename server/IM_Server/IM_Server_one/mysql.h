@@ -17,13 +17,16 @@
 #include <QTextCodec>
 
 //待存放的数据结构//
-class MySql
+class MySql : public QObject
 {
+     Q_OBJECT
 public:
-    MySql(const QString& pathAndDataBaseName,const QString& driver_Name,const QString& connection_Name);
-    ~MySql();
+     ~ MySql();
 
 private:
+ explicit MySql(const QString &pathAndDataBaseName,const QString& driver_Name,const QString& connection_Name,QObject *parent = nullptr);
+ static MySql* m_pInstance;
+ static QMutex m_Mutex;;//实例互斥锁
 
 //    bool isDirExist(const QString& Dir);            //路径是否存在//
 
@@ -53,6 +56,9 @@ public:
     bool MyUpdate(const QMap<QString,QString>& InputUserInfo);       //更新//
     bool MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo);
     bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);
+static MySql* getInstance(void);
+public slots:
+   bool createTable();
 
     bool loguser(QString name, QString passward);
 

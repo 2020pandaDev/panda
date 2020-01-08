@@ -2,6 +2,7 @@
 #define SERVERTHREAD_H
 #include <QThread>
 #include <QTcpSocket>
+#include "mysql.h"
 class ServerThread : public QThread
 {
     Q_OBJECT
@@ -23,6 +24,7 @@ signals:
     void chat(QMap<QString,QTcpSocket*>);
     void assist();
     void dowithCAPTCHA(QStringList&);
+	void createDB();
 
 };
 

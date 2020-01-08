@@ -14,18 +14,18 @@ public:
     explicit Worker(QObject *parent = nullptr);
 
 signals:
+    void createDB();
 
 public slots:
     void dowork();
     void registe(QStringList & registerInfo);
     void loginIn(QStringList & userInfoList);
     void privateChat(QVariantMap&);
+	void createTable();
 	void doingCAPTCHA(QStringList &CAPTCHAInfo);
 private:
     QMap<QString ,QString> userinfo;
-    QMap<QString ,QString> userVerification;
-    MySql *sql;
-
+    MySql* m_pInstance ;
 };
 
 #endif // WORKER_H
