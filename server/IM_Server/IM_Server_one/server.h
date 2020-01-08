@@ -6,6 +6,7 @@
 #include <QTcpSocket>
 #include "ctcpsv.h"
 #include "worker.h"
+
 class Server : public QObject
 {
     Q_OBJECT
@@ -17,6 +18,8 @@ public:
     void incomingConnection(qintptr socketDescriptor);
    /*******************/
    CTcpSv* m_ctcpsv = nullptr;
+
+
 
 
 signals:

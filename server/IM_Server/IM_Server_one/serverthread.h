@@ -15,10 +15,12 @@ public:
     static QMap<QString,QTcpSocket*> userSocket;
    
 
-
+public slots:
+    void sendByteData(QByteArray&);
 
 signals:
-    void work1();
+    void work();
+    void dataPaser();
     void regist(QStringList&);
     void login(QStringList&);
     void chat(QMap<QString,QTcpSocket*>);

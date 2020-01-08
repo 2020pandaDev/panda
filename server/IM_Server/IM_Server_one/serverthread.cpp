@@ -29,12 +29,14 @@ void ServerThread::run()
         qDebug() << "m_recData :" << m_recData;
         qDebug() << "run thread:" << currentThreadId();
         QStringList ss= {"ssss","123456"};
-        QStringList yzm= {"ssss","078653"};
-        emit work1();
+        emit work();
         emit regist(ss);
         emit createDB();
 		emit dowithCAPTCHA(yzm);
     });
+
+
+
     m_tcpSocket->write("ni hao");
     m_tcpSocket->flush();
 
@@ -47,6 +49,11 @@ void ServerThread::run()
 //       m_tcpSocket->waitForDisconnected(); // 注意到这又是个waitFor...()函数，它会阻塞当前线程直到连接断开
        exec();
 
+}
+
+void ServerThread::sendByteData(QByteArray &retuernData)
+{
+    m_tcpSocket->write(retuernData);
 }
 
 

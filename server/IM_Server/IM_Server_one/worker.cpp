@@ -6,13 +6,15 @@
 
 Worker::Worker(QObject *parent) : QObject(parent)
 {
-
+    m_dataParse = new Dataparsing ();
 }
 
-void Worker::dowork()
+void Worker::dowork(QByteArray& message)
 {
     qDebug()<<" dpwork";
     qDebug()<<"work thread:"<<QThread::currentThreadId();
+    QVariantMap recValue  = m_dataParse->paserByteData(message);
+
 }
 
 void Worker::registe(QStringList &registerInfo)
@@ -90,6 +92,10 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 
 }
 
+void Worker::sendReturnData(QByteArray & returnData)
+{
+    emit sendInfo(returnData);
+}
 
 void Worker::loginIn(QStringList &userInfoList)
 {
