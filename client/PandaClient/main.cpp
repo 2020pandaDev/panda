@@ -37,17 +37,17 @@ int main(int argc, char *argv[])
     a.setOrganizationName("deepin");
     a.setApplicationName("Panda");
     a.setApplicationVersion("1.0");
-    a.setProductIcon(QIcon(":/images/logo.svg"));
+    a.setProductIcon(QIcon(":/image/logo.svg"));
     a.setProductName("Panda");
     a.setApplicationDescription("This is a Remote Assist application.");
     a.loadTranslator();
     Login login;
-    DMainWindow w;
-    w.setCentralWidget(&login);
-    w.setFixedSize(440, 340);
-    w.show();
+    login.setFixedSize(440, 340);
+    login.show();
 
-    Dtk::Widget::moveToCenter(&w);
+    Dtk::Widget::moveToCenter(&login);
 
     return a.exec();
 }
+
+

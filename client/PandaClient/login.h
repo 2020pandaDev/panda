@@ -21,7 +21,7 @@
 
 #ifndef LOGIN_H
 #define LOGIN_H
-#include <DWidget>
+#include <DMainWindow>
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
@@ -29,14 +29,17 @@
 #include <QPushButton>
 #include <DSuggestButton>
 #include <QCheckBox>
+#include <DTitlebar>
 #include "clabel.h"
 #include "m_loginregister.h"
+#include "systemsetting.h"
+
 
 
 DWIDGET_USE_NAMESPACE
 
 
-class Login:public DWidget
+class Login:public DMainWindow
 {
     Q_OBJECT
 public:
@@ -46,6 +49,7 @@ private:
     void initUI();
 
 private:
+    QWidget *m_mainWidget;
     QGridLayout *m_gridLayout;
     QLabel *m_userPng_label;
 
@@ -63,7 +67,10 @@ public:
 
 private:
     m_loginregister *m_pLoginReg;
+    SystemSetting *m_pSystemSet;
 
+protected Q_SLOTS:
+    void menuItemInvoked(QAction *action);
 private slots:
     void changeCurrentPage(CLabel *label);
 
