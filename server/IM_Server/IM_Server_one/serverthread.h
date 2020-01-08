@@ -13,8 +13,8 @@ public:
     QTcpSocket * m_tcpSocket;
     QByteArray m_recData;
     static QMap<QString,QTcpSocket*> userSocket;
-    QVariantMap* recData;
-    QVariantMap* sendData;
+   
+
 
 
 signals:
@@ -24,7 +24,7 @@ signals:
     void chat(QMap<QString,QTcpSocket*>);
     void assist();
     void dowithCAPTCHA(QStringList&);
-	void createDB();
+    void createDB();
 
 };
 

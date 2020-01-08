@@ -17,28 +17,28 @@ void Worker::dowork()
 
 void Worker::registe(QStringList &registerInfo)
 {
-    QString username = registerInfo.at(0);
-    QString password = registerInfo.at(1);
-
-    MySql *sql =new MySql("user.db","QSQLITE","todb");
+    QString username=registerInfo.at(0);
+    QString password=registerInfo.at(1);
 
     QMap<QString ,QString> userinfo;
     userinfo.insert("user_name",username);
     userinfo.insert("user_password",password);
 
-
-    if(sql->MySelect(userinfo)){
+    QSqlQuery query;
+    if(query.exec(username)){
         userinfo.insert("user_id","0");
         userinfo.insert("user_ip","100.22.11.11");
         userinfo.insert("user_port","4455");
         userinfo.insert("user_online","online");
         userinfo.insert("user_link","notlink");
         userinfo.insert("user_Verification","notlink");
-        sql->MyInsert(userinfo);
-        qDebug()<<" insert success";
+        MySql::getInstance()->MyInsert(userinfo);
+        qDebug()<< "registe sucess";
     }
+
     else {
-        qDebug()<<"fail";
+
+        qDebug()<< " registe fail";
     }
 }
 
@@ -48,6 +48,14 @@ void Worker::privateChat(QVariantMap& chatMessage)
     QByteArray message= chatMessage["Msg"].toString().toLatin1().data();
     QTcpSocket* socket = ServerThread::userSocket["recvUsrName"];
     socket->write(message);
+
+}
+
+void Worker::createTable()
+{
+
+    qDebug()<< "mysql :"<< MySql::getInstance();
+    MySql::getInstance()->CreateConnection();
 
 }
 
@@ -127,5 +135,3 @@ void Worker::loginIn(QStringList &userInfoList)
 //    QSqlQuery querySet;
 //    querySet.exec(sql);
 }
-
-

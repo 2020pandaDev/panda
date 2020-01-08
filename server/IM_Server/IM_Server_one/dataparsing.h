@@ -6,7 +6,6 @@
 #include <QJsonDocument>
 #include <QVariantMap>
 #include <QJsonObject>
-
 class Dataparsing : public QObject
 {
     Q_OBJECT
@@ -33,3 +32,4 @@ public slots:
 };
 
 #endif // DATAPARSING_H
+

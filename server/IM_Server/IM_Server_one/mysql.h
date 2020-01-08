@@ -35,8 +35,6 @@ private:
     QString driverName;
     QSqlDatabase db;
 
-    QSqlQuery *query;  //login查询sql语句
-
 
 public:
 
@@ -58,9 +56,11 @@ public:
     bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);
 static MySql* getInstance(void);
 public slots:
-   bool createTable();
+   
 
-    bool loguser(QString name, QString passward);
+   bool loguser(QString name, QString passward);
+
+
 
 };
 

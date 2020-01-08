@@ -22,6 +22,8 @@ public:
 signals:
 
 public slots:
+
+
 };
 
 #endif // SERVER_H
