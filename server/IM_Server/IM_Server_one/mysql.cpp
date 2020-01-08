@@ -250,7 +250,7 @@ bool MySql::loguser(QString name, QString passward) //登录判断用户与密�
 {
     qDebug()<<"验证用户";
     QString str=QString("select * from t_user where user_name='%1' and user_password='%2'").arg(name).arg(passward);
-    query=new QSqlQuery;
+    QSqlQuery *query=new QSqlQuery;
     query->exec(str);
     query->last();
     int record=query->at()+1;
