@@ -29,7 +29,6 @@ void ServerThread::run()
         qDebug() << "m_recData :" << m_recData;
         qDebug() << "run thread:" << currentThreadId();  
         emit work(m_recData);
-
     });
 
 

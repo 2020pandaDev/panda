@@ -22,10 +22,21 @@
 #include "login.h"
 #include <QDebug>
 
-Login::Login(QWidget *parent) : DWidget(parent)
+Login::Login(QWidget *parent) : DMainWindow(parent)
 {
     m_pLoginReg = new m_loginregister;
+    m_pSystemSet = new SystemSetting;
     initUI();
+    /////////////
+    DTitlebar *titlebar = this->titlebar();
+
+    if (titlebar) {
+        titlebar->setMenu(new QMenu(titlebar));
+        titlebar->setSeparatorVisible(true);
+        titlebar->menu()->addAction("设置");
+        connect(titlebar->menu(), &QMenu::triggered, this, &Login::menuItemInvoked);
+    }
+
     connect(m_login_suggestButton, &DSuggestButton::clicked, this,
     [=]()
     {
@@ -35,6 +46,7 @@ Login::Login(QWidget *parent) : DWidget(parent)
 
 void Login::initUI()
 {
+    m_mainWidget = new QWidget;
     center_layout = new QVBoxLayout;
     // 构建控件 头像、用户名、密码输入框等
     m_gridLayout = new QGridLayout;
@@ -82,7 +94,8 @@ void Login::initUI()
 
     center_layout->setContentsMargins(10, 0, 0, 10);
     center_layout->addLayout(m_gridLayout);
-    setLayout(center_layout);
+    m_mainWidget->setLayout(center_layout);
+    setCentralWidget(m_mainWidget);
 }
 
 void Login::changeCurrentPage(CLabel *label)
@@ -90,5 +103,11 @@ void Login::changeCurrentPage(CLabel *label)
     m_pLoginReg->show();
 }
 
+void Login::menuItemInvoked(QAction *action)
+{
+    if (action->text() == "设置") {
+        m_pSystemSet->show();
 
+    }
+}
 

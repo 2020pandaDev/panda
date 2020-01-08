@@ -54,7 +54,8 @@ m_loginregister::m_loginregister(DWidget* parent) :
     glayout->setAlignment(Qt::AlignCenter);
     registerwidget->setLayout(glayout);
 
-    setheadtitle(":/images/panda.png","注册");
+    setFixedSize(440,340);
+    setheadtitle(":/image/panda.png","注册");
     setCentralWidget(registerwidget);
     m_namelineedit->setStyleSheet(QString(":focus{ background-color: black; }"));
     m_passwordlineedit->setStyleSheet(QString(":focus{ background-color: black; }"));
