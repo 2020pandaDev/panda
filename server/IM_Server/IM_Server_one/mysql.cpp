@@ -8,10 +8,11 @@ QMutex MySql::m_Mutex;
 MySql::MySql(const QString &pathAndDataBaseName, const QString &driver_Name, const QString &connection_Name, QObject *parent):QObject (parent)
 {
 
-        dbDir = pathAndDataBaseName;
-        connectionName = connection_Name;
-        driverName = driver_Name;
-        db = QSqlDatabase::addDatabase(driverName,connectionName);  //创建一个SQLite数据库/
+    dbDir = pathAndDataBaseName;
+    connectionName = connection_Name;
+    driverName = driver_Name;
+    db = QSqlDatabase::contains("qt_sql_default_connection") ? QSqlDatabase::database("qt_sql_default_connection") : QSqlDatabase::addDatabase(driver_Name, connectionName);  //创建一个SQLite数据库连接//
+
 }
 
 
@@ -55,7 +56,7 @@ bool MySql::createTable()
 {
     qDebug()<<"createTable thread:"<<QThread::currentThreadId();
     QSqlQuery query(db);
-    bool success =query.exec("create table IF NOT EXISTS t_user(user_id text primary key,"
+    bool success =query.exec("create table if not exists t_user(user_id text primary key,"
                     " user_name text, user_password text, user_ip text, "
                     "user_port text, user_online text, user_link text,user_Verification text);");   //新建一张表，访问已有.bd时，执行该语句也不受影响//
 
@@ -157,7 +158,7 @@ bool MySql::MyDelete(const QMap<QString,QString>& InputUserInfo)
 {
 
     QSqlQuery query(db);
-    query.prepare("delete from t_user where id = :id");
+    query.prepare("delete from t_user where user_id = :id");
     query.bindValue(":id",InputUserInfo["user_id"]);
     if (!query.exec())
     {
