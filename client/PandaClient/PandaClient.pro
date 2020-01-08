@@ -43,8 +43,9 @@ SOURCES += main.cpp\
            client.cpp\
            login.cpp\
            clabel.cpp \
-    myapp.cpp \
-    clientsocket.cpp
+           myapp.cpp \  
+           clientsocket.cpp\
+           systemsetting.cpp
 
 HEADERS  += widget.h \
             tcpserver.h \
@@ -54,9 +55,10 @@ HEADERS  += widget.h \
             client.h\
             login.h\
             clabel.h \
-    myapp.h \
-    clientsocket.h \
-    unit.h
+            myapp.h \
+            clientsocket.h \
+            unit.h\
+            systemsetting.h
 
 FORMS    += widget.ui \
             tcpserver.ui \
