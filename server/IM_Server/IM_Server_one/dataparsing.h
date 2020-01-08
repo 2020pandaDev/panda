@@ -6,7 +6,6 @@
 #include <QJsonDocument>
 #include <QVariantMap>
 #include <QJsonObject>
-
 class Dataparsing : public QObject
 {
     Q_OBJECT

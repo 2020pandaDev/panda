@@ -34,7 +34,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     connect(thread, &ServerThread::regist, worker, &Worker::registe, Qt::DirectConnection);
     connect(thread, &ServerThread::createDB, worker, &Worker::createTable, Qt::DirectConnection);
     connect(thread, &ServerThread::createDB, worker, &Worker::createTable, Qt::DirectConnection);
-	connect(thread, &ServerThread::dowithCAPTCHA, worker, &Worker::doingCAPTCHA, Qt::DirectConnection);
+    connect(thread, &ServerThread::dowithCAPTCHA, worker, &Worker::doingCAPTCHA, Qt::DirectConnection);
 
 //    connect(thread, &ServerThread::createDB, mysql, &MySql::createTable, Qt::DirectConnection);
 //    connect(worker, &Worker::createDB, mysql, &MySql::createTable, Qt::DirectConnection);

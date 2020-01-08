@@ -35,8 +35,6 @@ private:
     QString driverName;
     QSqlDatabase db;
 
-    QSqlQuery *query;  //login查询sql语句
-
 
 public:
 
