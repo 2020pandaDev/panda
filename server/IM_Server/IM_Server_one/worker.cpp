@@ -94,6 +94,13 @@ void Worker::registe(QStringList &registerInfo)
         userinfo.insert("user_Verification","notlink");
         MySql::getInstance()->MyInsert(userinfo);
         qDebug()<< "registe sucess";
+
+        QVariantMap responMessage;
+        responMessage.insert("type","1");
+        responMessage.insert("message","register success");
+
+        return;
+
     }
 
     else {
