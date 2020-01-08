@@ -17,17 +17,12 @@ void Worker::dowork(QByteArray& message)
     QVariantMap recValue  = m_dataParse->paserByteData(recMessage);
 
     int  messType = recValue["Type"].toInt();
-
-
-
-
-
     switch (messType) {
     case 1:
 
 
     break;
-    case 2:
+    case 2://注册
     {
         QString    registeusrName = recValue["usrName"].toString();
         QString    registepassword = recValue["password"].toString();
@@ -39,25 +34,40 @@ void Worker::dowork(QByteArray& message)
 
     break;
     }
-    case 3:
+    case 3://登录
     {
+
         QString loginInusrName = recValue["usrName"].toString();
         QString loginInpassword = recValue["password"].toString();
         QStringList loginIninfo;
         loginIninfo.append(loginInusrName);
         loginIninfo.append(loginInpassword);
+
+        emit insertSocket(loginInusrName);
         loginIn(loginIninfo);
 
     break;
     }
 
-    case 4:
+    case 4://私聊
+    {
+        privateChat(recValue);
+         break;
+    }
 
 
-    break;
-    case 5:
 
-    break;
+    case 5:{
+        QString    usrName = recValue["usrName"].toString();
+        QString    captcha = recValue["captcha"].toString();
+        QStringList helpIninfo;
+        helpIninfo.append(usrName);
+        helpIninfo.append(captcha);
+        doingCAPTCHA(helpIninfo);
+          break;
+    }
+
+
 
     default:
          break;
