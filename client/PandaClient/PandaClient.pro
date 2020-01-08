@@ -40,7 +40,6 @@ SOURCES += main.cpp\
            tcpclient.cpp \
            chat.cpp\
            m_loginregister.cpp\
-           client.cpp\
            login.cpp\
            clabel.cpp \
            myapp.cpp \  
@@ -52,7 +51,6 @@ HEADERS  += widget.h \
             tcpclient.h \
             chat.h\
             m_loginregister.h\
-            client.h\
             login.h\
             clabel.h \
             myapp.h \

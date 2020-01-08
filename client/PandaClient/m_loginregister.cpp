@@ -26,7 +26,7 @@ m_loginregister::m_loginregister(DWidget* parent) :
     m_passwordlineedit->setFont(ft1);
     QRegExp rx("[a-zA-Z0-9!@#%^&*()_]{8,}$");
     m_passwordlineedit->setValidator(new QRegExpValidator(rx,this));
-    m_passwordlineedit->setEchoMode(QLineEdit::PasswordEchoOnEdit);
+    m_passwordlineedit->setEchoMode(QLineEdit::Password);
 
     m_try_pwdlineedit = new QLineEdit;
     m_try_pwdlineedit->setPlaceholderText("请确认密码");
@@ -34,7 +34,7 @@ m_loginregister::m_loginregister(DWidget* parent) :
     m_try_pwdlineedit->setFixedSize(250,40);
     m_try_pwdlineedit->setFont(ft1);
     m_try_pwdlineedit->setValidator(new QRegExpValidator(rx,this));
-    m_try_pwdlineedit->setEchoMode(QLineEdit::PasswordEchoOnEdit );
+    m_try_pwdlineedit->setEchoMode(QLineEdit::Password);
 
     //两个按钮
     m_okbutton = new DSuggestButton(this);

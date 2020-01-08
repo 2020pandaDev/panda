@@ -24,8 +24,9 @@
 
 Login::Login(QWidget *parent) : DWidget(parent)
 {
+    m_pLoginReg = new m_loginregister;
     initUI();
-    connect(m_autoLogin_CheckBox, &DSuggestButton::clicked, this,
+    connect(m_login_suggestButton, &DSuggestButton::clicked, this,
     [=]()
     {
 
@@ -40,13 +41,12 @@ void Login::initUI()
     m_userPng_label = new QLabel;
     m_usrName_lineEdit = new QLineEdit;
     m_password_lineEdit = new QLineEdit;
-    m_registerAccount_label = new QLabel;
-    m_findPassword_label = new QLabel;
+    m_registerAccount_label = new CLabel;
+    m_findPassword_label = new CLabel;
 
     m_forgetPassword_CheckBox = new QCheckBox;
     m_autoLogin_CheckBox = new QCheckBox;
     m_login_suggestButton = new DSuggestButton;
-
 
     m_login_suggestButton->setFixedHeight(35);
     //m_usrName_lineEdit->setFixedWidth(200);
@@ -60,11 +60,13 @@ void Login::initUI()
     // 设置文本
     m_usrName_lineEdit->setPlaceholderText("用户名");
     m_password_lineEdit->setEchoMode(QLineEdit::Password);
-    m_registerAccount_label->setText("<style> a {text-decoration: none} </style><a href=\"https://ssl.zc.qq.com\">注册帐号");
-    m_registerAccount_label->setOpenExternalLinks(true);
+    m_registerAccount_label->setText("注册帐号");
+    m_registerAccount_label->setStyleSheet("font-size:15px;color:blue");
+
+    connect(m_registerAccount_label, SIGNAL(signalLabelPress(CLabel*)), this, SLOT(changeCurrentPage(CLabel*)));
     m_password_lineEdit->setPlaceholderText("密码");
-    m_findPassword_label->setText("<style> a {text-decoration: none} </style><a href=\"https://aq.qq.com\">找回密码");
-    m_findPassword_label->setOpenExternalLinks(true);
+    m_findPassword_label->setText("找回密码");
+    m_findPassword_label->setStyleSheet("font-size:15px;color:blue");
     m_forgetPassword_CheckBox->setText("记住密码");
     m_autoLogin_CheckBox->setText("自动登陆");
     m_login_suggestButton->setText("登陆");
@@ -81,7 +83,11 @@ void Login::initUI()
     center_layout->setContentsMargins(10, 0, 0, 10);
     center_layout->addLayout(m_gridLayout);
     setLayout(center_layout);
+}
 
+void Login::changeCurrentPage(CLabel *label)
+{
+    m_pLoginReg->show();
 }
 
 
