@@ -1,22 +1,16 @@
 #ifndef TCPCLIENT_H
 #define TCPCLIENT_H
 
-#include <QDialog>
-#include<QTcpServer>
-#include<QFile>
-#include<QTcpSocket>
-#include<QTime>
-#include<QFileDialog>
-#include<QString>
-#include<QCloseEvent>
-#include<QHostAddress>
-
+#include <QMainWindow>
+#include <QtNetwork>
+#include <QMessageBox>
+//#include "userinterface.h"
 
 namespace Ui {
 class TcpClient;
 }
 
-class TcpClient : public QDialog
+class TcpClient : public QMainWindow
 {
     Q_OBJECT
 
@@ -24,47 +18,21 @@ public:
     explicit TcpClient(QWidget *parent = 0);
     ~TcpClient();
 
-
-    void setFileName(QString fileName);
-    void setHostAddress(QHostAddress address);
-
-    void closeEvent(QCloseEvent *);
-
-     QFile *localFile;
+protected:
+    void init();
+    void connectServer();
 
 private slots:
-    void on_tcpClientCancleBtn_clicked();
-    void on_tcpClientCloseBtn_clicked();
-
-    void readMessage();
-
+    void on_sendBtn_clicked();
     void displayError(QAbstractSocket::SocketError);
-
-    void newConnect();
-
+    void on_signBtn_clicked();
+    void readMessages();
 
 private:
     Ui::TcpClient *ui;
-
-    QTcpSocket *tcpClient;
-    qint16  tcpPort ;
-
-    QHostAddress hostAddress;
-
-    qint64 TotalBytes ;
-    qint64 bytesReceived;
-    qint64 fileNameSize ;
-    qint64 blockSize;
-    QString fileName;
-
-    QTime time;
-    QByteArray inBlock;
-
-
-
-
-
-
+    QTcpSocket *tcpSocket;
+    int readFlag;
+    //UserInterface *user;
 };
 
 #endif // TCPCLIENT_H

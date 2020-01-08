@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network dbus
-QT       += sql
+
 CONFIG +=c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -18,7 +18,6 @@ PKGCONFIG += dtkwidget
 
 OTHER_FILES += myapp.rc
 
-RC_FILE += myapp.rc
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -31,37 +30,50 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-
-
-
 SOURCES += main.cpp\
-           widget.cpp \
-           tcpserver.cpp \
-           tcpclient.cpp \
-           chat.cpp\
            m_loginregister.cpp\
            login.cpp\
            clabel.cpp \
+           systemsetting.cpp\
            myapp.cpp \  
            clientsocket.cpp\
-           systemsetting.cpp
+           tcpclient.cpp \
+           userinterface.cpp \
+           personaldialog.cpp
 
-HEADERS  += widget.h \
-            tcpserver.h \
-            tcpclient.h \
-            chat.h\
-            m_loginregister.h\
+HEADERS  += m_loginregister.h\
             login.h\
-            clabel.h \
-            myapp.h \
-            clientsocket.h \
+            clabel.h\
+            systemsetting.h\
+            myapp.h\
+            clientsocket.h\
             unit.h\
-            systemsetting.h
+            tcpclient.h \
+            userinterface.h \
+            personaldialog.h
 
-FORMS    += widget.ui \
-            tcpserver.ui \
-            tcpclient.ui \
-            chat.ui
+
+FORMS += \
+        tcpclient.ui \
+        userinterface.ui \
+        personaldialog.ui
+
+DISTFILES += \
+    images/bold.png \
+    images/color.png \
+    images/tilt.png \
+    images/Underline.png \
+    images/bold_copy.png \
+    images/Underline.png \
+    images/bold_copy.png \
+    images/bold.png \
+    images/color.png \
+    images/tilt.png \
+    images/Underline.png \
+    images/color.png \
+    images/tilt.png \
+    images/bold.png \
+    images/bold_copy.png
 
 RESOURCES += \
     images.qrc

@@ -49,20 +49,20 @@ SystemSetting::SystemSetting(DWidget* parent) :
     QRegExp rx("((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])[\\.]){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])");
     lineEditHostAddr->setPlaceholderText("输入正确的ip地址");
     lineEditHostAddr->setFont(ft1);
-    lineEditHostAddr->setFixedSize(250,35);
+    lineEditHostAddr->setFixedSize(200,35);
     lineEditHostAddr->setValidator(new QRegExpValidator(rx,this));
     //lineEditHostAddr->setInputMask(QString("000.000.000.000;_"));
 
 
     lineEditHostMsgPort = new QLineEdit;
-    lineEditHostMsgPort->setFixedSize(250,35);
+    lineEditHostMsgPort->setFixedSize(200,35);
     lineEditHostMsgPort->setPlaceholderText("输入正确端口");
     QRegExp regx("[0-9]{5,7}");
     lineEditHostMsgPort->setValidator(new QRegExpValidator(regx,this));
     lineEditHostMsgPort->setFont(ft1);
 
     lineEditHostFilePort = new QLineEdit;
-    lineEditHostFilePort->setFixedSize(250,35);
+    lineEditHostFilePort->setFixedSize(200,35);
     lineEditHostFilePort->setPlaceholderText("输入正确端口");
     lineEditHostFilePort->setValidator(new QRegExpValidator(regx,this));
     lineEditHostFilePort->setFont(ft1);
@@ -76,19 +76,19 @@ SystemSetting::SystemSetting(DWidget* parent) :
     m_cancelbutton->setText(tr("取消"));
 
     //布局
-    configlayout->addWidget(addr,0,0,1,1,Qt::AlignHCenter);
-    configlayout->addWidget(lineEditHostAddr,0,1,1,1,Qt::AlignCenter);
+    configlayout->addWidget(addr,0,0,1,1);
+    configlayout->addWidget(lineEditHostAddr,0,1,1,1);
 
-    configlayout->addWidget(message,1,0,1,1,Qt::AlignCenter);
-    configlayout->addWidget(lineEditHostMsgPort, 1, 1,1,1,Qt::AlignCenter);
+    configlayout->addWidget(message,1,0,1,1);
+    configlayout->addWidget(lineEditHostMsgPort, 1, 1,1,1);
 
-    configlayout->addWidget(file,2,0,1,1,Qt::AlignCenter);
-    configlayout->addWidget(lineEditHostFilePort,2,1,1,1,Qt::AlignCenter);
+    configlayout->addWidget(file,2,0,1,1);
+    configlayout->addWidget(lineEditHostFilePort,2,1,1,1);
 
     hlayout->addStretch(0);
     hlayout->addWidget(m_okbutton);
     hlayout->addWidget(m_cancelbutton);
-    configlayout->setContentsMargins(10,10,150,200);
+    configlayout->setContentsMargins(10,10,80,50);
     configlayout->setHorizontalSpacing(0);
     group->setLayout(configlayout);
     vlayout->addWidget(group);
@@ -96,7 +96,7 @@ SystemSetting::SystemSetting(DWidget* parent) :
 
     configwidget->setLayout(vlayout);
     setCentralWidget(configwidget);
-    setFixedSize(480,480);
+    setFixedSize(440, 340);
 
 
     //两个按钮响应函数
