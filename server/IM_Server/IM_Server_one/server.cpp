@@ -38,12 +38,14 @@ void Server::incomingConnection(qintptr socketDescriptor)
 
 
 
+
     connect(thread, &ServerThread::regist, worker, &Worker::registe, Qt::DirectConnection);
     connect(thread, &ServerThread::createDB, worker, &Worker::createTable, Qt::DirectConnection);
     connect(thread, &ServerThread::createDB, worker, &Worker::createTable, Qt::DirectConnection);
     connect(thread, &ServerThread::dowithCAPTCHA, worker, &Worker::doingCAPTCHA, Qt::DirectConnection);
 
     connect(worker, &Worker::sendInfo, thread, &ServerThread::sendByteData, Qt::DirectConnection);//
+    connect(worker, &Worker::insertSocket, thread, &ServerThread::insertSocket, Qt::DirectConnection);//
 //    connect(thread, &ServerThread::createDB, mysql, &MySql::createTable, Qt::DirectConnection);
 //    connect(worker, &Worker::createDB, mysql, &MySql::createTable, Qt::DirectConnection);
 
