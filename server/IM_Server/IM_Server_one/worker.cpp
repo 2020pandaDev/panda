@@ -13,8 +13,55 @@ void Worker::dowork(QByteArray& message)
 {
     qDebug()<<" dpwork";
     qDebug()<<"work thread:"<<QThread::currentThreadId();
-    QVariantMap recValue  = m_dataParse->paserByteData(message);
+    QByteArray recMessage =message;
+    QVariantMap recValue  = m_dataParse->paserByteData(recMessage);
 
+    int  messType = recValue["Type"].toInt();
+
+
+
+
+
+    switch (messType) {
+    case 1:
+
+
+    break;
+    case 2:
+    {
+        QString    registeusrName = recValue["usrName"].toString();
+        QString    registepassword = recValue["password"].toString();
+
+        QStringList registeinfo;
+        registeinfo.append(registeusrName);
+        registeinfo.append(registepassword);
+        registe(registeinfo);
+
+    break;
+    }
+    case 3:
+    {
+        QString loginInusrName = recValue["usrName"].toString();
+        QString loginInpassword = recValue["password"].toString();
+        QStringList loginIninfo;
+        loginIninfo.append(loginInusrName);
+        loginIninfo.append(loginInpassword);
+        loginIn(loginIninfo);
+
+    break;
+    }
+
+    case 4:
+
+
+    break;
+    case 5:
+
+    break;
+
+    default:
+         break;
+    }
 }
 
 void Worker::registe(QStringList &registerInfo)

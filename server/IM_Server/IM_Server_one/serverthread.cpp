@@ -33,7 +33,7 @@ void ServerThread::run()
         emit work(ccc);
         emit regist(ss);
         emit createDB();
-		emit dowithCAPTCHA(yzm);
+        emit dowithCAPTCHA(ss);
     });
 
 
