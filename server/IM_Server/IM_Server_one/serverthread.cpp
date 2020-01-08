@@ -10,10 +10,12 @@ ServerThread::ServerThread(qintptr socketDescriptor)
 }
 QMap<QString,QTcpSocket*> ServerThread::userSocket;
 
+
+
 void ServerThread::run()
 {
-    recData = new  QVariantMap();
-    sendData = new  QVariantMap();
+    QVariantMap* recData = new  QVariantMap();
+    QVariantMap* sendData = new  QVariantMap();
 
     m_tcpSocket = new QTcpSocket();
 
@@ -27,11 +29,10 @@ void ServerThread::run()
         qDebug() << "m_recData :" << m_recData;
         qDebug() << "run thread:" << currentThreadId();
         QStringList ss= {"ssss","123456"};
-        QStringList yzm= {"ssss","09541"};
         emit work1();
         emit regist(ss);
-        emit login(ss);
-        emit dowithCAPTCHA(yzm);
+        emit createDB();
+		emit dowithCAPTCHA(yzm);
     });
     m_tcpSocket->write("ni hao");
     m_tcpSocket->flush();

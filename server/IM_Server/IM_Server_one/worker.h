@@ -4,8 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
-#include <mysql.h>
-
+#include "mysql.h"
 
 class Worker : public QObject
 {
@@ -23,9 +22,12 @@ public slots:
     void privateChat(QVariantMap&);
 	void createTable();
 	void doingCAPTCHA(QStringList &CAPTCHAInfo);
+    void privateChat(QVariantMap&);
+    void createTable();
 private:
     QMap<QString ,QString> userinfo;
-    MySql* m_pInstance ;
+    
+
 };
 
 #endif // WORKER_H

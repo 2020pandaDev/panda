@@ -58,9 +58,11 @@ public:
     bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);
 static MySql* getInstance(void);
 public slots:
-   bool createTable();
+   
 
-    bool loguser(QString name, QString passward);
+   bool loguser(QString name, QString passward);
+
+
 
 };
 

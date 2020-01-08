@@ -14,11 +14,15 @@ MySql::MySql(const QString &pathAndDataBaseName, const QString &driver_Name, con
         db = QSqlDatabase::addDatabase(driverName,connectionName);  //创建一个SQLite数据库/
 }
 
+
+
 MySql::~MySql()
 {
     closeDb();
 
 }
+
+
 
 void MySql::closeDb()
 {
@@ -143,14 +147,6 @@ bool MySql::MySelect(const QMap<QString,QString>& OutputUserInfo)
         return false;
     }
 
-//    QSqlRecord rec = query.record();
-//    qDebug() << QObject::tr("t_user表字段数：" ) << rec.count();
-
-//    if( rec.count())
-//    {
-//        return false;
-//    }
-
     return true;
 }
 
@@ -228,7 +224,9 @@ bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
 
 bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
 {
-    QSqlQuery query(db);
+
+
+     QSqlQuery query(db);
 
     query.prepare("update t_user set user_Verification = :Verification where user_name = :findName");
 
@@ -248,7 +246,6 @@ bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
     return true;
 
 }
-
 bool MySql::loguser(QString name, QString passward) //登录判断用户与密码是否一致
 {
     qDebug()<<"验证用户";
@@ -261,7 +258,6 @@ bool MySql::loguser(QString name, QString passward) //登录判断用户与密�
         return false;
     return true;
 }
-
 
 MySql *MySql::getInstance()
 {
@@ -279,3 +275,5 @@ MySql *MySql::getInstance()
           return m_pInstance;
 
 }
+
+

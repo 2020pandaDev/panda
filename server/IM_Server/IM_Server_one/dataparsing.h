@@ -33,3 +33,4 @@ public slots:
 };
 
 #endif // DATAPARSING_H
+
