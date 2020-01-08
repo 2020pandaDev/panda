@@ -30,8 +30,9 @@ void Worker::dowork(QByteArray& message)
         QStringList registeinfo;
         registeinfo.append(registeusrName);
         registeinfo.append(registepassword);
-        registe(registeinfo);
-
+        m_returnDataToClient =registe(registeinfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
     break;
     }
     case 3://登录
@@ -44,15 +45,16 @@ void Worker::dowork(QByteArray& message)
         loginIninfo.append(loginInpassword);
 
         emit insertSocket(loginInusrName);
-        loginIn(loginIninfo);
-
+        m_returnDataToClient =loginIn(loginIninfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
     break;
     }
 
     case 4://私聊
     {
         privateChat(recValue);
-         break;
+        break;
     }
 
 
@@ -61,9 +63,12 @@ void Worker::dowork(QByteArray& message)
         QString    usrName = recValue["usrName"].toString();
         QString    captcha = recValue["captcha"].toString();
         QStringList helpIninfo;
+
         helpIninfo.append(usrName);
         helpIninfo.append(captcha);
-        doingCAPTCHA(helpIninfo);
+        m_returnDataToClient =doingCAPTCHA(helpIninfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
           break;
     }
 
@@ -74,12 +79,10 @@ void Worker::dowork(QByteArray& message)
     }
 }
 
-void Worker::registe(QStringList &registerInfo)
+QVariantMap Worker::registe(QStringList &registerInfo)
 {
     QString username=registerInfo.at(0);
     QString password=registerInfo.at(1);
-    MySql::getInstance()->CreateConnection();
-    MySql::getInstance()->createTable();
 
     QMap<QString ,QString> userinfo;
     userinfo.insert("user_name","bella");
@@ -97,29 +100,39 @@ void Worker::registe(QStringList &registerInfo)
         MySql::getInstance()->MyInsert(userinfo);
         qDebug()<< "registe sucess";
 
-        responMessage.insert("type","1");
-        responMessage.insert("message","register success");
-        return;
+        responMessage.insert("Type","1");
+        responMessage.insert("responMsg","register success");
+        return responMessage ;
+
     }
 
     else {
-        responMessage.insert("type","1");
-        responMessage.insert("message","register fail");
-        return ;
-
+        responMessage.insert("Type","1");
+        responMessage.insert("responMsg","register fail");
+        return responMessage ;
     }
+
+
 }
 
 void Worker::privateChat(QVariantMap& chatMessage)
 {
     qDebug()<< "privateChat fun ";
+    QVariantMap returnData;
+
     QString sendUsrName = chatMessage["sendUsrName"].toString();
     QString recvUsrName = chatMessage["recvUsrName"].toString();
     QString Msg = chatMessage["Msg"].toString();
     int msgType = chatMessage["msgType"].toInt();
     QByteArray message= Msg.toLatin1().data();
     QTcpSocket* socket = ServerThread::userSocket["recvUsrName"];
-    socket->write(message);
+    returnData.insert("Type",4);
+    returnData.insert("sendUsrName",sendUsrName);
+    returnData.insert("recvUsrName",recvUsrName);
+    returnData.insert("Msg",Msg);
+    returnData.insert("msgType",0);
+    m_sendData= m_dataParse->paserMapData(returnData);
+    socket->write(m_sendData);
 
 }
 
@@ -132,8 +145,9 @@ void Worker::createTable()
 }
 
 
-void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
+QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 {
+    QVariantMap re;
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
 
@@ -144,13 +158,13 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     }
 
     QMap<QString ,QString> userinfo;
-    userinfo.insert("user_name",username);
-    userinfo.insert("user_verification",captcha);
+    userinfo.insert("usrName",username);
+    userinfo.insert("captcha",captcha);
 
     if(MySql::getInstance()->MySelect(userinfo)){
         qDebug() << "有用户请求帮助!";
-        userVerification.insert("user_name",username);
-        userVerification.insert("user_verification",captcha);
+        userVerification.insert("usrName",username);
+        userVerification.insert("captcha",captcha);
 
         MySql::getInstance()->MyUpdateVerification(userVerification);
 
@@ -160,7 +174,11 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 
     }
 
+    re.insert("Type", 5);
+    re.insert("usrName", username);
+    re.insert("captcha", captcha);
 
+    return re;
 }
 
 void Worker::sendReturnData(QByteArray & returnData)

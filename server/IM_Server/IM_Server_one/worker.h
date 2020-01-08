@@ -20,11 +20,11 @@ signals:
 
 public slots:
     void dowork(QByteArray& message);
-    void registe(QStringList & registerInfo);
-    void loginIn(QStringList & userInfoList);
+    QVariantMap registe(QStringList & registerInfo);
+    QVariantMap loginIn(QStringList & userInfoList);
     void privateChat(QVariantMap&);
 	void createTable();
-	void doingCAPTCHA(QStringList &CAPTCHAInfo);
+    QVariantMap doingCAPTCHA(QStringList &CAPTCHAInfo);
     void sendReturnData(QByteArray&);////给客户端发送消息
 
 private:
