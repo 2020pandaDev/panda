@@ -30,8 +30,9 @@ void Worker::dowork(QByteArray& message)
         QStringList registeinfo;
         registeinfo.append(registeusrName);
         registeinfo.append(registepassword);
-        registe(registeinfo);
-
+        m_returnDataToClient =registe(registeinfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
     break;
     }
     case 3://登录
@@ -44,15 +45,16 @@ void Worker::dowork(QByteArray& message)
         loginIninfo.append(loginInpassword);
 
         emit insertSocket(loginInusrName);
-        loginIn(loginIninfo);
-
+        m_returnDataToClient =loginIn(loginIninfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
     break;
     }
 
     case 4://私聊
     {
         privateChat(recValue);
-         break;
+        break;
     }
 
 
@@ -61,9 +63,12 @@ void Worker::dowork(QByteArray& message)
         QString    usrName = recValue["usrName"].toString();
         QString    captcha = recValue["captcha"].toString();
         QStringList helpIninfo;
+
         helpIninfo.append(usrName);
         helpIninfo.append(captcha);
-        doingCAPTCHA(helpIninfo);
+        m_returnDataToClient =doingCAPTCHA(helpIninfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
           break;
     }
 
@@ -78,8 +83,6 @@ void Worker::registe(QStringList &registerInfo)
 {
     QString username=registerInfo.at(0);
     QString password=registerInfo.at(1);
-    MySql::getInstance()->CreateConnection();
-    MySql::getInstance()->createTable();
 
     QMap<QString ,QString> userinfo;
     userinfo.insert("user_name","bella");
@@ -99,13 +102,13 @@ void Worker::registe(QStringList &registerInfo)
 
         responMessage.insert("type","1");
         responMessage.insert("message","register success");
-        return;
+        return responMessage;
     }
 
     else {
         responMessage.insert("type","1");
         responMessage.insert("message","register fail");
-        return ;
+        return responMessage ;
 
     }
 }
@@ -113,13 +116,21 @@ void Worker::registe(QStringList &registerInfo)
 void Worker::privateChat(QVariantMap& chatMessage)
 {
     qDebug()<< "privateChat fun ";
+    QVariantMap returnData;
+
     QString sendUsrName = chatMessage["sendUsrName"].toString();
     QString recvUsrName = chatMessage["recvUsrName"].toString();
     QString Msg = chatMessage["Msg"].toString();
     int msgType = chatMessage["msgType"].toInt();
     QByteArray message= Msg.toLatin1().data();
     QTcpSocket* socket = ServerThread::userSocket["recvUsrName"];
-    socket->write(message);
+    returnData.insert("Type",4);
+    returnData.insert("sendUsrName",sendUsrName);
+    returnData.insert("recvUsrName",recvUsrName);
+    returnData.insert("Msg",Msg);
+    returnData.insert("msgType",0);
+    m_sendData= m_dataParse->paserMapData(returnData);
+    socket->write(m_sendData);
 
 }
 

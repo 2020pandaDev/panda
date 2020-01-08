@@ -17,6 +17,7 @@ public:
 
 public slots:
     void sendByteData(QByteArray&);
+    void insertSocket(QString);
 
 signals:
     void work(QByteArray&);
