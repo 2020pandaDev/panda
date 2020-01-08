@@ -231,9 +231,9 @@ bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
 
     query.prepare("update t_user set user_Verification = :Verification where user_name = :findName");
 
-    query.bindValue(":name",InputUserInfo["user_name"]);
+    query.bindValue(":name",InputUserInfo["usrName"]);
     query.bindValue(":Verification",InputUserInfo["user_verification"]);
-    query.bindValue(":findName",InputUserInfo["user_name"]);
+    query.bindValue(":findName",InputUserInfo["usrName"]);
 
     bool success=query.exec();
     if(!success)

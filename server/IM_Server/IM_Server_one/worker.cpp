@@ -143,8 +143,9 @@ void Worker::createTable()
 }
 
 
-void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
+QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 {
+    QVariantMap re;
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
 
@@ -155,13 +156,13 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     }
 
     QMap<QString ,QString> userinfo;
-    userinfo.insert("user_name",username);
-    userinfo.insert("user_verification",captcha);
+    userinfo.insert("usrName",username);
+    userinfo.insert("captcha",captcha);
 
     if(MySql::getInstance()->MySelect(userinfo)){
         qDebug() << "有用户请求帮助!";
-        userVerification.insert("user_name",username);
-        userVerification.insert("user_verification",captcha);
+        userVerification.insert("usrName",username);
+        userVerification.insert("captcha",captcha);
 
         MySql::getInstance()->MyUpdateVerification(userVerification);
 
@@ -171,7 +172,11 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 
     }
 
+    re.insert("Type", 5);
+    re.insert("usrName", username);
+    re.insert("captcha", captcha);
 
+    return re;
 }
 
 void Worker::sendReturnData(QByteArray & returnData)
