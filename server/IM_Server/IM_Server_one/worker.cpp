@@ -186,32 +186,27 @@ void Worker::sendReturnData(QByteArray & returnData)
     emit sendInfo(returnData);
 }
 
-void Worker::loginIn(QStringList &userInfoList)
+QVariantMap Worker::loginIn(QStringList &userInfoList)
 {
+    QVariantMap loginResponse;
     QString u_name=userInfoList.at(0);
     QString u_pwd=userInfoList.at(1);
-    MySql::getInstance()->createTable();
-    QList<QStringList> userInfo = MySql::getInstance()->selectDataFromBase(userinfo); //获取整张表的数据
-   //获取表中user_name字段
-    for (int i = 0;i < userInfo.size();i++) {
-        qDebug()<<userInfo[i];
-        for (int j = 0;j < userInfo[i].size();j++) {
-            qDebug()<<userInfo[i][j];
-            if(QString::compare(u_name,userInfo[i][j]) == 0)  //判断用户名是否在user_name字段中
-            {
-                if(MySql::getInstance()->loguser(u_name,u_pwd))//判断密码是否一致
-                {
-                    QMessageBox msg;
-                    msg.setToolTip("登录成功");
-                } else {
-                    QMessageBox msg;
-                    msg.setToolTip("密码错误");
-                }
 
+    MySql::getInstance()->CreateConnection();
+    QMap<QString ,QString> usinfo;
+    usinfo.insert("user_name",u_name);
+    if(MySql::getInstance()->MySelect(usinfo)) {
+            if(MySql::getInstance()->loguser(u_name,u_pwd))//判断密码是否一致
+            {
+                loginResponse.insert("loginMsg","登录成功");
+                
             } else {
-                QMessageBox msg;
-                msg.setToolTip("用户名不存在");
-              }
-        }
-    }
+                loginResponse.insert("loginMsg","密码错误");
+            }
+
+        } else {
+        loginResponse.insert("loginMsg","用户名不存在");
+      }
+    loginResponse.insert("Type",3);
+    return loginResponse;
 }
