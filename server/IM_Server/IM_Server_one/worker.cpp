@@ -64,8 +64,7 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
 
-    MySql sql("user.db","QSQLITE","todb");
-    if (!sql.CreateConnection())
+    if (MySql::getInstance()->CreateConnection())
     {
         qDebug() << "数据库连接失败!";
 
@@ -75,19 +74,16 @@ void Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     userinfo.insert("user_name",username);
     userinfo.insert("user_verification",captcha);
 
-    if(sql.MySelect(userinfo)){
+    if(MySql::getInstance()->MySelect(userinfo)){
         qDebug() << "有用户请求帮助!";
         userVerification.insert("user_name",username);
         userVerification.insert("user_verification",captcha);
 
-        sql.MyUpdateVerification(userVerification);
-        QMessageBox msg;
-        msg.setToolTip("有用户请求帮助");
+        MySql::getInstance()->MyUpdateVerification(userVerification);
+
     }
     else {
         qDebug() << "用户请求失败!";
-        QMessageBox msg;
-        msg.setToolTip("用户请求失败");
 
     }
 

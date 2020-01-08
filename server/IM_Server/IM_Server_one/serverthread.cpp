@@ -29,6 +29,7 @@ void ServerThread::run()
         qDebug() << "m_recData :" << m_recData;
         qDebug() << "run thread:" << currentThreadId();
         QStringList ss= {"ssss","123456"};
+        QStringList yzm= {"ssss","078653"};
         emit work1();
         emit regist(ss);
         emit createDB();
