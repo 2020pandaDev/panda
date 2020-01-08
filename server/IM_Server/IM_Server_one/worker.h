@@ -22,8 +22,7 @@ public slots:
     void privateChat(QVariantMap&);
 	void createTable();
 	void doingCAPTCHA(QStringList &CAPTCHAInfo);
-    void privateChat(QVariantMap&);
-    void createTable();
+    
 private:
     QMap<QString ,QString> userinfo;
     
