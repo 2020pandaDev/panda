@@ -29,7 +29,8 @@ void ServerThread::run()
         qDebug() << "m_recData :" << m_recData;
         qDebug() << "run thread:" << currentThreadId();
         QStringList ss= {"ssss","123456"};
-        emit work();
+        QByteArray ccc = "sss";
+        emit work(ccc);
         emit regist(ss);
         emit createDB();
 		emit dowithCAPTCHA(yzm);
