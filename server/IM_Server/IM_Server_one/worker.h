@@ -16,6 +16,7 @@ public:
 signals:
     void createDB();
     void sendInfo(QByteArray&);
+    void insertSocket(QString);
 
 public slots:
     void dowork(QByteArray& message);
@@ -24,7 +25,7 @@ public slots:
     void privateChat(QVariantMap&);
 	void createTable();
 	void doingCAPTCHA(QStringList &CAPTCHAInfo);
-    void sendReturnData(QByteArray&);
+    void sendReturnData(QByteArray&);////给客户端发送消息
 
 private:
     QMap<QString ,QString> userinfo;

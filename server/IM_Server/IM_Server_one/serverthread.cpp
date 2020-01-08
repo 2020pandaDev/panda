@@ -27,24 +27,15 @@ void ServerThread::run()
     connect(m_tcpSocket, &QTcpSocket::readyRead, [ = ]() {
         m_recData = m_tcpSocket->readAll();
         qDebug() << "m_recData :" << m_recData;
-        qDebug() << "run thread:" << currentThreadId();
-        QStringList ss= {"ssss","123456"};
-        QByteArray ccc = "sss";
-        emit work(ccc);
-        emit regist(ss);
-        emit createDB();
-        emit dowithCAPTCHA(ss);
+        qDebug() << "run thread:" << currentThreadId();  
+        emit work(m_recData);
+
     });
 
 
 
-    m_tcpSocket->write("ni hao");
-    m_tcpSocket->flush();
 
-    if(true){
-       userSocket.insert("user",m_tcpSocket);
 
-    }
 
 //       m_tcpSocket->disconnectFromHost(); // 这个函数是异步执行的
 //       m_tcpSocket->waitForDisconnected(); // 注意到这又是个waitFor...()函数，它会阻塞当前线程直到连接断开
@@ -55,7 +46,14 @@ void ServerThread::run()
 void ServerThread::sendByteData(QByteArray &retuernData)
 {
     m_tcpSocket->write(retuernData);
+    m_tcpSocket->flush();
 }
+
+void ServerThread::insertSocket(QString userName)
+{
+  userSocket.insert(userName,m_tcpSocket);
+}
+
 
 
 
