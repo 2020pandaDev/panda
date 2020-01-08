@@ -24,8 +24,7 @@ void Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_name",username);
     userinfo.insert("user_password",password);
 
-    QSqlQuery query;
-    if(query.exec(username)){
+    if(MySql::getInstance()->MySelect(userinfo)){
         userinfo.insert("user_id","0");
         userinfo.insert("user_ip","100.22.11.11");
         userinfo.insert("user_port","4455");
