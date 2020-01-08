@@ -12,6 +12,8 @@ class Worker : public QObject
 public:
     explicit Worker(QObject *parent = nullptr);
     Dataparsing* m_dataParse = nullptr;
+    QVariantMap m_returnDataToClient;
+    QByteArray m_sendData;
 
 signals:
     void createDB();
