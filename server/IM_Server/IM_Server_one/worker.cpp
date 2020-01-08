@@ -85,6 +85,8 @@ void Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_name","bella");
     userinfo.insert("user_password",password);
 
+    QVariantMap responMessage;
+
     if(MySql::getInstance()->MySelect(userinfo)){
         userinfo.insert("user_id","1");
         userinfo.insert("user_ip","100.22.11.11");
@@ -94,11 +96,17 @@ void Worker::registe(QStringList &registerInfo)
         userinfo.insert("user_Verification","notlink");
         MySql::getInstance()->MyInsert(userinfo);
         qDebug()<< "registe sucess";
+
+        responMessage.insert("type","1");
+        responMessage.insert("message","register success");
+        return;
     }
 
     else {
+        responMessage.insert("type","1");
+        responMessage.insert("message","register fail");
+        return ;
 
-        qDebug()<< " registe fail";
     }
 }
 
