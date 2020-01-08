@@ -29,6 +29,8 @@
 #include <QPushButton>
 #include <DSuggestButton>
 #include <QCheckBox>
+#include "clabel.h"
+#include "m_loginregister.h"
 
 
 DWIDGET_USE_NAMESPACE
@@ -47,8 +49,8 @@ private:
     QGridLayout *m_gridLayout;
     QLabel *m_userPng_label;
 
-    QLabel *m_registerAccount_label;
-    QLabel *m_findPassword_label;
+    CLabel *m_registerAccount_label;
+    CLabel *m_findPassword_label;
 
     QCheckBox *m_forgetPassword_CheckBox;
     QCheckBox *m_autoLogin_CheckBox;
@@ -58,6 +60,12 @@ private:
 public:
     QLineEdit *m_usrName_lineEdit;
     QLineEdit *m_password_lineEdit;
+
+private:
+    m_loginregister *m_pLoginReg;
+
+private slots:
+    void changeCurrentPage(CLabel *label);
 
 
 };
