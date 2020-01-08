@@ -37,25 +37,27 @@ QString Dataparsing::tranJonstoStr(const QJsonDocument jsonDoc)//json转string
     return QString(jsonDoc.toJson());
 }
 
-void Dataparsing::getPreServerData(QMap<QString,QVariant>&str)
+QByteArray Dataparsing::paserMapData(QMap<QString,QVariant>&str)
 {
     QJsonDocument jsonDocSend = createJsonDo(str);
     QString strSend = tranJonstoStr(jsonDocSend);
     QByteArray by_array = strSend.toLatin1().data();
 
     if(jsonDocSend.isEmpty() && by_array.isEmpty())
-        return;
+        //return;
     qDebug()<<"by_array :";
-    emit sendBytInfo(by_array);
+    return by_array;
+    //emit sendBytInfo(by_array);
 }
 
-void Dataparsing::getServerData(QByteArray returnData)
+QVariantMap Dataparsing::paserByteData(QByteArray returnData)
 {
     QJsonDocument jsonDoc = tranQBytearrttoJonsDo(returnData);
     QVariantMap Map_info = parseJons(jsonDoc);
 
     if(jsonDoc.isEmpty() && Map_info.isEmpty())
-         return;
+         //return ;
     qDebug()<<"Map_info :";
-    emit sendMapInfo(Map_info);
+    return Map_info;
+    //emit sendMapInfo(Map_info);
 }

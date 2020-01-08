@@ -27,8 +27,8 @@ signals:
     void sendMapInfo(QVariantMap Mapinfo);
 
 public slots:
-    void getServerData(QByteArray returnData);//emit  info
-    void getPreServerData(QMap<QString,QVariant>&str);//emit  prinfo
+    QVariantMap paserByteData(QByteArray returnData);//emit  info
+    QByteArray paserMapData(QMap<QString,QVariant>&str);//emit  prinfo
 };
 
 #endif // DATAPARSING_H
