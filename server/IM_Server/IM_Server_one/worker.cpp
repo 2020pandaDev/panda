@@ -94,8 +94,12 @@ void Worker::registe(QStringList &registerInfo)
 
 void Worker::privateChat(QVariantMap& chatMessage)
 {
-    QString userName= chatMessage["userName"].toString();
-    QByteArray message= chatMessage["Msg"].toString().toLatin1().data();
+    qDebug()<< "privateChat fun ";
+    QString sendUsrName = chatMessage["sendUsrName"].toString();
+    QString recvUsrName = chatMessage["recvUsrName"].toString();
+    QString Msg = chatMessage["Msg"].toString();
+    int msgType = chatMessage["msgType"].toInt();
+    QByteArray message= Msg.toLatin1().data();
     QTcpSocket* socket = ServerThread::userSocket["recvUsrName"];
     socket->write(message);
 
