@@ -79,7 +79,7 @@ void Worker::dowork(QByteArray& message)
     }
 }
 
-void Worker::registe(QStringList &registerInfo)
+QVariantMap Worker::registe(QStringList &registerInfo)
 {
     QString username=registerInfo.at(0);
     QString password=registerInfo.at(1);
@@ -100,17 +100,19 @@ void Worker::registe(QStringList &registerInfo)
         MySql::getInstance()->MyInsert(userinfo);
         qDebug()<< "registe sucess";
 
-        responMessage.insert("type","1");
-        responMessage.insert("message","register success");
-        return responMessage;
-    }
-
-    else {
-        responMessage.insert("type","1");
-        responMessage.insert("message","register fail");
+        responMessage.insert("Type","1");
+        responMessage.insert("responMsg","register success");
         return responMessage ;
 
     }
+
+    else {
+        responMessage.insert("Type","1");
+        responMessage.insert("responMsg","register fail");
+        return responMessage ;
+    }
+
+
 }
 
 void Worker::privateChat(QVariantMap& chatMessage)
