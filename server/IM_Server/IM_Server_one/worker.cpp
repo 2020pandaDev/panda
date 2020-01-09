@@ -31,6 +31,7 @@ void Worker::dowork(QByteArray& message)
         QString    registepassword = recValue["password"].toString();
 
         QStringList registeinfo;
+
         registeinfo.append(registeusrName);
         registeinfo.append(registepassword);
         m_returnDataToClient =registe(registeinfo);
@@ -61,8 +62,6 @@ void Worker::dowork(QByteArray& message)
         privateChat(recValue);
         break;
     }
-
-
 
     case 5:{//传入验证码
         qDebug()<<"CAPTCHA passed";
@@ -127,22 +126,22 @@ QVariantMap Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_Verification","notlink");
 
     QVariantMap responMessage;
+    MySql::getInstance()->CreateConnection();
+    MySql::getInstance()->createTable();
 
-    if(MySql::getInstance()->MySelect(userinfo)){
-        MySql::getInstance()->MyInsert(userinfo);
-        qDebug()<< "registe sucess";
+   if( !MySql::getInstance()->userList().contains(username)){
+            MySql::getInstance()->MyInsert(userinfo);
+            qDebug()<< "registe sucess";
+            responMessage.insert("Type","1");
+            responMessage.insert("responMsg","register success");
+            return responMessage ;
+        }
 
-        responMessage.insert("Type","1");
-        responMessage.insert("responMsg","register success");
-        return responMessage ;
-    }
-
-    else {
-        responMessage.insert("Type","1");
-        responMessage.insert("responMsg","register fail");
-        return responMessage ;
-    }
-
+        else {
+            responMessage.insert("Type","1");
+            responMessage.insert("responMsg","register fail");
+            return responMessage ;
+        }
 
 }
 
