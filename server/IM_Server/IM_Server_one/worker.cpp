@@ -69,9 +69,23 @@ void Worker::dowork(QByteArray& message)
         m_returnDataToClient =doingCAPTCHA(helpIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         sendReturnData(m_sendData);
-          break;
+        break;
     }
 
+    case 6:{
+        QString    usrName = recValue["usrName"].toString();
+        QString    helper = recValue["helper"].toString();
+        QString    captcha = recValue["captcha"].toString();
+        QStringList helpIninfo;
+
+        helpIninfo.append(usrName);
+        helpIninfo.append(helper);
+        helpIninfo.append(captcha);
+        m_returnDataToClient =helpingOther(helpIninfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
+        break;
+    }
 
 
     default:
@@ -151,10 +165,11 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
 
-    if (MySql::getInstance()->CreateConnection())
+    if (!MySql::getInstance()->CreateConnection())
     {
         qDebug() << "数据库连接失败!";
-
+        re.insert("dbstatus", "Connecting database failed!");
+        return re;
     }
 
     QMap<QString ,QString> userinfo;
@@ -177,6 +192,40 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     re.insert("Type", 5);
     re.insert("usrName", username);
     re.insert("captcha", captcha);
+
+    return re;
+}
+
+QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
+{
+    QVariantMap re;
+    QString username=HelpingInfo.at(0); //求助者
+    QString helper=HelpingInfo.at(1); //帮助者
+    QString captcha=HelpingInfo.at(2); //验证码
+    bool isSim = false; //连接是否成功
+
+    if (!MySql::getInstance()->CreateConnection())
+    {
+        qDebug() << "数据库连接失败!";
+
+        re.insert("dbstatus", "Connecting database failed!");
+        return re;
+    }
+
+    QString capt = MySql::getInstance()->userMessage(username, 5);
+
+    if(captcha == capt){
+        isSim = true;
+        qDebug() << "此刻可以进行帮助!";
+    }
+    else {
+        isSim = false;
+        qDebug() << "验证码不一致!";
+    }
+
+    re.insert("usrName", username);
+    re.insert("helper", helper);
+    re.insert("isSim", isSim);
 
     return re;
 }
