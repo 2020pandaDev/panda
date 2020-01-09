@@ -3,6 +3,7 @@
 #include <QMap>
 #include <QMessageBox>
 #include "serverthread.h"
+#include <QTime>
 
 Worker::Worker(QObject *parent) : QObject(parent)
 {
@@ -110,26 +111,29 @@ QVariantMap Worker::registe(QStringList &registerInfo)
     QString username=registerInfo.at(0);
     QString password=registerInfo.at(1);
 
+    qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
+    int num = qrand()%(1000000);
+    QString strId=QString::number(num);
+
     QMap<QString ,QString> userinfo;
-    userinfo.insert("user_name","bella");
+    userinfo.insert("user_name",username);
     userinfo.insert("user_password",password);
+    userinfo.insert("user_id",strId);
+    userinfo.insert("user_ip","100.22.11.11");
+    userinfo.insert("user_port","4455");
+    userinfo.insert("user_online","online");
+    userinfo.insert("user_link","notlink");
+    userinfo.insert("user_Verification","notlink");
 
     QVariantMap responMessage;
 
     if(MySql::getInstance()->MySelect(userinfo)){
-        userinfo.insert("user_id","1");
-        userinfo.insert("user_ip","100.22.11.11");
-        userinfo.insert("user_port","4455");
-        userinfo.insert("user_online","online");
-        userinfo.insert("user_link","notlink");
-        userinfo.insert("user_Verification","notlink");
         MySql::getInstance()->MyInsert(userinfo);
         qDebug()<< "registe sucess";
 
         responMessage.insert("Type","1");
         responMessage.insert("responMsg","register success");
         return responMessage ;
-
     }
 
     else {
