@@ -17,6 +17,9 @@
 #include<DApplication>
 #include<DTitlebar>
 #include<QSpacerItem>
+#include<QTcpSocket>
+#include<QMessageBox>
+#include "clientsocket.h"
 DWIDGET_USE_NAMESPACE
 
 class m_loginregister: public DMainWindow
@@ -26,7 +29,11 @@ public:
     m_loginregister(DWidget* parent = nullptr);
     ~m_loginregister();
 private slots:
+    // 服务器信息返回处理
+    void SltTcpStatus(const quint8 &state);
     void setheadtitle(const QString &Lefticon,const QString &Righticon);
+    void on_okregisterbtn_clicked();
+    bool CheckPwd();
 private:
     QWidget *registerwidget;
     QGridLayout *glayout;
@@ -36,8 +43,17 @@ private:
     QLineEdit *m_try_pwdlineedit;
     DSuggestButton *m_okbutton;
     DSuggestButton *m_cancelbutton;
+    DLabel  *textLabel;
 
     bool isSee = false;
+    bool flag;
+    bool m_bConnected;
+    // socket通信
+    ClientSocket *m_tcpSocket;
+    QString m_strHostAddr        = "10.61.11.140";
+    int     m_nMsgPort           = 8000;
+    int     m_nFilePort          = 60002;
+    int     m_nGroupPort         = 60003;
 
     //标题
     QImage *image;
@@ -45,6 +61,8 @@ private:
     DWidget *headtitle;
     DLabel * lefticon;
     DLabel * righticon;
+
+
 
 };
 
