@@ -172,16 +172,23 @@ QVariantMap Worker::registe(QStringList &registerInfo)
    if( !mysql->userList().contains(username)){
             mysql->MyInsert(userinfo);
             qDebug()<< "registe sucess";
-            responMessage.insert("Type","1");
-            responMessage.insert("responMsg","register success");
+            responMessage.insert("Type","2");
+            responMessage.insert("responMsg",0);
             return responMessage ;
         }
 
         else {
-            responMessage.insert("Type","1");
-            responMessage.insert("responMsg","register fail");
+            responMessage.insert("Type","2");
+            responMessage.insert("responMsg",1);
+            qDebug()<< "registe fail";
             return responMessage ;
         }
+
+}
+QStringList Worker::updateUserList()
+{
+    qDebug()<<MySql::getInstance()->userList();
+    return MySql::getInstance()->userList();
 
 }
 
