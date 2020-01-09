@@ -107,6 +107,14 @@ void Worker::dowork(QByteArray& message)
         break;
     }
 
+    case 8:{//更新
+
+        m_returnDataToClient = updateUserList();
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
+        break;
+    }
+
     default:
          break;
     }
