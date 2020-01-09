@@ -184,10 +184,11 @@ QVariantMap Worker::registe(QStringList &registerInfo)
 
 }
 
-void Worker::privateChat(QVariantMap& chatMessage)
+QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 {
     qDebug()<<"privateChat thread:"<<QThread::currentThreadId();
     qDebug()<< "privateChat fun ";
+    QVariantMap sendData;
     QVariantMap returnData;
 
     QString sendUsrName = chatMessage["sendUsrName"].toString();
@@ -195,14 +196,24 @@ void Worker::privateChat(QVariantMap& chatMessage)
     QString Msg = chatMessage["Msg"].toString();
     int msgType = chatMessage["msgType"].toInt();
     QByteArray message= Msg.toLatin1().data();
-    QTcpSocket* socket = ServerThread::userSocket["recvUsrName"];
-    returnData.insert("Type",4);
-    returnData.insert("sendUsrName",sendUsrName);
-    returnData.insert("recvUsrName",recvUsrName);
-    returnData.insert("Msg",Msg);
-    returnData.insert("msgType",0);
-    m_sendData= m_dataParse->paserMapData(returnData);
+
+    QTcpSocket* socket = ServerThread::userSocket[recvUsrName];
+    if(socket){
+    sendData.insert("Type",4);
+    sendData.insert("sendUsrName",sendUsrName);
+    sendData.insert("recvUsrName",recvUsrName);
+    sendData.insert("Msg",Msg);
+    sendData.insert("msgType",0);
+    m_sendData= m_dataParse->paserMapData(sendData);
     socket->write(m_sendData);
+    returnData.insert("Type",4);
+    returnData.insert("result",true);
+    } else {
+     returnData.insert("Type",4);
+     returnData.insert("result",false);
+    }
+    return  returnData;
+
 
 }
 
