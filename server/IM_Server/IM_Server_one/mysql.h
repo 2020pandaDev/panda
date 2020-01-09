@@ -19,16 +19,16 @@
 //待存放的数据结构//
 class MySql : public QObject
 {
-     Q_OBJECT
+    Q_OBJECT
 public:
-     ~ MySql();
+    ~ MySql();
 
 private:
- explicit MySql(const QString &pathAndDataBaseName,const QString& driver_Name,const QString& connection_Name,QObject *parent = nullptr);
- static MySql* m_pInstance;
- static QMutex m_Mutex;;//实例互斥锁
+    explicit MySql(const QString &pathAndDataBaseName,const QString& driver_Name,const QString& connection_Name,QObject *parent = nullptr);
+    static MySql* m_pInstance;
+    static QMutex m_Mutex;//实例互斥锁
 
-//    bool isDirExist(const QString& Dir);            //路径是否存在//
+    //    bool isDirExist(const QString& Dir);            //路径是否存在//
 
     QString dbDir;                //.db文件路径//
     QString connectionName;       //连接名称//
@@ -38,6 +38,8 @@ private:
 
 public:
 
+
+
     bool CreateConnection();      //创建数据库连接//
 
     void closeDb();               //关闭数据库//
@@ -46,19 +48,26 @@ public:
     bool MyInsertDataBase(const QMap<QString,QString>& userInfo);
 
 
-    QList<QStringList> selectDataFromBase(const QMap<QString,QString>& InputUserInfo);
+    QVariantMap userStatus();
+    QStringList userList();
+    QString userMessage(QString userName,int type);
+    QVariantMap selectDataFromBase();
+    QVariantMap selectNameDataFromBase();
+    QVariantMap selectDataFromBase(int type, QString userName);
     bool MySelect(const QMap<QString,QString>& OutputUserInfo);      //查找//
-
+    QList<QStringList> selectDataFromBase(const QMap<QString,QString>& InputUserInfo);
 
     bool MyDelete(const QMap<QString,QString>& InputUserInfo);       //删除//
-    bool MyUpdate(const QMap<QString,QString>& InputUserInfo);       //更新//
+    bool MyUpdate(const QMap<QString,QString>& InputUserInfo);
+    bool MyUpdateUserStatus(const QString& UserName,const QString& OnLineStatus);//更新//
+    bool MyUpdateUserStatus(int Choose,const QString& UserName,const QString& OnLineStatus);
     bool MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo);
     bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);
-static MySql* getInstance(void);
+    static MySql* getInstance(void);
 public slots:
-   
 
-   bool loguser(QString name, QString passward);
+
+    bool loguser(QString name, QString passward);
 
 
 
