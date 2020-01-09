@@ -67,7 +67,7 @@ public:
 public slots:
 
 
-    bool loguser(QString name, QString passward);
+    bool logUser(QString name, QString passward);
 
 
 
