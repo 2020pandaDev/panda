@@ -36,6 +36,7 @@ public slots:
 private:
     QMap<QString ,QString> userinfo;
     QMap<QString ,QString> userVerification;
+    MySql *mysql;
 
 };
 
