@@ -8,7 +8,6 @@
 Worker::Worker(QObject *parent) : QObject(parent)
 {
     m_dataParse = new Dataparsing ();
-    MySql* mysql = MySql::getInstance();
 }
 
 void Worker::dowork(QByteArray& message)
@@ -96,16 +95,16 @@ void Worker::dowork(QByteArray& message)
 
     case 7:{//退出登录
         qDebug()<<"Signout :";
-        QString    usrName = recValue["usrName"].toString();
+        QString    SignoutusrName = recValue["usrName"].toString();
         QStringList usrOutInfo;
 
-        usrOutInfo.append(usrName);
+        usrOutInfo.append(SignoutusrName);
         m_returnDataToClient = Signout(usrOutInfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         sendReturnData(m_sendData);
 
-         emit deleteSocket(usrName);
-         break;
+        emit deleteSocket(SignoutusrName);
+        break;
     }
 
     default:
@@ -118,7 +117,7 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     qDebug()<<"Signout thread:"<<QThread::currentThreadId();
     QVariantMap outResponse;
 
-    if (!mysql->CreateConnection()) {
+    if (!MySql::getInstance()->CreateConnection()) {
         qDebug() << "数据库连接失败!";
         outResponse.insert("dbstatus", "Connecting database failed!");
         return outResponse;
@@ -131,10 +130,10 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     userinfo.insert("u_name", u_name);
     userinfo.insert("online_status", online_status);
 
-    if (mysql->MySelect(userinfo)) {
+    if (MySql::getInstance()->MySelect(userinfo)) {
         qDebug() << "用户退出!";
 
-        mysql->MyUpdateUserStatus(u_name, online_status);
+        MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
 
     } else {
         qDebug() << "此用户未注册!";
@@ -166,29 +165,22 @@ QVariantMap Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_Verification","notlink");
 
     QVariantMap responMessage;
-    mysql->CreateConnection();
-    mysql->createTable();
+    MySql::getInstance()->CreateConnection();
+    MySql::getInstance()->createTable();
 
-   if( !mysql->userList().contains(username)){
-            mysql->MyInsert(userinfo);
+   if( !MySql::getInstance()->userList().contains(username)){
+            MySql::getInstance()->MyInsert(userinfo);
             qDebug()<< "registe sucess";
-            responMessage.insert("Type","2");
-            responMessage.insert("responMsg",0);
+            responMessage.insert("Type","1");
+            responMessage.insert("responMsg","register success");
             return responMessage ;
         }
 
         else {
-            responMessage.insert("Type","2");
-            responMessage.insert("responMsg",1);
-            qDebug()<< "registe fail";
+            responMessage.insert("Type","1");
+            responMessage.insert("responMsg","register fail");
             return responMessage ;
         }
-
-}
-QStringList Worker::updateUserList()
-{
-    qDebug()<<MySql::getInstance()->userList();
-    return MySql::getInstance()->userList();
 
 }
 
@@ -217,6 +209,7 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     returnData.insert("Type",4);
     returnData.insert("result",true);
     } else {
+     qDebug()<<"fail:";
      returnData.insert("Type",4);
      returnData.insert("result",false);
     }
@@ -228,8 +221,8 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 void Worker::createTable()
 {
 
-    qDebug()<< "mysql :"<< mysql;
-    mysql->CreateConnection();
+    qDebug()<< "mysql :"<< MySql::getInstance();
+    MySql::getInstance()->CreateConnection();
 
 }
 
@@ -241,7 +234,7 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
 
-    if (!mysql->CreateConnection()) {
+    if (!MySql::getInstance()->CreateConnection()) {
         qDebug() << "数据库连接失败!";
         re.insert("dbstatus", "Connecting database failed!");
         return re;
@@ -251,12 +244,12 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     userinfo.insert("usrName",username);
     userinfo.insert("captcha",captcha);
 
-    if (mysql->MySelect(userinfo)) {
+    if (MySql::getInstance()->MySelect(userinfo)) {
         qDebug() << "有用户请求帮助!";
         userVerification.insert("usrName",username);
         userVerification.insert("captcha",captcha);
 
-        mysql->MyUpdateVerification(userVerification);
+        MySql::getInstance()->MyUpdateVerification(userVerification);
 
     } else {
         qDebug() << "用户请求失败!";
@@ -279,14 +272,14 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
     QString captcha=HelpingInfo.at(2); //验证码
     bool isSim = false; //连接是否成功
 
-    if (!mysql->CreateConnection()) {
+    if (!MySql::getInstance()->CreateConnection()) {
         qDebug() << "数据库连接失败!";
 
         re.insert("dbstatus", "Connecting database failed!");
         return re;
     }
 
-    QString capt = mysql->userMessage(username, 5);
+    QString capt = MySql::getInstance()->userMessage(username, 5);
 
     if (captcha == capt) {
         isSim = true;
@@ -315,23 +308,21 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
     QString u_name = userInfoList.at(0);
     QString u_pwd = userInfoList.at(1);
 
-    mysql->CreateConnection();
-    QMap<QString, QString> usinfo;
-    usinfo.insert("user_name", u_name);
-    if (mysql->MySelect(usinfo)) {
-        if (mysql->logUser(u_name, u_pwd)) {
-            loginResponse.insert("loginMsg", 0);
-            QString online_status = "true";
-            mysql->MyUpdateUserStatus(u_name, online_status);
-            loginResponse.insert("onlineStatus", true);
-            QVariantMap userMessage = mysql->userStatus();
-            loginResponse.insert("result",userMessage);
+    MySql::getInstance()->CreateConnection();
+    QMap<QString ,QString> usinfo;
+    usinfo.insert("user_name",u_name);
+    if(MySql::getInstance()->MySelect(usinfo)) {
+            if(MySql::getInstance()->loguser(u_name,u_pwd))//判断密码是否一致
+            {
+                loginResponse.insert("loginMsg",0);
+                
+            } else {
+                loginResponse.insert("loginMsg",1);
+            }
+
         } else {
-            loginResponse.insert("loginMsg", 2);
-        }
-    } else {
-        loginResponse.insert("loginMsg", 1);
-    }
-    loginResponse.insert("Type", 3);
+        loginResponse.insert("loginMsg",2);
+      }
+    loginResponse.insert("Type",3);
     return loginResponse;
 }
