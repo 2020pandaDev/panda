@@ -25,7 +25,7 @@ public slots:
     void dowork(QByteArray& message);
     QVariantMap registe(QStringList & registerInfo);
     QVariantMap loginIn(QStringList & userInfoList);
-    void privateChat(QVariantMap&);
+    QVariantMap privateChat(QVariantMap&);
 	void createTable();
     QVariantMap doingCAPTCHA(QStringList &CAPTCHAInfo);
     QVariantMap helpingOther(QStringList &HelpingInfo);
