@@ -39,7 +39,7 @@ void MySql::closeDb()
 bool MySql::CreateConnection()
 {
 
-//     //本地数据库文件名//
+    //     //本地数据库文件名//
     db.setDatabaseName(dbDir);                                //数据库连接命名//
     if (!db.open())                                            //如果.db文件不存在，自动新建.db文件并打开//
     {
@@ -375,7 +375,7 @@ bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
 bool MySql::MyUpdateUserStatus(const QString& UserName,const QString& OnLineStatus)
 {
     QSqlQuery query(db);
-    query.prepare("update t_user set  user_online = :online, "
+    query.prepare("update t_user set  user_online = :online "
                   " where user_name = :findName");
     query.bindValue(":findName",UserName);
     query.bindValue(":online",OnLineStatus);
@@ -395,18 +395,18 @@ bool MySql::MyUpdateUserStatus(const QString& UserName,const QString& OnLineStat
 bool MySql::MyUpdateUserStatus(int Choose,const QString& UserName,const QString& Status)
 {
     QSqlQuery query(db);
-    if(Choose == 1){
-        query.prepare("update t_user set  user_online = :online, "
+    if(Status == "online"){
+        query.prepare("update t_user set  user_online = :online "
                       " where user_name = :findName");
         query.bindValue(":findName",UserName);
         query.bindValue(":online",Status);
     }else if(Choose == 2){
-        query.prepare("update t_user set  user_link = :link, "
+        query.prepare("update t_user set  user_link = :link "
                       " where user_name = :findName");
         query.bindValue(":findName",UserName);
         query.bindValue(":link",Status);
     }else if(Choose == 3){
-        query.prepare("update t_user set  user_verification = :verification, "
+        query.prepare("update t_user set  user_verification = :verification "
                       " where user_name = :findName");
         query.bindValue(":findName",UserName);
         query.bindValue(":verification",Status);
