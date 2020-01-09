@@ -12,12 +12,14 @@ public:
     qintptr  m_socketDescriptor;
     QTcpSocket * m_tcpSocket;
     QByteArray m_recData;
+    static QMutex m_Mutex;
     static QMap<QString,QTcpSocket*> userSocket;
    
 
 public slots:
     void sendByteData(QByteArray&);
     void insertSocket(QString);
+    void deleteSocket(QString userName);
 
 signals:
     void work(QByteArray&);
