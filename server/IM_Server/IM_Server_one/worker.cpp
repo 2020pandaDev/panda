@@ -180,20 +180,25 @@ QVariantMap Worker::registe(QStringList &registerInfo)
             MySql::getInstance()->MyInsert(userinfo);
             qDebug()<< "registe sucess";
             responMessage.insert("Type","1");
-            responMessage.insert("responMsg","register success");
+            responMessage.insert("responMsg",0);
             return responMessage ;
         }
 
         else {
             responMessage.insert("Type","1");
-            responMessage.insert("responMsg","register fail");
+            responMessage.insert("responMsg",1);
             return responMessage ;
         }
 
 }
-QStringList Worker::updateUserList()
+QVariantMap  Worker:: updateUserList()
 {
-    return MySql::getInstance()->userList();
+    qDebug()<<"updateUserList thread:"<<QThread::currentThreadId();
+    qDebug()<< "updateUserList fun ";
+    QStringList userList = MySql::getInstance()->userList();
+    QVariantMap userLists;
+    userLists.insert("userList",userList);
+    return userLists;
 
 }
 

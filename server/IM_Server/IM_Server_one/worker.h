@@ -24,7 +24,7 @@ signals:
 public slots:
     void dowork(QByteArray& message);
     QVariantMap registe(QStringList & registerInfo);
-    QStringList updateUserList();
+    QVariantMap updateUserList();
     QVariantMap loginIn(QStringList & userInfoList);
     QVariantMap privateChat(QVariantMap&);
 	void createTable();
@@ -36,6 +36,7 @@ public slots:
 private:
     QMap<QString ,QString> userinfo;
     QMap<QString ,QString> userVerification;
+
 
 };
 
