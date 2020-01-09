@@ -27,6 +27,7 @@ public slots:
     void privateChat(QVariantMap&);
 	void createTable();
     QVariantMap doingCAPTCHA(QStringList &CAPTCHAInfo);
+    QVariantMap helpingOther(QStringList &HelpingInfo);
     void sendReturnData(QByteArray&);////给客户端发送消息
 
 private:
