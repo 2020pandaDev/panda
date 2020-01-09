@@ -64,21 +64,21 @@ void Worker::dowork(QByteArray& message)
     }
 
     case 5:{//传入验证码
-        qDebug()<<"CAPTCHA passed";
+        qDebug()<<"doingCAPTCHA";
         QString    usrName = recValue["usrName"].toString();
         QString    captcha = recValue["captcha"].toString();
         QStringList helpIninfo;
 
         helpIninfo.append(usrName);
         helpIninfo.append(captcha);
-        m_returnDataToClient =doingCAPTCHA(helpIninfo);
+        m_returnDataToClient = doingCAPTCHA(helpIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         sendReturnData(m_sendData);
         break;
     }
 
     case 6:{//验证码比较
-        qDebug()<<"CAPTCHA comparing";
+        qDebug()<<"helpingOther";
         QString    usrName = recValue["usrName"].toString();
         QString    helper = recValue["helper"].toString();
         QString    captcha = recValue["captcha"].toString();
@@ -87,22 +87,61 @@ void Worker::dowork(QByteArray& message)
         helpIninfo.append(usrName);
         helpIninfo.append(helper);
         helpIninfo.append(captcha);
-        m_returnDataToClient =helpingOther(helpIninfo);
+        m_returnDataToClient = helpingOther(helpIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         sendReturnData(m_sendData);
         break;
     }
 
-  case 7:{//退出登录
+    case 7:{//退出登录
+        qDebug()<<"Signout :";
+        QString    usrName = recValue["usrName"].toString();
+        QStringList usrOutInfo;
 
-         qDebug()<<" doingCAPTCHA :";
-         emit deleteSocket("ss");
+        usrOutInfo.append(usrName);
+        m_returnDataToClient = Signout(usrOutInfo);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        sendReturnData(m_sendData);
+
+         emit deleteSocket(usrName);
          break;
     }
 
     default:
          break;
     }
+}
+
+QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
+{
+    qDebug()<<"Signout thread:"<<QThread::currentThreadId();
+    QVariantMap outResponse;
+
+    if (!MySql::getInstance()->CreateConnection()) {
+        qDebug() << "数据库连接失败!";
+        outResponse.insert("dbstatus", "Connecting database failed!");
+        return outResponse;
+    }
+
+    QString u_name = SignoutInfo.at(0);
+    QString online_status = "false";
+
+    QMap<QString ,QString> userinfo;
+    userinfo.insert("u_name", u_name);
+    userinfo.insert("online_status", online_status);
+
+    if (MySql::getInstance()->MySelect(userinfo)) {
+        qDebug() << "用户退出!";
+
+        MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
+
+    } else {
+        qDebug() << "此用户未注册!";
+    }
+
+    outResponse.insert("Type", 7);
+    outResponse.insert("online_status", online_status);
+    return outResponse;
 }
 
 QVariantMap Worker::registe(QStringList &registerInfo)

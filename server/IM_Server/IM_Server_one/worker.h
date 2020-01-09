@@ -30,11 +30,11 @@ public slots:
     QVariantMap doingCAPTCHA(QStringList &CAPTCHAInfo);
     QVariantMap helpingOther(QStringList &HelpingInfo);
     void sendReturnData(QByteArray&);////给客户端发送消息
+    QVariantMap Signout(QStringList &SignoutInfo);
 
 private:
     QMap<QString ,QString> userinfo;
     QMap<QString ,QString> userVerification;
-    
 
 };
 
