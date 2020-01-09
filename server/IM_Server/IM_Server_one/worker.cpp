@@ -288,6 +288,7 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
         qDebug() << "验证码不一致!";
     }
 
+    re.insert("Type", 6);
     re.insert("usrName", username);
     re.insert("helper", helper);
     re.insert("isSim", isSim);
