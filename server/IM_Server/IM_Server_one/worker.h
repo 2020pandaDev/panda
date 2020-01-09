@@ -19,6 +19,7 @@ signals:
     void createDB();
     void sendInfo(QByteArray&);
     void insertSocket(QString);
+    void deleteSocket(QString);
 
 public slots:
     void dowork(QByteArray& message);
