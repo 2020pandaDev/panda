@@ -64,7 +64,8 @@ void Worker::dowork(QByteArray& message)
 
 
 
-    case 5:{
+    case 5:{//传入验证码
+        qDebug()<<"CAPTCHA passed";
         QString    usrName = recValue["usrName"].toString();
         QString    captcha = recValue["captcha"].toString();
         QStringList helpIninfo;
@@ -77,8 +78,8 @@ void Worker::dowork(QByteArray& message)
         break;
     }
 
-    case 6:{
-         qDebug()<<" doingCAPTCHA :";
+    case 6:{//验证码比较
+        qDebug()<<"CAPTCHA comparing";
         QString    usrName = recValue["usrName"].toString();
         QString    helper = recValue["helper"].toString();
         QString    captcha = recValue["captcha"].toString();
@@ -183,8 +184,7 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
 
-    if (!MySql::getInstance()->CreateConnection())
-    {
+    if (!MySql::getInstance()->CreateConnection()) {
         qDebug() << "数据库连接失败!";
         re.insert("dbstatus", "Connecting database failed!");
         return re;
@@ -194,15 +194,14 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     userinfo.insert("usrName",username);
     userinfo.insert("captcha",captcha);
 
-    if(MySql::getInstance()->MySelect(userinfo)){
+    if (MySql::getInstance()->MySelect(userinfo)) {
         qDebug() << "有用户请求帮助!";
         userVerification.insert("usrName",username);
         userVerification.insert("captcha",captcha);
 
         MySql::getInstance()->MyUpdateVerification(userVerification);
 
-    }
-    else {
+    } else {
         qDebug() << "用户请求失败!";
 
     }
@@ -216,14 +215,14 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 
 QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
 {
+    qDebug()<<"helpingOther thread:"<<QThread::currentThreadId();
     QVariantMap re;
     QString username=HelpingInfo.at(0); //求助者
     QString helper=HelpingInfo.at(1); //帮助者
     QString captcha=HelpingInfo.at(2); //验证码
     bool isSim = false; //连接是否成功
 
-    if (!MySql::getInstance()->CreateConnection())
-    {
+    if (!MySql::getInstance()->CreateConnection()) {
         qDebug() << "数据库连接失败!";
 
         re.insert("dbstatus", "Connecting database failed!");
@@ -232,11 +231,10 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
 
     QString capt = MySql::getInstance()->userMessage(username, 5);
 
-    if(captcha == capt){
+    if (captcha == capt) {
         isSim = true;
         qDebug() << "此刻可以进行帮助!";
-    }
-    else {
+    } else {
         isSim = false;
         qDebug() << "验证码不一致!";
     }
