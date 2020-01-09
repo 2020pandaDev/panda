@@ -267,7 +267,7 @@ QVariantMap MySql::selectNameDataFromBase()
             dbData.insert("user_port",user_portList );
             dbData.insert("user_online",user_onlineList );
             dbData.insert("user_link",user_linkList );
-            dbData.insert("user_Verification",user_VerificationList );
+            dbData.insert("user_verification",user_VerificationList );
 
         }
 
@@ -448,7 +448,7 @@ bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
     return true;
 
 }
-bool MySql::loguser(QString name, QString passward) //登录判断用户与密码是否一致
+bool MySql::logUser(QString name, QString passward) //登录判断用户与密码是否一致
 {
     qDebug()<<"验证用户";
     QString str=QString("select * from t_user where user_name='%1' and user_password='%2'").arg(name).arg(passward);

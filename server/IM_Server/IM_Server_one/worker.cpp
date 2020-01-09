@@ -304,24 +304,26 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
 {
     qDebug()<<"loginIn thread:"<<QThread::currentThreadId();
     QVariantMap loginResponse;
-    QString u_name=userInfoList.at(0);
-    QString u_pwd=userInfoList.at(1);
+    QString u_name = userInfoList.at(0);
+    QString u_pwd = userInfoList.at(1);
 
     MySql::getInstance()->CreateConnection();
-    QMap<QString ,QString> usinfo;
-    usinfo.insert("user_name",u_name);
-    if(MySql::getInstance()->MySelect(usinfo)) {
-            if(MySql::getInstance()->loguser(u_name,u_pwd))//判断密码是否一致
-            {
-                loginResponse.insert("loginMsg","登录成功");
-                
-            } else {
-                loginResponse.insert("loginMsg","密码错误");
-            }
-
+    QMap<QString, QString> usinfo;
+    usinfo.insert("user_name", u_name);
+    if (MySql::getInstance()->MySelect(usinfo)) {
+        if (MySql::getInstance()->logUser(u_name, u_pwd)) {
+            loginResponse.insert("loginMsg", 0);
+            QString online_status = "true";
+            MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
+            loginResponse.insert("onlineStatus", true);
+            QVariantMap userMessage = MySql::getInstance()->userStatus();
+            loginResponse.insert("result",userMessage);
         } else {
-        loginResponse.insert("loginMsg","用户名不存在");
-      }
-    loginResponse.insert("Type",3);
+            loginResponse.insert("loginMsg", 2);
+        }
+    } else {
+        loginResponse.insert("loginMsg", 1);
+    }
+    loginResponse.insert("Type", 3);
     return loginResponse;
 }
