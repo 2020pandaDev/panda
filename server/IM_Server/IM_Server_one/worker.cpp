@@ -8,6 +8,7 @@
 Worker::Worker(QObject *parent) : QObject(parent)
 {
     m_dataParse = new Dataparsing ();
+    MySql* mysql = MySql::getInstance();
 }
 
 void Worker::dowork(QByteArray& message)
@@ -117,7 +118,7 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     qDebug()<<"Signout thread:"<<QThread::currentThreadId();
     QVariantMap outResponse;
 
-    if (!MySql::getInstance()->CreateConnection()) {
+    if (!mysql->CreateConnection()) {
         qDebug() << "数据库连接失败!";
         outResponse.insert("dbstatus", "Connecting database failed!");
         return outResponse;
@@ -130,10 +131,10 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     userinfo.insert("u_name", u_name);
     userinfo.insert("online_status", online_status);
 
-    if (MySql::getInstance()->MySelect(userinfo)) {
+    if (mysql->MySelect(userinfo)) {
         qDebug() << "用户退出!";
 
-        MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
+        mysql->MyUpdateUserStatus(u_name, online_status);
 
     } else {
         qDebug() << "此用户未注册!";
@@ -165,11 +166,11 @@ QVariantMap Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_Verification","notlink");
 
     QVariantMap responMessage;
-    MySql::getInstance()->CreateConnection();
-    MySql::getInstance()->createTable();
+    mysql->CreateConnection();
+    mysql->createTable();
 
-   if( !MySql::getInstance()->userList().contains(username)){
-            MySql::getInstance()->MyInsert(userinfo);
+   if( !mysql->userList().contains(username)){
+            mysql->MyInsert(userinfo);
             qDebug()<< "registe sucess";
             responMessage.insert("Type","1");
             responMessage.insert("responMsg","register success");
@@ -220,8 +221,8 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 void Worker::createTable()
 {
 
-    qDebug()<< "mysql :"<< MySql::getInstance();
-    MySql::getInstance()->CreateConnection();
+    qDebug()<< "mysql :"<< mysql;
+    mysql->CreateConnection();
 
 }
 
@@ -233,7 +234,7 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
 
-    if (!MySql::getInstance()->CreateConnection()) {
+    if (!mysql->CreateConnection()) {
         qDebug() << "数据库连接失败!";
         re.insert("dbstatus", "Connecting database failed!");
         return re;
@@ -243,12 +244,12 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     userinfo.insert("usrName",username);
     userinfo.insert("captcha",captcha);
 
-    if (MySql::getInstance()->MySelect(userinfo)) {
+    if (mysql->MySelect(userinfo)) {
         qDebug() << "有用户请求帮助!";
         userVerification.insert("usrName",username);
         userVerification.insert("captcha",captcha);
 
-        MySql::getInstance()->MyUpdateVerification(userVerification);
+        mysql->MyUpdateVerification(userVerification);
 
     } else {
         qDebug() << "用户请求失败!";
@@ -271,14 +272,14 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
     QString captcha=HelpingInfo.at(2); //验证码
     bool isSim = false; //连接是否成功
 
-    if (!MySql::getInstance()->CreateConnection()) {
+    if (!mysql->CreateConnection()) {
         qDebug() << "数据库连接失败!";
 
         re.insert("dbstatus", "Connecting database failed!");
         return re;
     }
 
-    QString capt = MySql::getInstance()->userMessage(username, 5);
+    QString capt = mysql->userMessage(username, 5);
 
     if (captcha == capt) {
         isSim = true;
@@ -288,7 +289,6 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
         qDebug() << "验证码不一致!";
     }
 
-    re.insert("Type", 6);
     re.insert("usrName", username);
     re.insert("helper", helper);
     re.insert("isSim", isSim);
@@ -308,16 +308,16 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
     QString u_name = userInfoList.at(0);
     QString u_pwd = userInfoList.at(1);
 
-    MySql::getInstance()->CreateConnection();
+    mysql->CreateConnection();
     QMap<QString, QString> usinfo;
     usinfo.insert("user_name", u_name);
-    if (MySql::getInstance()->MySelect(usinfo)) {
-        if (MySql::getInstance()->logUser(u_name, u_pwd)) {
+    if (mysql->MySelect(usinfo)) {
+        if (mysql->logUser(u_name, u_pwd)) {
             loginResponse.insert("loginMsg", 0);
             QString online_status = "true";
-            MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
+            mysql->MyUpdateUserStatus(u_name, online_status);
             loginResponse.insert("onlineStatus", true);
-            QVariantMap userMessage = MySql::getInstance()->userStatus();
+            QVariantMap userMessage = mysql->userStatus();
             loginResponse.insert("result",userMessage);
         } else {
             loginResponse.insert("loginMsg", 2);
