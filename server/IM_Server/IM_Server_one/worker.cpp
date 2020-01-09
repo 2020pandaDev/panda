@@ -183,6 +183,11 @@ QVariantMap Worker::registe(QStringList &registerInfo)
         }
 
 }
+QStringList Worker::updateUserList()
+{
+    return MySql::getInstance()->userList();
+
+}
 
 QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 {
@@ -312,7 +317,7 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
     QMap<QString ,QString> usinfo;
     usinfo.insert("user_name",u_name);
     if(MySql::getInstance()->MySelect(usinfo)) {
-            if(MySql::getInstance()->loguser(u_name,u_pwd))//判断密码是否一致
+            if(MySql::getInstance()->logUser(u_name,u_pwd))//判断密码是否一致
             {
                 loginResponse.insert("loginMsg",0);
                 
