@@ -24,6 +24,8 @@ void Worker::dowork(QByteArray& message)
     break;
     case 2://注册
     {
+        qDebug()<<" registe:";
+
         QString    registeusrName = recValue["usrName"].toString();
         QString    registepassword = recValue["password"].toString();
 
@@ -37,6 +39,7 @@ void Worker::dowork(QByteArray& message)
     }
     case 3://登录
     {
+        qDebug()<<" loginIn:";
 
         QString loginInusrName = recValue["usrName"].toString();
         QString loginInpassword = recValue["password"].toString();
@@ -53,6 +56,7 @@ void Worker::dowork(QByteArray& message)
 
     case 4://私聊
     {
+        qDebug()<<" privateChat :";
         privateChat(recValue);
         break;
     }
@@ -73,6 +77,7 @@ void Worker::dowork(QByteArray& message)
     }
 
     case 6:{
+         qDebug()<<" doingCAPTCHA :";
         QString    usrName = recValue["usrName"].toString();
         QString    helper = recValue["helper"].toString();
         QString    captcha = recValue["captcha"].toString();
@@ -87,6 +92,12 @@ void Worker::dowork(QByteArray& message)
         break;
     }
 
+  case 7:{//退出登录
+
+         qDebug()<<" doingCAPTCHA :";
+         emit deleteSocket("ss");
+         break;
+    }
 
     default:
          break;
@@ -95,6 +106,7 @@ void Worker::dowork(QByteArray& message)
 
 QVariantMap Worker::registe(QStringList &registerInfo)
 {
+    qDebug()<<"registe thread:"<<QThread::currentThreadId();
     QString username=registerInfo.at(0);
     QString password=registerInfo.at(1);
 
@@ -131,6 +143,7 @@ QVariantMap Worker::registe(QStringList &registerInfo)
 
 void Worker::privateChat(QVariantMap& chatMessage)
 {
+    qDebug()<<"privateChat thread:"<<QThread::currentThreadId();
     qDebug()<< "privateChat fun ";
     QVariantMap returnData;
 
@@ -161,6 +174,7 @@ void Worker::createTable()
 
 QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 {
+    qDebug()<<"doingCAPTCHA thread:"<<QThread::currentThreadId();
     QVariantMap re;
     QString username=CAPTCHAInfo.at(0);
     QString captcha=CAPTCHAInfo.at(1);
@@ -237,6 +251,7 @@ void Worker::sendReturnData(QByteArray & returnData)
 
 QVariantMap Worker::loginIn(QStringList &userInfoList)
 {
+    qDebug()<<"loginIn thread:"<<QThread::currentThreadId();
     QVariantMap loginResponse;
     QString u_name=userInfoList.at(0);
     QString u_pwd=userInfoList.at(1);

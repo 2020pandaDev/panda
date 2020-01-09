@@ -8,14 +8,12 @@ ServerThread::ServerThread(qintptr socketDescriptor)
     m_socketDescriptor = socketDescriptor;
     qDebug() << "main thread:" << currentThreadId();
 }
-QMap<QString,QTcpSocket*> ServerThread::userSocket;
-
+QMutex ServerThread::m_Mutex;
+QMap<QString, QTcpSocket *> ServerThread::userSocket;
 
 
 void ServerThread::run()
 {
-    QVariantMap* recData = new  QVariantMap();
-    QVariantMap* sendData = new  QVariantMap();
 
     m_tcpSocket = new QTcpSocket();
 
@@ -44,14 +42,29 @@ void ServerThread::run()
 
 void ServerThread::sendByteData(QByteArray &retuernData)
 {
+    qDebug() << "sendByteData thread:" << QThread::currentThreadId();
     m_tcpSocket->write(retuernData);
     m_tcpSocket->flush();
 }
 
 void ServerThread::insertSocket(QString userName)
 {
-  userSocket.insert(userName,m_tcpSocket);
+    qDebug() << "insertSocket thread:" << QThread::currentThreadId();
+    QMutexLocker m_lock(&m_Mutex);
+    userSocket.insert(userName, m_tcpSocket);
 }
+
+void ServerThread::deleteSocket(QString userName)
+{
+    qDebug() << "insertSocket thread:" << QThread::currentThreadId();
+    if (userName.contains(userName)) {
+        userSocket.remove(userName);
+    } else {
+        qDebug() << "this Socket no exist :";
+    }
+}
+
+
 
 
 
