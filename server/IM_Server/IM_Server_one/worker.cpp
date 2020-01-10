@@ -363,7 +363,7 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
         if (nowUserList.contains(u_pwd)) {
             QString onlineStatus = nowUserList.at(5);
             if (onlineStatus == "true") {
-                loginResponse.insert("repeatLogin",4);
+                loginResponse.insert("loginMsg",3);
                 return loginResponse;
             }
             loginResponse.insert("loginMsg", 0);
