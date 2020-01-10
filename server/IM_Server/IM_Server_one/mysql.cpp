@@ -132,7 +132,7 @@ QVariantMap MySql::userStatus()//获取用户的用户名／在线状态／链�
         Status.append(lineStatus);
         Status.append(linkStatus);
         userStatus.insert(userList.at(i),Status);
-        qDebug() << "1";
+
 
     }
 
@@ -145,7 +145,7 @@ QStringList MySql::userList()//获取表内用户名的列表
 {
 
     QStringList userList =  selectNameDataFromBase()["user_name"].toStringList();
-    qDebug() << "1";
+
     return  userList ;
 
 }
@@ -155,16 +155,9 @@ QString MySql::userMessage(const QString userName,int UserFieldNumber)//获取�
 {
     QString record;
     QStringList userList =  selectNameDataFromBase()["user_name"].toStringList();
-
-    qDebug() << "1";
-
     if(userList.contains(userName)){
-
-
         QStringList userMessageList =  selectDataFromBase()[userName].toStringList();
         record= userMessageList.at(UserFieldNumber);
-
-
     }else {
         qDebug() << "not exit user";
     }
@@ -179,9 +172,6 @@ QList<QStringList> MySql::selectDataFromBase(const QMap<QString,QString>& InputU
     query.bindValue(":name",InputUserInfo["user_name"]);
     if(query.exec()){
         if(query.exec("select * from t_user;")){
-
-
-
             while(query.next()){
 
                 QStringList rowData;
