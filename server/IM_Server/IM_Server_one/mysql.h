@@ -40,34 +40,31 @@ public:
 
 
 
-    bool CreateConnection();      //创建数据库连接//
-
+    bool CreateConnection();      //创建数据库需先调用连接//
     void closeDb();               //关闭数据库//
-    bool createTable();
+    bool createTable();            //初次使用必须调用建表的方法
     bool MyInsert(const QMap<QString,QString>& InputUserInfo);        //插入//
-    bool MyInsertDataBase(const QMap<QString,QString>& userInfo);
+//    bool MyInsertDataBase(const QMap<QString,QString>& userInfo);
 
 
-    QVariantMap userStatus();
-    QStringList userList();
-    QString userMessage(QString userName,int type);
+    QVariantMap userStatus();       //获取用户的在线，链接，验证码的状态
+    QStringList userList();         //获取用户列表
+    QString userMessage(const QString userName,int UserFieldNumber);//获取用户信息
     QVariantMap selectDataFromBase();
     QVariantMap selectNameDataFromBase();
-    QVariantMap selectDataFromBase(int type, QString userName);
+//    QVariantMap selectDataFromBase(int type, QString userName);
     bool MySelect(const QMap<QString,QString>& OutputUserInfo);      //查找//
-    QList<QStringList> selectDataFromBase(const QMap<QString,QString>& InputUserInfo);
+    QList<QStringList> selectDataFromBase(const QMap<QString,QString>& InputUserInfo);//获取全部表内的全部信息
 
     bool MyDelete(const QMap<QString,QString>& InputUserInfo);       //删除//
-    bool MyUpdate(const QMap<QString,QString>& InputUserInfo);
-    bool MyUpdateUserStatus(const QString& UserName,const QString& OnLineStatus);//更新//
-    bool MyUpdateUserStatus(int Choose,const QString& UserName,const QString& OnLineStatus);
-    bool MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo);
-    bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);
-    static MySql* getInstance(void);
-public slots:
+    bool MyUpdate(const QMap<QString,QString>& InputUserInfo);       //删除用户后插入用户新值
+    bool MyUpdateUserStatus(const QString& UserName,const QString& OnLineStatus);//更新用户的在线状态//
+    bool MyUpdateUserStatus(int Choose,const QString& UserName,const QString& NewStatus);//选择更新的用户的在线状态／用户是否链接／用户的验证码
+    bool MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo);//更新用户除用户ｉｄ和用户名之外的所有值
+    bool MyUpdateVerification(const QMap<QString,QString>& InputUserInfo);//更新用户的验证码
 
-
-    bool logUser(QString name, QString passward);
+    static MySql* getInstance(void);//获取mysql类的实例
+   
 
 
 
