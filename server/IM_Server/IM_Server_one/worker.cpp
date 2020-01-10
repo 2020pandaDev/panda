@@ -4,7 +4,8 @@
 #include <QMessageBox>
 #include "serverthread.h"
 #include <QTime>
-
+#include <QMetaObject>
+QMap<QString, QTcpSocket *> Worker::m_userSocket;
 Worker::Worker(QObject *parent) : QObject(parent)
 {
     m_dataParse = new Dataparsing ();
@@ -49,7 +50,8 @@ void Worker::dowork(QByteArray& message)
         loginIninfo.append(loginInusrName);
         loginIninfo.append(loginInpassword);
 
-        emit insertSocket(loginInusrName);
+        m_userSocket.insert(loginInusrName,m_socket);//绑定用户和socket
+
         m_returnDataToClient =loginIn(loginIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         sendReturnData(m_sendData);
@@ -102,8 +104,12 @@ void Worker::dowork(QByteArray& message)
         m_returnDataToClient = Signout(usrOutInfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         sendReturnData(m_sendData);
+        if (m_userSocket.contains(SignoutusrName)) {
+            m_userSocket.remove(SignoutusrName);
+        } else {
+            qDebug() << "this Socket no exist :";
+        }
 
-        emit deleteSocket(SignoutusrName);
         break;
     }
 
@@ -142,6 +148,7 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
         qDebug() << "用户退出!";
 
         MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
+       
 
     } else {
         qDebug() << "此用户未注册!";
@@ -150,6 +157,11 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     outResponse.insert("Type", 7);
     outResponse.insert("online_status", online_status);
     return outResponse;
+}
+
+QTcpSocket *Worker::recSocket(QTcpSocket *socket)
+{
+    m_socket =  socket;
 }
 
 QVariantMap Worker::registe(QStringList &registerInfo)
@@ -170,7 +182,7 @@ QVariantMap Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_port","4455");
     userinfo.insert("user_online","false");
     userinfo.insert("user_link","false");
-    userinfo.insert("user_Verification","notlink");
+    userinfo.insert("user_verification","notlink");
 
     QVariantMap responMessage;
     MySql::getInstance()->CreateConnection();
@@ -216,7 +228,7 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     int msgType = chatMessage["msgType"].toInt();
     QByteArray message= Msg.toLatin1().data();
 
-    QTcpSocket* socket = ServerThread::userSocket[recvUsrName];
+    QTcpSocket* socket = m_userSocket[recvUsrName];
     if(socket){
     sendData.insert("Type",4);
     sendData.insert("sendUsrName",sendUsrName);
@@ -224,7 +236,11 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     sendData.insert("Msg",Msg);
     sendData.insert("msgType",0);
     m_sendData= m_dataParse->paserMapData(sendData);
-    socket->write(m_sendData);
+
+    QMetaObject::invokeMethod(socket,std::bind( static_cast< qint64(QTcpSocket::*)(const QByteArray &) >( &QTcpSocket::write ), socket,m_sendData));
+//跨线程tcp通信
+
+
     returnData.insert("Type",4);
     returnData.insert("result",true);
     } else {
@@ -357,3 +373,4 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
     loginResponse.insert("Type", 3);
     return loginResponse;
 }
+

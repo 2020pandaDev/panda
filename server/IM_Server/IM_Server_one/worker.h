@@ -6,6 +6,7 @@
 #include <QString>
 #include "mysql.h"
 #include "dataparsing.h"
+#include <QTcpSocket>
 class Worker : public QObject
 {
     Q_OBJECT
@@ -14,12 +15,12 @@ public:
     Dataparsing* m_dataParse = nullptr;
     QVariantMap m_returnDataToClient;
     QByteArray m_sendData;
+    static QMap<QString, QTcpSocket *> m_userSocket;
 
 signals:
     void createDB();
     void sendInfo(QByteArray&);
-    void insertSocket(QString);
-    void deleteSocket(QString);
+
 
 public slots:
     void dowork(QByteArray& message);
@@ -32,10 +33,12 @@ public slots:
     QVariantMap helpingOther(QStringList &HelpingInfo);
     void sendReturnData(QByteArray&);////给客户端发送消息
     QVariantMap Signout(QStringList &SignoutInfo);
+    QTcpSocket* recSocket(QTcpSocket*);
 
 private:
     QMap<QString ,QString> userinfo;
     QMap<QString ,QString> userVerification;
+    QTcpSocket* m_socket = nullptr;
 
 
 };

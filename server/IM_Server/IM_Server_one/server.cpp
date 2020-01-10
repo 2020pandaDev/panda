@@ -33,6 +33,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::DirectConnection);
 
     connect(thread, &ServerThread::work, worker, &Worker::dowork, Qt::DirectConnection);
+    connect(thread, &ServerThread::socket, worker, &Worker::recSocket, Qt::DirectConnection);
 
 
 
@@ -42,8 +43,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     connect(thread, &ServerThread::dowithCAPTCHA, worker, &Worker::doingCAPTCHA, Qt::DirectConnection);
 
     connect(worker, &Worker::sendInfo, thread, &ServerThread::sendByteData, Qt::DirectConnection);//
-    connect(worker, &Worker::insertSocket, thread, &ServerThread::insertSocket, Qt::DirectConnection);//
-    connect(worker, &Worker::deleteSocket, thread, &ServerThread::deleteSocket, Qt::DirectConnection);//
+
 
 
     thread->start();
