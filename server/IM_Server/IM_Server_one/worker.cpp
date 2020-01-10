@@ -345,32 +345,40 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
     QString u_pwd = userInfoList.at(1);
     qDebug() << u_name << " " << u_pwd;
 
+    QVariantMap nowUserInfo = MySql::getInstance()->selectDataFromBase(); //所有用户信息
+    QStringList nowUserList = nowUserInfo[u_name].toStringList(); //该用户所有信息
+
+    QMap<QString, QString> usinfo;
+    usinfo.insert("user_name", u_name);
+    QStringList userNameList = MySql::getInstance()->userList();
+
+
     if (!MySql::getInstance()->CreateConnection()) {
         qDebug() << "数据库连接失败!";
         loginResponse.insert("dbstatus", "Connecting database failed!");
         return loginResponse;
     }
 
-    QMap<QString, QString> usinfo;
-    usinfo.insert("user_name", u_name);
-    QStringList userNameList = MySql::getInstance()->userList();
     if (userNameList.contains(u_name)) {
-        QVariantMap userInfoList = MySql::getInstance()->selectDataFromBase();
-        QStringList usNameList = userInfoList[u_name].toStringList(); //该用户所有信息
-            if(usNameList.contains(u_pwd)) {
-                loginResponse.insert("loginMsg", 0);
-                QString online_status = "true";
-                MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
-                loginResponse.insert("onlineStatus", true);
-                QVariantMap userMessage = MySql::getInstance()->userStatus();
-                loginResponse.insert("result", userMessage);
-            } else {
-                loginResponse.insert("loginMsg", 2);
+        if (nowUserList.contains(u_pwd)) {
+            QString onlineStatus = nowUserList.at(5);
+            if (onlineStatus == "true") {
+                loginResponse.insert("repeatLogin",4);
+                return loginResponse;
             }
+            loginResponse.insert("loginMsg", 0);
+            QString online_status = "true";
+            MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
+            loginResponse.insert("onlineStatus", true);
+            QVariantMap userMessage = MySql::getInstance()->userStatus();
+            loginResponse.insert("result", userMessage);
+        } else {
+            loginResponse.insert("loginMsg", 2);
+        }
     } else {
         loginResponse.insert("loginMsg", 1);
     }
+
     loginResponse.insert("Type", 3);
     return loginResponse;
 }
-
