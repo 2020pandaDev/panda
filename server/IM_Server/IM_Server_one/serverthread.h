@@ -14,15 +14,16 @@ public:
     QByteArray m_recData;
     static QMutex m_Mutex;
     static QMap<QString,QTcpSocket*> userSocket;
+    static QMap<QString,QString> user;
    
 
 public slots:
     void sendByteData(QByteArray&);
-    void insertSocket(QString);
-    void deleteSocket(QString userName);
+
 
 signals:
     void work(QByteArray&);
+    void socket(QTcpSocket*);
     void dataPaser();
     void regist(QStringList&);
     void login(QStringList&);
