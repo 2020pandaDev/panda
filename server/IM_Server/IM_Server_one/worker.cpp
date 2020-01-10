@@ -178,13 +178,14 @@ QVariantMap Worker::registe(QStringList &registerInfo)
 
    if( !MySql::getInstance()->userList().contains(username)){
             MySql::getInstance()->MyInsert(userinfo);
-            qDebug()<< "registe sucess";
+            qDebug()<< "注册成功";
             responMessage.insert("Type","1");
             responMessage.insert("responMsg",0);
             return responMessage ;
         }
 
         else {
+            qDebug()<< "注册失败";
             responMessage.insert("Type","1");
             responMessage.insert("responMsg",1);
             return responMessage ;
