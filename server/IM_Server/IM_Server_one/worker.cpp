@@ -27,7 +27,7 @@ void Worker::dowork(QByteArray& message)
     {
         qDebug()<<" registe:";
 
-        QString    registeusrName = recValue["usrName"].toString();
+        QString    registeusrName = recValue["user_name"].toString();
         QString    registepassword = recValue["password"].toString();
 
         QStringList registeinfo;
@@ -43,7 +43,7 @@ void Worker::dowork(QByteArray& message)
     {
         qDebug()<<" loginIn:";
 
-        QString loginInusrName = recValue["usrName"].toString();
+        QString loginInusrName = recValue["user_name"].toString();
         QString loginInpassword = recValue["password"].toString();
         QStringList loginIninfo;
         loginIninfo.append(loginInusrName);
@@ -65,8 +65,8 @@ void Worker::dowork(QByteArray& message)
 
     case 5:{//传入验证码
         qDebug()<<"doingCAPTCHA";
-        QString    usrName = recValue["usrName"].toString();
-        QString    captcha = recValue["captcha"].toString();
+        QString    usrName = recValue["user_name"].toString();
+        QString    captcha = recValue["user_verification"].toString();
         QStringList helpIninfo;
 
         helpIninfo.append(usrName);
@@ -79,9 +79,9 @@ void Worker::dowork(QByteArray& message)
 
     case 6:{//验证码比较
         qDebug()<<"helpingOther";
-        QString    usrName = recValue["usrName"].toString();
+        QString    usrName = recValue["user_name"].toString();
         QString    helper = recValue["helper"].toString();
-        QString    captcha = recValue["captcha"].toString();
+        QString    captcha = recValue["user_verification"].toString();
         QStringList helpIninfo;
 
         helpIninfo.append(usrName);
@@ -95,7 +95,7 @@ void Worker::dowork(QByteArray& message)
 
     case 7:{//退出登录
         qDebug()<<"Signout :";
-        QString    SignoutusrName = recValue["usrName"].toString();
+        QString    SignoutusrName = recValue["user_name"].toString();
         QStringList usrOutInfo;
 
         usrOutInfo.append(SignoutusrName);
@@ -135,7 +135,7 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     QString online_status = "false";
 
     QMap<QString ,QString> userinfo;
-    userinfo.insert("u_name", u_name);
+    userinfo.insert("user_name", u_name);
     userinfo.insert("online_status", online_status);
 
     if (MySql::getInstance()->MySelect(userinfo)) {
@@ -259,13 +259,13 @@ QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
     }
 
     QMap<QString ,QString> userinfo;
-    userinfo.insert("usrName",username);
-    userinfo.insert("captcha",captcha);
+    userinfo.insert("user_name",username);
+    userinfo.insert("user_verification",captcha);
 
     if (MySql::getInstance()->MySelect(userinfo)) {
         qDebug() << "有用户请求帮助!";
-        userVerification.insert("usrName",username);
-        userVerification.insert("captcha",captcha);
+        userVerification.insert("user_name",username);
+        userVerification.insert("user_verification",captcha);
 
         MySql::getInstance()->MyUpdateVerification(userVerification);
 
@@ -297,7 +297,7 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
         return re;
     }
 
-    QString capt = MySql::getInstance()->userMessage(username, 5);
+    QString capt = MySql::getInstance()->userMessage(username, 7);
 
     if (captcha == capt) {
         isSim = true;
@@ -307,7 +307,8 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
         qDebug() << "验证码不一致!";
     }
 
-    re.insert("usrName", username);
+    re.insert("Type", 6);
+    re.insert("user_name", username);
     re.insert("helper", helper);
     re.insert("isSim", isSim);
 
