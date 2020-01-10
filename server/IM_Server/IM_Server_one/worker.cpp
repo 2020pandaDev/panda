@@ -27,7 +27,7 @@ void Worker::dowork(QByteArray& message)
     {
         qDebug()<<" registe:";
 
-        QString    registeusrName = recValue["user_name"].toString();
+        QString    registeusrName = recValue["usrName"].toString();
         QString    registepassword = recValue["password"].toString();
 
         QStringList registeinfo;
@@ -43,7 +43,7 @@ void Worker::dowork(QByteArray& message)
     {
         qDebug()<<" loginIn:";
 
-        QString loginInusrName = recValue["user_name"].toString();
+        QString loginInusrName = recValue["usrName"].toString();
         QString loginInpassword = recValue["password"].toString();
         QStringList loginIninfo;
         loginIninfo.append(loginInusrName);
@@ -65,8 +65,8 @@ void Worker::dowork(QByteArray& message)
 
     case 5:{//传入验证码
         qDebug()<<"doingCAPTCHA";
-        QString    usrName = recValue["user_name"].toString();
-        QString    captcha = recValue["user_verification"].toString();
+        QString    usrName = recValue["usrName"].toString();
+        QString    captcha = recValue["captcha"].toString();
         QStringList helpIninfo;
 
         helpIninfo.append(usrName);
@@ -79,9 +79,9 @@ void Worker::dowork(QByteArray& message)
 
     case 6:{//验证码比较
         qDebug()<<"helpingOther";
-        QString    usrName = recValue["user_name"].toString();
+        QString    usrName = recValue["usrName"].toString();
         QString    helper = recValue["helper"].toString();
-        QString    captcha = recValue["user_verification"].toString();
+        QString    captcha = recValue["captcha"].toString();
         QStringList helpIninfo;
 
         helpIninfo.append(usrName);
@@ -95,7 +95,7 @@ void Worker::dowork(QByteArray& message)
 
     case 7:{//退出登录
         qDebug()<<"Signout :";
-        QString    SignoutusrName = recValue["user_name"].toString();
+        QString    SignoutusrName = recValue["usrName"].toString();
         QStringList usrOutInfo;
 
         usrOutInfo.append(SignoutusrName);
