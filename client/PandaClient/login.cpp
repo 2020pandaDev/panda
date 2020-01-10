@@ -20,12 +20,17 @@
  */
 
 #include "login.h"
+#include "unit.h"
+#include "myapp.h"
 #include <QDebug>
+#include <QMessageBox>
 
-Login::Login(QWidget *parent) : DMainWindow(parent)
+
+LoginWindow::LoginWindow(QWidget *parent) : DMainWindow(parent)
 {
     m_pLoginReg = new m_loginregister;
     m_pSystemSet = new SystemSetting;
+    m_pUserInterface = new UserInterface;
     initUI();
     /////////////
     DTitlebar *titlebar = this->titlebar();
@@ -34,17 +39,50 @@ Login::Login(QWidget *parent) : DMainWindow(parent)
         titlebar->setMenu(new QMenu(titlebar));
         titlebar->setSeparatorVisible(true);
         titlebar->menu()->addAction("设置");
-        connect(titlebar->menu(), &QMenu::triggered, this, &Login::menuItemInvoked);
+        connect(titlebar->menu(), &QMenu::triggered, this, &LoginWindow::menuItemInvoked);
     }
+
+    m_bConnected = false;
+
+    // socket通信
+    m_tcpSocket = new ClientSocket();
+   // ui->labelWinTitle->setText(tr("正在连接服务器..."));
+    m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
+
+    connect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
 
     connect(m_login_suggestButton, &DSuggestButton::clicked, this,
     [=]()
     {
+        QString strUserID = m_usrName_lineEdit->text();
+        QString strPwd = m_password_lineEdit->text();
 
+        if (strUserID.isEmpty() || strPwd.isEmpty())
+        {
+            QMessageBox::information(this, "Panda客户端", "用户名或密码不能为空，请重新输入!");
+            return;
+        }
+        if(!checkUserAndPwd())
+            return;
+        if (!m_bConnected) {
+            m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
+            QMessageBox::information(this, "未连接服务器，请等待！", "111");
+            return;
+        }
+
+        // 构建 Json 对象
+        QJsonObject json;
+        json.insert("Type", Login);
+        json.insert("name", strUserID);
+        json.insert("passwd", strPwd);
+
+        m_tcpSocket->SltSendMessage(Login, json);
     });
+
+
 }
 
-void Login::initUI()
+void LoginWindow::initUI()
 {
     m_mainWidget = new QWidget;
     center_layout = new QVBoxLayout;
@@ -71,8 +109,13 @@ void Login::initUI()
 
     // 设置文本
     m_usrName_lineEdit->setPlaceholderText("用户名");
+    QRegExp regx_user("[a-zA-Z0-9]{1,10}");
+    m_usrName_lineEdit->setValidator(new QRegExpValidator(regx_user,this));
+
+    QRegExp rx_password("[a-zA-Z0-9!,;:=+?@#%^&*]{6,18}$");
+    m_password_lineEdit->setValidator(new QRegExpValidator(rx_password,this));
     m_password_lineEdit->setEchoMode(QLineEdit::Password);
-    m_registerAccount_label->setText("注册帐号");
+    m_registerAccount_label->setText("注册账号");
     m_registerAccount_label->setStyleSheet("font-size:15px;color:blue");
 
     connect(m_registerAccount_label, SIGNAL(signalLabelPress(CLabel*)), this, SLOT(changeCurrentPage(CLabel*)));
@@ -98,16 +141,138 @@ void Login::initUI()
     setCentralWidget(m_mainWidget);
 }
 
-void Login::changeCurrentPage(CLabel *label)
+void LoginWindow::changeCurrentPage(CLabel *label)
 {
     m_pLoginReg->show();
+    m_pLoginReg->setWindowFlags( m_pLoginReg->windowFlags() & ~Qt::WindowMaximizeButtonHint);
 }
 
-void Login::menuItemInvoked(QAction *action)
+void LoginWindow::menuItemInvoked(QAction *action)
 {
     if (action->text() == "设置") {
         m_pSystemSet->show();
 
     }
 }
+
+void LoginWindow::SltTcpStatus(const quint8 &state)
+{
+    qDebug()<<"state"<<state;
+    switch (state) {
+    case DisConnectedHost: {
+        m_bConnected = false;
+        qDebug()<<"服务器已断开";
+       // ui->labelWinTitle->setText(tr("服务器已断开"));
+    }
+        break;
+    case ConnectedHost:
+    {
+        m_bConnected = true;
+        qDebug()<<"已连接服务器";
+      //  ui->labelWinTitle->setText(tr("已连接服务器"));
+    }
+        break;
+        // 登陆验证成功
+    case LoginSuccess:
+    {
+        qDebug()<<"登录成功";
+       // disconnect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
+
+       // QMessageBox::information(this, "Panda客户端", "登录成功；!");
+
+        // 登录成功后，保存当前用户
+        MyApp::m_strUserName = m_usrName_lineEdit->text();
+        MyApp::m_strPassword = m_password_lineEdit->text();
+        MyApp::SaveConfig();
+        //显示聊天框
+        m_pUserInterface->show();
+        this->close();
+
+        // 显示主界面
+//        MainWindow *mainWindow = new MainWindow();
+//        if (!QFile::exists(MyApp::m_strHeadFile)) {
+//            myHelper::Sleep(100);
+//            QJsonObject jsonObj;
+//            jsonObj.insert("from", MyApp::m_nId);
+//            jsonObj.insert("id",  -2);
+//            jsonObj.insert("msg", myHelper::GetFileNameWithExtension(MyApp::m_strHeadFile));
+//            m_tcpSocket->SltSendMessage(GetFile, jsonObj);
+//            myHelper::Sleep(100);
+//        }
+
+        // 居中显示
+       // myHelper::FormInCenter(mainWindow);
+     //  mainWindow->SetSocket(m_tcpSocket, MyApp::m_strUserName);
+     //   mainWindow->show();
+      //  this->close();
+    }
+        break;
+    case LoginPasswdError:
+    {
+        QMessageBox::information(this, "Panda客户端", "登录失败，请检查用户名和密码!");
+    }
+        break;
+    case UserNotFind:
+    {
+        QMessageBox::information(this, "Panda客户端", "登录失败，请检查用户名和密码!");
+    }
+        break;
+    case LoginRepeat:
+    {
+        QMessageBox::information(this, "Panda客户端", "登录失败，该账户已登录!");
+    }
+        break;
+    default:
+        break;
+    }
+
+    // 还原初始位置，重新登录
+  //  ui->widgetInput->setVisible(true);
+ //   ui->labelUserHead->move(40, 115);
+}
+
+//注册判断机制
+bool LoginWindow::checkUserAndPwd()
+{
+    QString nickName = m_usrName_lineEdit->text();//用户昵称
+    QString firstPassWrd = m_password_lineEdit->text();//用户密码
+    QRegExp rx;
+    if(0 == nickName.size())
+    {
+
+        QMessageBox::information(this,"登录信息","用户名不能为空!");
+        return false;
+    }
+    if(nickName.size() > 10)
+    {
+        QMessageBox::information(this,"登录信息","用户名长度超过10位!");
+        return false;
+    }
+
+    rx.setPatternSyntax(QRegExp::RegExp);
+    //对大小写字母敏感，即区分大小写
+    rx.setCaseSensitivity(Qt::CaseSensitive);
+    //匹配格式为所有大小写字母和数字组成的字符串，位数不限
+    rx.setPattern(QString("[a-zA-Z0-9!@#%^&*()_]{6,18}$"));
+    if(firstPassWrd.isEmpty())  //检测密码输入框是不是为空
+    {
+        QMessageBox::information(this,"登录信息","密码不能为空!");
+        return false;
+    }
+    else if(!rx.exactMatch(firstPassWrd))
+    {
+        QMessageBox::information(this,"登录信息","密码只能是数字或字母!");
+       return false;
+
+    }
+    else if(firstPassWrd.size()<6 || firstPassWrd.size()>18)
+    {
+        QMessageBox::information(this,"登录信息","密码长度范围必须是[6,18]!");
+        return false;
+
+    }
+
+    return true;
+}
+
 

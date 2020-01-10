@@ -28,13 +28,14 @@
 #include<DLabel>
 #include<DSuggestButton>
 #include<QGridLayout>
-#include<QGroupBox>
-#include<QHBoxLayout>
-#include<QVBoxLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QRegExpValidator>
-#include<QFont>
-#include<QImage>
-#include<DTitlebar>
+#include <QFont>
+#include <QImage>
+#include <DTitlebar>
+#include <QMessageBox>
 
 
 DWIDGET_USE_NAMESPACE
@@ -45,10 +46,12 @@ class SystemSetting : public DMainWindow
 
 public:
     explicit SystemSetting(DWidget* parent = nullptr);
-    ~SystemSetting();
 
 private slots:
     void setheadtitle(const QString &Lefticon,const QString &Righticon);
+    void on_btnSaveSetting_clicked();
+protected:
+    void changeEvent(QEvent *e);
 
 private:
 

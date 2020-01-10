@@ -15,7 +15,7 @@ m_loginregister::m_loginregister(DWidget* parent) :
     textLabel = new DLabel;
 
     m_bConnected = false;
-    textLabel->setText(tr("正在连接服务器..."));
+    textLabel->setText(tr(""));
     m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
     connect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
 
@@ -27,7 +27,7 @@ m_loginregister::m_loginregister(DWidget* parent) :
     QFont ft1;
     ft1.setLetterSpacing(QFont::AbsoluteSpacing,3);
     m_namelineedit->setFont(ft1);
-    QRegExp regx("[a-zA-Z0-9]{5,10}");
+    QRegExp regx("[a-zA-Z0-9]{1,10}");
     m_namelineedit->setValidator(new QRegExpValidator(regx,this));
 
     //密码框
@@ -64,18 +64,17 @@ m_loginregister::m_loginregister(DWidget* parent) :
     glayout->addWidget(m_okbutton, 4, 0, 1, 1,Qt::AlignCenter);
     glayout->addWidget(m_cancelbutton, 5, 0, 1, 1,Qt::AlignCenter);
     glayout->setHorizontalSpacing(30);
-    glayout->setAlignment(Qt::AlignCenter);
+   // glayout->setAlignment(Qt::AlignCenter);
     registerwidget->setLayout(glayout);
 
-    setheadtitle(":/images/panda.png","注册");
-    setCentralWidget(registerwidget);
+    setheadtitle(":/image/panda.png","注册");
+   setCentralWidget(registerwidget);
 
     // * 判断输入机制
     connect(m_okbutton,&DSuggestButton::clicked,this,
             [=]() {
         if(CheckPwd())
         {
-
             // 如果没有链接上服务器，此时进行一次链接
                 if (!m_bConnected) {
                     qDebug()<<"111111"<<MyApp::m_strHostAddr<<MyApp::m_nMsgPort;
@@ -88,17 +87,16 @@ m_loginregister::m_loginregister(DWidget* parent) :
                 }
                 // 构建 Json 对象
                 QJsonObject json;
-                json.insert("Type", 3);
+                json.insert("Type", Register);
                 json.insert("name", m_namelineedit->text());
                 json.insert("passwd", m_passwordlineedit->text());
 
-                m_tcpSocket->SltSendMessage(Login, json);
-            //close();
+                m_tcpSocket->SltSendMessage(Register, json);
         }
 
     });
     // * 关闭槽函数
-    connect(m_cancelbutton,&DSuggestButton::pressed,this,
+    connect(m_cancelbutton,&DSuggestButton::clicked,this,
             [=]() {
             this->close();
     });
@@ -107,59 +105,6 @@ m_loginregister::m_loginregister(DWidget* parent) :
 
 m_loginregister::~m_loginregister()
 {
-
-}
-
-// * 用户注册
-void m_loginregister::on_okregisterbtn_clicked()
-{
-    // 如果没有链接上服务器，此时进行一次链接
-//        if (!m_bConnected) {
-//            m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
-//            QMessageBox msgBox;
-//              msgBox.setText("The document has been modified.");
-//              msgBox.exec();
-//            //DMessageBox::Infomation(this, "未连接服务器，请等待！");
-//            return;
-//        }
-
-//        // 构建 Json 对象
-//        QJsonObject json;
-//        json.insert("name",m_namelineedit->text());
-//        json.insert("passwd", m_passwordlineedit->text());
-
-//        m_tcpSocket->SltSendMessage(Register, json);
-
-
-//    // 如果没有链接上服务器，此时进行一次链接
-//    if (!m_bConnected) {
-//        //m_tcpSocket->connectToHost(hostName,port);
-//        m_tcpSocket->connectToHost(m_strHostAddr,m_nMsgPort);
-//        //CMessageBox::Infomation(this, "未连接服务器，请等待！");
-//        return;
-//    }
-
-//    // 构建 Json 对象
-//    QJsonObject json;
-//    QJsonArray Array;
-//    json.insert("name", m_namelineedit->text());
-//    json.insert("passwd", m_passwordlineedit->text());
-//    //m_tcpSocket->SltSendMessage(Register, json);
-
-//         Array.push_back(json);
-
-//        QJsonDocument jsonDoc(Array);
-
-//        QByteArray strArray = jsonDoc.toJson(QJsonDocument::Indented);
-
-//        QString string(strArray);
-
-//        QJsonObject strjson;
-//        strjson.insert("date",string);
-//        strjson.insert("time","2020.01.07");
-//        QJsonDocument strdocument;
-//        strdocument.setObject(strjson);
-//        QByteArray Ary = strdocument.toJson(QJsonDocument::Indented);
 
 }
 
@@ -173,75 +118,28 @@ void m_loginregister::SltTcpStatus(const quint8 &state)
     switch (state) {
     case DisConnectedHost: {
         m_bConnected = false;
-        textLabel->setText(tr("服务器已断开"));
+        qDebug()<<"服务器已断开";
     }
         break;
     case ConnectedHost:
     {
         m_bConnected = true;
-        textLabel->setText(tr("已连接服务器"));
+        qDebug()<<"已连接服务器";
     }
         break;
-        // 登陆验证成功
-    case LoginSuccess:
-    {
-        disconnect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
-
-        // 登录成功后，保存当前用户
-       // MyApp::m_strUserName = ui->lineEditUser->text();
-       // MyApp::m_strPassword = ui->lineEditPasswd->text();
-       // MyApp::SaveConfig();
-
-        // 显示主界面
-//        MainWindow *mainWindow = new MainWindow();
-//        if (!QFile::exists(MyApp::m_strHeadFile)) {
-//            myHelper::Sleep(100);
-//            QJsonObject jsonObj;
-//            jsonObj.insert("from", MyApp::m_nId);
-//            jsonObj.insert("id",  -2);
-//            jsonObj.insert("msg", myHelper::GetFileNameWithExtension(MyApp::m_strHeadFile));
-//            m_tcpSocket->SltSendMessage(GetFile, jsonObj);
-//            myHelper::Sleep(100);
-        }
-
-        // 居中显示
-//        myHelper::FormInCenter(mainWindow);
-//        mainWindow->SetSocket(m_tcpSocket, MyApp::m_strUserName);
-//        mainWindow->show();
-//        this->close();
-        break;
-    case LoginPasswdError:
-    {
-        QMessageBox::information(this, "Title", "登录失败，请检查用户名和密码！", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-       // CMessageBox::Infomation(this, "登录失败，请检查用户名和密码！");
-    }
-        break;
-    case LoginRepeat:
-    {
-                QMessageBox::information(this, "Title", "登录失败，该账户已登录！", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-       // CMessageBox::Infomation(this, "登录失败，该账户已登录！");
-    }
-        break;
-
     case RegisterOk:
     {
-        QMessageBox::information(this, "Title", "该账号注册成功！请点击登录！", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-       // CMessageBox::Infomation(this, "该账号注册成功！请点击登录！");
+        QMessageBox::information(this, "注册信息", "该账号注册成功！请点击登录！");
     }
         break;
     case RegisterFailed:
     {
-        QMessageBox::information(this, "Title", "该账号已经注册！请点击登录!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-       // CMessageBox::Infomation(this, "该账号已经注册！请点击登录！");
+        QMessageBox::information(this, "注册信息", "注册失败，请重试!");
     }
         break;
     default:
         break;
     }
-
-    // 还原初始位置，重新登录
-    //ui->widgetInput->setVisible(true);
-    //ui->labelUserHead->move(40, 115);
 }
 
 

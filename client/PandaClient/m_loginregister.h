@@ -32,7 +32,6 @@ private slots:
     // 服务器信息返回处理
     void SltTcpStatus(const quint8 &state);
     void setheadtitle(const QString &Lefticon,const QString &Righticon);
-    void on_okregisterbtn_clicked();
     bool CheckPwd();
 private:
     QWidget *registerwidget;

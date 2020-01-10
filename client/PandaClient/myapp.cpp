@@ -29,8 +29,8 @@ int     MyApp::m_nFilePort          = 32102;
 int     MyApp::m_nGroupPort         = 32103;
 #else
 // 服务器相关配置
-QString MyApp::m_strHostAddr        = "192.168.5.181";
-int     MyApp::m_nMsgPort           = 60001;
+QString MyApp::m_strHostAddr        = "10.61.11.143";
+int     MyApp::m_nMsgPort           = 6565;
 int     MyApp::m_nFilePort          = 60002;
 int     MyApp::m_nGroupPort         = 60003;
 #endif

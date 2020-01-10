@@ -97,7 +97,7 @@ void ClientSocket::ConnectToHost(const QHostAddress &host, const int &port)
  * @param type
  * @param dataVal
  */
-void ClientSocket::SltSendMessage(const quint8 &type, const QJsonValue &dataVal)
+void ClientSocket::SltSendMessage(const quint8 &type, const QJsonObject &dataVal)
 {
     // 连接服务器
     if (!m_tcpSocket->isOpen()) {
@@ -108,14 +108,15 @@ void ClientSocket::SltSendMessage(const quint8 &type, const QJsonValue &dataVal)
     if (!m_tcpSocket->isOpen()) return;
 
     // 构建 Json 对象
-    QJsonObject json;
-    json.insert("type", type);
-    json.insert("from", m_nId);
-    json.insert("data", dataVal);
+  //  QJsonObject json;
+  //  json.insert("type", type);
+  //  json.insert("from", m_nId);
+  //  json.insert("data", dataVal);
 
     // 构建 Json 文档
     QJsonDocument document;
-    document.setObject(json);
+    document.setObject(dataVal);
+    qDebug()<<"to server data"<<dataVal;
     m_tcpSocket->write(document.toJson(QJsonDocument::Compact));
 }
 
@@ -128,7 +129,7 @@ void ClientSocket::SltSendOnline()
     // 上线的时候给当前好友上报下状态
     QJsonArray friendArr ;
     // 组织Jsonarror
-    SltSendMessage(UserOnLine, friendArr);
+  //  SltSendMessage(UserOnLine, friendArr);
 }
 
 /**
@@ -159,6 +160,7 @@ void ClientSocket::SltReadyRead()
 {
     // 读取socket数据
     QByteArray byRead = m_tcpSocket->readAll();
+    qDebug()<<"from server json"<<byRead;
     QJsonParseError jsonError;
     // 转化为 JSON 文档
     QJsonDocument doucment = QJsonDocument::fromJson(byRead, &jsonError);
@@ -168,10 +170,10 @@ void ClientSocket::SltReadyRead()
         if (doucment.isObject()) {
             // 转化为对象
             QJsonObject jsonObj = doucment.object();
-            QJsonValue dataVal = jsonObj.value("data");
+            int dataVal = jsonObj.value("loginMsg").toInt();
 
-            int nType = jsonObj.value("type").toInt();
-
+            int nType = jsonObj.value("Type").toInt();
+            qDebug()<<"from server data"<<nType<<dataVal;
             // 根据消息类型解析服务器消息
             switch (nType) {
             case Register:
@@ -181,6 +183,7 @@ void ClientSocket::SltReadyRead()
                 break;
             case Login:
             {
+                qDebug()<<"11111111";
                 ParseLogin(dataVal);
             }
                 break;
@@ -283,30 +286,42 @@ void ClientSocket::SltReadyRead()
  * 解析登录信息
  * @param reply
  */
-void ClientSocket::ParseLogin(const QJsonValue &dataVal)
+void ClientSocket::ParseLogin(const int &dataVal)
 {
     // data 的 value 是对象
-    if (dataVal.isObject()) {
-        QJsonObject dataObj = dataVal.toObject();
-        int code = dataObj.value("code").toInt();
-        QString msg = dataObj.value("msg").toString();
-        QString strHead = dataObj.value("head").toString();
+//    if (dataVal.isObject()) {
+//        QJsonObject dataObj = dataVal.toObject();
+//        int code = dataObj.value("code").toInt();
+//        QString msg = dataObj.value("msg").toString();
+//        QString strHead = dataObj.value("head").toString();
 
-        if (0 == code && msg == "ok") {
-            m_nId = dataObj.value("id").toInt();
-            // 保存头像
-            MyApp::m_strHeadFile = MyApp::m_strHeadPath + strHead;
+//        if (0 == code && msg == "ok") {
+//            m_nId = dataObj.value("id").toInt();
+//            // 保存头像
+//            MyApp::m_strHeadFile = MyApp::m_strHeadPath + strHead;
 
-            MyApp::m_nId = m_nId;
+//            MyApp::m_nId = m_nId;
+//            Q_EMIT signalStatus(LoginSuccess);
+//        }
+//        else if (-1 == code){
+//            Q_EMIT signalStatus(LoginPasswdError);
+//        }
+//        else if (-2 == code) {
+//            Q_EMIT signalStatus(LoginRepeat);
+//        }
+//loginMsg:0：登录成功；1.登录失败；2.用户不存在；3.密码错误4；重复登录
+    qDebug()<<"PareLogin"<<dataVal;
+       if (dataVal == 2) {
             Q_EMIT signalStatus(LoginSuccess);
         }
-        else if (-1 == code){
-            Q_EMIT signalStatus(LoginPasswdError);
-        }
-        else if (-2 == code) {
-            Q_EMIT signalStatus(LoginRepeat);
-        }
-    }
+       else if (dataVal == 1) {
+           Q_EMIT signalStatus(UserNotFind);
+       }
+       else if(dataVal == 3) {
+           Q_EMIT signalStatus(LoginPasswdError);
+       }else if(dataVal == 4) {
+           Q_EMIT signalStatus(LoginRepeat);
+       }
 }
 
 /**
@@ -341,7 +356,7 @@ void ClientSocket::SltSendOffline()
     json.insert("friends", friendArr);
 
     // 通知我的好友，我下线了
-    this->SltSendMessage(Logout, json);
+  //  this->SltSendMessage(Logout, json);
 }
 
 ///////////////////////////////////////////////////////////////
