@@ -182,7 +182,8 @@ QVariantMap Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_port","4455");
     userinfo.insert("user_online","false");
     userinfo.insert("user_link","false");
-    userinfo.insert("user_verification","notlink");
+    userinfo.insert("user_Verification","000000");
+
 
     QVariantMap responMessage;
     MySql::getInstance()->CreateConnection();

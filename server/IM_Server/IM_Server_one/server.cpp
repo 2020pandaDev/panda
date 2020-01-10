@@ -35,9 +35,6 @@ void Server::incomingConnection(qintptr socketDescriptor)
     connect(thread, &ServerThread::work, worker, &Worker::dowork, Qt::DirectConnection);
     connect(thread, &ServerThread::socket, worker, &Worker::recSocket, Qt::DirectConnection);
 
-
-
-
     connect(thread, &ServerThread::regist, worker, &Worker::registe, Qt::DirectConnection);
     connect(thread, &ServerThread::createDB, worker, &Worker::createTable, Qt::DirectConnection);
     connect(thread, &ServerThread::dowithCAPTCHA, worker, &Worker::doingCAPTCHA, Qt::DirectConnection);

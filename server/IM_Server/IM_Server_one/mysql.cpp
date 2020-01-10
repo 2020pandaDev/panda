@@ -14,7 +14,6 @@ MySql::MySql(const QString &pathAndDataBaseName, const QString &driver_Name, con
     db = QSqlDatabase::contains("qt_sql_default_connection") ? QSqlDatabase::database("qt_sql_default_connection") : QSqlDatabase::addDatabase(driver_Name, connectionName);  //创建一个SQLite数据库连接//
     if (!CreateConnection())
         {
-
             return;
         }
 
@@ -179,9 +178,6 @@ QList<QStringList> MySql::selectDataFromBase(const QMap<QString,QString>& InputU
     query.bindValue(":name",InputUserInfo["user_name"]);
     if(query.exec()){
         if(query.exec("select * from t_user;")){
-
-
-
             while(query.next()){
 
                 QStringList rowData;
@@ -208,13 +204,8 @@ QVariantMap MySql::selectDataFromBase()//以行的形式获取表内全部信息
     QVariantMap userInfo;
 
     if(query.exec("select * from t_user;")){
-
-
-
         while(query.next()){
-
             QStringList rowData;
-
             rowData << query.value(0).toString();
             rowData << query.value(1).toString();
             rowData << query.value(2).toString();
@@ -223,7 +214,6 @@ QVariantMap MySql::selectDataFromBase()//以行的形式获取表内全部信息
             rowData << query.value(5).toString();
             rowData << query.value(6).toString();
             rowData << query.value(7).toString();
-
             userInfo.insert(rowData.at(1),rowData);
         }
         return userInfo;
