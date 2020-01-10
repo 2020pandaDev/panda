@@ -168,8 +168,8 @@ QVariantMap Worker::registe(QStringList &registerInfo)
     userinfo.insert("user_id",strId);
     userinfo.insert("user_ip","100.22.11.11");
     userinfo.insert("user_port","4455");
-    userinfo.insert("user_online","online");
-    userinfo.insert("user_link","notlink");
+    userinfo.insert("user_online","false");
+    userinfo.insert("user_link","false");
     userinfo.insert("user_Verification","notlink");
 
     QVariantMap responMessage;
