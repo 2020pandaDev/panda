@@ -110,10 +110,10 @@ typedef enum {
 
 typedef enum {
     Unknow,
-    Register            = 0x10,     // 用户注册
-    Login,                          // 用户登录
+    Register            = 0x02,     // 用户注册
+    Login               =0x03,      // 用户登录
     Logout,                         // 用户注销
-    LoginRepeat,                    // 重复登录
+    //LoginRepeat,                    // 重复登录
 
     UserOnLine          = 0x15,     // 用户上线通知
     UserOffLine,                    // 用户下线通知
@@ -151,12 +151,15 @@ typedef enum {
 
 } E_MSG_TYPE;
 
+//loginMsg: 0:登录成功;1：账号错误, 2:密码错误;3：重复登录
 typedef enum {
-    ConnectedHost = 0x01,
-    DisConnectedHost,
+    LoginSuccess = 0x00, // 登录成功
+    UserNotFind,        //1：账号错误
+    LoginPasswdError,   //密码错误
+    LoginRepeat,       // 3：重复登录
 
-    LoginSuccess,       // 登录成功
-    LoginPasswdError,   // 密码错误
+    ConnectedHost,
+    DisConnectedHost,
 
     OnLine,
     OffLine,

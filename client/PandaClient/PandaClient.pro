@@ -50,7 +50,8 @@ HEADERS  += m_loginregister.h\
             unit.h\
             tcpclient.h \
             userinterface.h \
-            personaldialog.h
+            personaldialog.h\
+            global.h
 
 
 FORMS += \

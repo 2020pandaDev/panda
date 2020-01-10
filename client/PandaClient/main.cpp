@@ -24,6 +24,7 @@
 #include <DWidgetUtil>
 #include <DGuiApplicationHelper>
 #include "login.h"
+#include "myapp.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -41,7 +42,10 @@ int main(int argc, char *argv[])
     a.setProductName("Panda");
     a.setApplicationDescription("This is a Remote Assist application.");
     a.loadTranslator();
-    Login login;
+    MyApp::InitApp(a.applicationDirPath());
+    //myHelper::setStyle("default");
+
+    LoginWindow login;
     login.setFixedSize(440, 340);
     login.show();
 

@@ -30,7 +30,7 @@ signals:
     void signalStatus(const quint8 &state);
 public slots:
     // socket消息发送封装
-    void SltSendMessage(const quint8 &type, const QJsonValue &dataVal);
+    void SltSendMessage(const quint8 &type, const QJsonObject &dataVal);
     // 发送上线通知
     void SltSendOnline();
     // 发送下线通知
@@ -49,7 +49,7 @@ private slots:
 
 private:
     // 解析登陆返回信息
-    void ParseLogin(const QJsonValue &dataVal);
+    void ParseLogin(const int &dataVal);
     // 解析注册返回信息
     void ParseReister(const QJsonValue &dataVal);
 };

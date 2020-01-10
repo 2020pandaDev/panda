@@ -33,17 +33,19 @@
 #include "clabel.h"
 #include "m_loginregister.h"
 #include "systemsetting.h"
+#include "clientsocket.h"
+#include "userinterface.h"
 
 
 
 DWIDGET_USE_NAMESPACE
 
 
-class Login:public DMainWindow
+class LoginWindow:public DMainWindow
 {
     Q_OBJECT
 public:
-    explicit Login(QWidget *parent = 0);
+    explicit LoginWindow(QWidget *parent = 0);
 
 private:
     void initUI();
@@ -68,11 +70,21 @@ public:
 private:
     m_loginregister *m_pLoginReg;
     SystemSetting *m_pSystemSet;
+    UserInterface *m_pUserInterface;
+
+private:
+    bool m_bConnected;
+    // socket通信
+    ClientSocket *m_tcpSocket;
+private:
+    bool checkUserAndPwd();
 
 protected Q_SLOTS:
     void menuItemInvoked(QAction *action);
 private slots:
     void changeCurrentPage(CLabel *label);
+    // 服务器信息返回处理
+    void SltTcpStatus(const quint8 &state);
 
 
 };

@@ -19,14 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "systemsetting.h"
-//#include <QPropertyAnimation>
-//#include <QColorDialog>
+#include "myapp.h"
+#include "global.h"
 
 SystemSetting::SystemSetting(DWidget* parent) :
     DMainWindow(parent)
 {
-    // 加载之前的配置
-    setheadtitle(":/images/panda.png","登录配置");
+    setheadtitle(":/image/panda.png","登录配置");
     QFont ft1;
     ft1.setLetterSpacing(QFont::AbsoluteSpacing,3);
 
@@ -57,7 +56,7 @@ SystemSetting::SystemSetting(DWidget* parent) :
     lineEditHostMsgPort = new QLineEdit;
     lineEditHostMsgPort->setFixedSize(200,35);
     lineEditHostMsgPort->setPlaceholderText("输入正确端口");
-    QRegExp regx("[0-9]{5,7}");
+    QRegExp regx("[0-9]{1,5}");
     lineEditHostMsgPort->setValidator(new QRegExpValidator(regx,this));
     lineEditHostMsgPort->setFont(ft1);
 
@@ -98,21 +97,21 @@ SystemSetting::SystemSetting(DWidget* parent) :
     setCentralWidget(configwidget);
     setFixedSize(440, 340);
 
+    // 加载之前的配置
+   lineEditHostAddr->setText(MyApp::m_strHostAddr);
+   lineEditHostMsgPort->setText(QString::number(MyApp::m_nMsgPort));
+   lineEditHostFilePort->setText(QString::number(MyApp::m_nFilePort));
+
 
     //两个按钮响应函数
     connect(m_okbutton,&DSuggestButton::clicked,this,
             [=]() {
-
+            on_btnSaveSetting_clicked();
     });
     connect(m_cancelbutton,&DSuggestButton::pressed,this,
             [=]() {
             this->close();
     });
-
-}
-
-SystemSetting::~SystemSetting()
-{
 
 }
 
@@ -139,53 +138,53 @@ void SystemSetting::setheadtitle(const QString &Lefticon, const QString &Rightic
     righticon->setText(Righticon);
 }
 
-
-//void SystemSetting::changeEvent(QEvent *e)
-//{
-//    QWidget::changeEvent(e);
-//    switch () {
-//    case QEvent::LanguageChange:
-//        ui->retranslateUi(this);
-//        break;
-//    default:
-//        break;
-//    }
-//}
-
 // 保存ip地址配置
-//void SystemSetting::on_btnSaveSetting_clicked()
-//{
-//    QString strHost = lineEditHostAddr->text();
+void SystemSetting::changeEvent(QEvent *e)
+{
+    QWidget::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        //ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
+}
 
-//    // 判断是否ip地址
-//    if (!myHelper::IsIP(strHost))
-//    {
-//        QMessageBox::information(this,"IP地址设置有误!");
-//        return;
-//    }
+ //保存ip地址配置
+void SystemSetting::on_btnSaveSetting_clicked()
+{
+    QString strHost = lineEditHostAddr->text();
 
-//    int nMsgPort = ui->lineEditHostMsgPort->text().toInt();
-//    if (nMsgPort > 65535 || nMsgPort < 100) {
-//        QMessageBox::information(this,tr("端口设置有误!"));
-//        return;
-//    }
+    // 判断是否ip地址
+    if (!myHelper::IsIP(strHost))
+    {
+        QMessageBox::information(this, "配置", "IP地址设置有误");
+        return;
+    }
 
-//    int nFilePort = ui->lineEditHostFilePort->text().toInt();
-//    if (nFilePort > 65535 || nFilePort < 100) {
-//        QMessageBox::information(this, tr("端口设置有误!"));
-//        return;
-//    }
+    int nMsgPort = lineEditHostMsgPort->text().toInt();
+    if (nMsgPort > 65535 || nMsgPort < 100) {
+        QMessageBox::information(this, "配置", "端口设置有误!");
+        return;
+    }
 
-//    if (nMsgPort == nFilePort) {
-//        QMessageBox::information(this,tr("2个端口不能设置一样!"));
-//        return;
-//    }
+    int nFilePort =lineEditHostFilePort->text().toInt();
+    if (nFilePort > 65535 || nFilePort < 100) {
+        QMessageBox::information(this, "配置", "端口设置有误!");
+        return;
+    }
 
-//    MyApp::m_strHostAddr = strHost;
-//    MyApp::m_nMsgPort    = nMsgPort;
-//    MyApp::m_nFilePort   = nFilePort;
+    if (nMsgPort == nFilePort) {
+        QMessageBox::information(this, "配置", "2个端口不能设置一样!");
+        return;
+    }
 
-//    // 保存配置
-//    MyApp::SaveConfig();
-//    QMessageBox::information(this, tr("配置保存成功，重启生效!"));
-//}
+    MyApp::m_strHostAddr = strHost;
+    MyApp::m_nMsgPort    = nMsgPort;
+    MyApp::m_nFilePort   = nFilePort;
+
+    // 保存配置
+    MyApp::SaveConfig();
+     QMessageBox::information(this, "配置", "配置保存成功，重启生效!");
+}
