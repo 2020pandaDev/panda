@@ -329,19 +329,19 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
     QString u_pwd = userInfoList.at(1);
     qDebug() << u_name << " " << u_pwd;
 
-    MySql::getInstance()->CreateConnection();
+    if (!MySql::getInstance()->CreateConnection()) {
+        qDebug() << "数据库连接失败!";
+        loginResponse.insert("dbstatus", "Connecting database failed!");
+        return loginResponse;
+    }
+
     QMap<QString, QString> usinfo;
     usinfo.insert("user_name", u_name);
-
     QStringList userNameList = MySql::getInstance()->userList();
     if (userNameList.contains(u_name)) {
-        QVariantMap userInfoList = MySql::getInstance()->selectNameDataFromBase();
-        QStringList usNameList = userInfoList["user_name"].toStringList(); //所有用户名
-        QStringList usPwdList = userInfoList["user_password"].toStringList(); //所有用户密码
-        for (int i = 0; i < usNameList.size(); ++i) {
-            QString name = usNameList.at(i);
-            QString pwd = usPwdList.at(i);
-            if (name == u_name && pwd == u_pwd) {
+        QVariantMap userInfoList = MySql::getInstance()->selectDataFromBase();
+        QStringList usNameList = userInfoList[u_name].toStringList(); //该用户所有信息
+            if(usNameList.contains(u_pwd)) {
                 loginResponse.insert("loginMsg", 0);
                 QString online_status = "true";
                 MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
@@ -351,7 +351,6 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
             } else {
                 loginResponse.insert("loginMsg", 2);
             }
-        }
     } else {
         loginResponse.insert("loginMsg", 1);
     }
