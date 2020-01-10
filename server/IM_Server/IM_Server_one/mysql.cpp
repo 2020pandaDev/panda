@@ -12,6 +12,11 @@ MySql::MySql(const QString &pathAndDataBaseName, const QString &driver_Name, con
     connectionName = connection_Name;
     driverName = driver_Name;
     db = QSqlDatabase::contains("qt_sql_default_connection") ? QSqlDatabase::database("qt_sql_default_connection") : QSqlDatabase::addDatabase(driver_Name, connectionName);  //创建一个SQLite数据库连接//
+    if (!CreateConnection())
+        {
+
+            return;
+        }
 
 }
 
@@ -47,7 +52,10 @@ bool MySql::CreateConnection()
         return false;
     }
 
-
+    QSqlQuery query(db);
+    query.exec("create table if not exists t_user(user_id text primary key,"
+                             " user_name text, user_password text, user_ip text, "
+                             "user_port text, user_online text, user_link text,user_verification text);");
 
     return true;
 }
@@ -108,7 +116,7 @@ bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)
 }
 
 
-QVariantMap MySql::userStatus()
+QVariantMap MySql::userStatus()//获取用户的用户名／在线状态／链接状态
 {
 
     QStringList userList =  selectNameDataFromBase()["user_name"].toStringList();
@@ -133,7 +141,7 @@ QVariantMap MySql::userStatus()
 }
 
 
-QStringList MySql::userList()
+QStringList MySql::userList()//获取表内用户名的列表
 {
 
     QStringList userList =  selectNameDataFromBase()["user_name"].toStringList();
@@ -143,7 +151,7 @@ QStringList MySql::userList()
 }
 
 
-QString MySql::userMessage(QString userName,int type)
+QString MySql::userMessage(const QString userName,int UserFieldNumber)//获取表内用户的每一个字段的值
 {
     QString record;
     QStringList userList =  selectNameDataFromBase()["user_name"].toStringList();
@@ -154,7 +162,7 @@ QString MySql::userMessage(QString userName,int type)
 
 
         QStringList userMessageList =  selectDataFromBase()[userName].toStringList();
-        record= userMessageList.at(type);
+        record= userMessageList.at(UserFieldNumber);
 
 
     }else {
@@ -163,7 +171,7 @@ QString MySql::userMessage(QString userName,int type)
     return  record;
 }
 
-QList<QStringList> MySql::selectDataFromBase(const QMap<QString,QString>& InputUserInfo)
+QList<QStringList> MySql::selectDataFromBase(const QMap<QString,QString>& InputUserInfo)//获取表内全部信息
 {
     QList<QStringList> userInfo;
     QSqlQuery query(db);
@@ -194,7 +202,7 @@ QList<QStringList> MySql::selectDataFromBase(const QMap<QString,QString>& InputU
     return userInfo;
 }
 
-QVariantMap MySql::selectDataFromBase()
+QVariantMap MySql::selectDataFromBase()//以行的形式获取表内全部信息
 {
     QSqlQuery query(db);
     QVariantMap userInfo;
@@ -225,8 +233,8 @@ QVariantMap MySql::selectDataFromBase()
 }
 
 
-//以列的形式获取全部数据
-QVariantMap MySql::selectNameDataFromBase()
+
+QVariantMap MySql::selectNameDataFromBase()//以列的形式获取全部数据
 {
     QSqlQuery query(db);
     QVariantMap dbData ;
@@ -237,7 +245,7 @@ QVariantMap MySql::selectNameDataFromBase()
     QStringList user_portList;
     QStringList user_onlineList;
     QStringList user_linkList;
-    QStringList user_VerificationList;
+    QStringList user_verificationList;
 
 
     if(query.exec("select * from t_user;")){
@@ -253,27 +261,24 @@ QVariantMap MySql::selectNameDataFromBase()
             QString user_Verification = query.value(7).toString();
             user_idList.append(user_id);
             user_nameList.append(user_name);
+            user_passwordList.append(user_password);
             user_ipList.append(user_ip);
             user_portList.append(user_port);
             user_onlineList.append(user_online);
             user_linkList.append(user_link);
-            user_VerificationList.append(user_Verification);
+            user_verificationList.append(user_Verification);
 
 
             dbData.insert("user_id",user_idList );
             dbData.insert("user_name",user_nameList );
+            dbData.insert("user_password",user_passwordList);
             dbData.insert("user_ip",user_ipList );
-            dbData.insert("user_name",user_nameList );
             dbData.insert("user_port",user_portList );
             dbData.insert("user_online",user_onlineList );
             dbData.insert("user_link",user_linkList );
-            dbData.insert("user_verification",user_VerificationList );
+            dbData.insert("user_verification",user_verificationList );
 
         }
-
-
-
-
     }else {
         qDebug() << "dbData is NULL";
 
@@ -287,17 +292,20 @@ QVariantMap MySql::selectNameDataFromBase()
 
 bool MySql::MySelect(const QMap<QString,QString>& OutputUserInfo)
 {
-
-
     QSqlQuery query(db);
-    query.prepare("select * from t_user where user_name = :name");
+
+    query.prepare("select * from t_user where user_name = :name;");
     query.bindValue(":name",OutputUserInfo["user_name"]);
-    if (!query.exec())
+    bool success=query.exec();
+    if(!success)
     {
+        QSqlError lastError = query.lastError();
+        qDebug() << lastError.driverText() << QString(QObject::tr("查询失败"));
         return false;
     }
-
+    qDebug() << QString(QObject::tr("查询成功"));
     return true;
+
 }
 
 
@@ -342,14 +350,9 @@ bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
 
 
     QSqlQuery query(db);
-    query.prepare("update t_user set user_id = :id ,"
-                  " user_name = :name, user_password = :password, user_ip = :ip, "
+    query.prepare("update t_user set user_password = :password, user_ip = :ip, "
                   "user_port = :port, user_online = :online, "
-                  "user_link = :link,user_verification = :verification where user_name = :findName");
-
-
-    query.bindValue(":id",InputUserInfo["user_id"]);
-    query.bindValue(":name",InputUserInfo["user_name"]);
+                  "user_link = :link,user_verification = :verification where user_name = :findName;");
     query.bindValue(":password",InputUserInfo["user_password"]);
     query.bindValue(":ip",InputUserInfo["user_ip"]);
     query.bindValue(":port",InputUserInfo["user_port"]);
@@ -357,7 +360,7 @@ bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
     query.bindValue(":link",InputUserInfo["user_link"]);
     query.bindValue(":verification",InputUserInfo["user_verification"]);
     query.bindValue(":findName",InputUserInfo["user_name"]);
-
+//    query.prepare("update t_user set user_password = :password where user_name = :findName");
 
     bool success=query.exec();
     if(!success)
@@ -375,10 +378,10 @@ bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
 bool MySql::MyUpdateUserStatus(const QString& UserName,const QString& OnLineStatus)
 {
     QSqlQuery query(db);
-    query.prepare("update t_user set  user_online = :online "
-                  " where user_name = :findName");
-    query.bindValue(":findName",UserName);
+    query.prepare("update t_user set user_online = :online where user_name = :findName");
     query.bindValue(":online",OnLineStatus);
+    query.bindValue(":findName",UserName);
+
 
     bool success=query.exec();
     if(!success)
@@ -392,24 +395,21 @@ bool MySql::MyUpdateUserStatus(const QString& UserName,const QString& OnLineStat
 
 }
 
-bool MySql::MyUpdateUserStatus(int Choose,const QString& UserName,const QString& Status)
+bool MySql::MyUpdateUserStatus(int Choose,const QString& UserName,const QString& NewStatus)
 {
     QSqlQuery query(db);
-    if(Status == "online"){
-        query.prepare("update t_user set  user_online = :online "
-                      " where user_name = :findName");
+    if(Choose == 1){//更新用户的在线状态
+        query.prepare("update t_user set user_online = :online where user_name = :findName");
         query.bindValue(":findName",UserName);
-        query.bindValue(":online",Status);
-    }else if(Choose == 2){
-        query.prepare("update t_user set  user_link = :link "
-                      " where user_name = :findName");
+        query.bindValue(":online",NewStatus);
+    }else if(Choose == 2){//更新用户的链接状态
+        query.prepare("update t_user set user_link = :link where user_name = :findName");
         query.bindValue(":findName",UserName);
-        query.bindValue(":link",Status);
-    }else if(Choose == 3){
-        query.prepare("update t_user set  user_verification = :verification "
-                      " where user_name = :findName");
+        query.bindValue(":link",NewStatus);
+    }else if(Choose == 3){//更新用户的验证码
+        query.prepare("update t_user set user_verification = :verification where user_name = :findName");
         query.bindValue(":findName",UserName);
-        query.bindValue(":verification",Status);
+        query.bindValue(":verification",NewStatus);
     }
 
     bool success=query.exec();
@@ -448,18 +448,7 @@ bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
     return true;
 
 }
-bool MySql::logUser(QString name, QString passward) //登录判断用户与密码是否一致
-{
-    qDebug()<<"验证用户";
-    QString str=QString("select * from t_user where user_name='%1' and user_password='%2'").arg(name).arg(passward);
-    QSqlQuery *query=new QSqlQuery;
-    query->exec(str);
-    query->last();
-    int record=query->at()+1;
-    if(record == 0)
-        return false;
-    return true;
-}
+
 
 MySql *MySql::getInstance()
 {
