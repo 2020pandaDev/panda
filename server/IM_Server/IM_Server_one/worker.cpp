@@ -196,11 +196,11 @@ QVariantMap Worker::groupChat(QVariantMap& recValue)
         //跨线程tcp通信
     }
 
-    returnData.insert("Type",4);
+    returnData.insert("Type",45);
     returnData.insert("result",true);
     } else {
      qDebug()<<"fail:";
-     returnData.insert("Type",4);
+     returnData.insert("Type",45);
      returnData.insert("result",false);
     }
     return  returnData;
@@ -291,7 +291,10 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     int msgType = chatMessage["msgType"].toInt();
     QByteArray message= Msg.toLatin1().data();
 
+
     QTcpSocket* socket = m_userSocket[recvUsrName];
+
+
     if(socket){
     sendData.insert("Type",4);
     sendData.insert("sendUsrName",sendUsrName);
@@ -304,12 +307,12 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 //跨线程tcp通信
 
 
-    returnData.insert("Type",4);
+    returnData.insert("Type",44);
     returnData.insert("result",true);
     } else {
      qDebug()<<"fail:";
-     returnData.insert("Type",4);
-     returnData.insert("result",false);
+     returnData.insert("Type",44);
+     returnData.insert("result","user no login");
     }
     return  returnData;
 
