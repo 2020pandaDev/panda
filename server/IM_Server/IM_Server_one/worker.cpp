@@ -9,9 +9,10 @@ QMap<QString, QTcpSocket *> Worker::m_userSocket;
 Worker::Worker(QObject *parent) : QObject(parent)
 {
     m_dataParse = new Dataparsing ();
+
 }
 
-void Worker::dowork(QByteArray& message)
+void Worker::doWork(QByteArray& message)
 {
     qDebug()<<" dpwork";
     qDebug()<<"work thread:"<<QThread::currentThreadId();
@@ -37,7 +38,7 @@ void Worker::dowork(QByteArray& message)
         registeinfo.append(registepassword);
         m_returnDataToClient =registe(registeinfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
-        sendReturnData(m_sendData);
+        m_tcpSocket->write(m_sendData);
     break;
     }
     case 3://登录
@@ -50,18 +51,20 @@ void Worker::dowork(QByteArray& message)
         loginIninfo.append(loginInusrName);
         loginIninfo.append(loginInpassword);
 
-        m_userSocket.insert(loginInusrName,m_socket);//绑定用户和socket
+        m_userSocket.insert(loginInusrName,m_tcpSocket);//绑定用户和socket
 
         m_returnDataToClient =loginIn(loginIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
-        sendReturnData(m_sendData);
+        m_tcpSocket->write(m_sendData);
     break;
     }
 
     case 4://私聊
     {
         qDebug()<<" privateChat :";
-        privateChat(recValue);
+        m_returnDataToClient =privateChat(recValue);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        m_tcpSocket->write(m_sendData);
         break;
     }
 
@@ -75,7 +78,7 @@ void Worker::dowork(QByteArray& message)
         helpIninfo.append(captcha);
         m_returnDataToClient = doingCAPTCHA(helpIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
-        sendReturnData(m_sendData);
+        m_tcpSocket->write(m_sendData);
         break;
     }
 
@@ -91,7 +94,7 @@ void Worker::dowork(QByteArray& message)
         helpIninfo.append(captcha);
         m_returnDataToClient = helpingOther(helpIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
-        sendReturnData(m_sendData);
+        m_tcpSocket->write(m_sendData);
         break;
     }
 
@@ -103,7 +106,7 @@ void Worker::dowork(QByteArray& message)
         usrOutInfo.append(SignoutusrName);
         m_returnDataToClient = Signout(usrOutInfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
-        sendReturnData(m_sendData);
+        m_tcpSocket->write(m_sendData);
         if (m_userSocket.contains(SignoutusrName)) {
             m_userSocket.remove(SignoutusrName);
         } else {
@@ -117,9 +120,19 @@ void Worker::dowork(QByteArray& message)
 
         m_returnDataToClient = updateUserList();
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
-        sendReturnData(m_sendData);
+        m_tcpSocket->write(m_sendData);
         break;
     }
+
+    case 9:{//群聊
+
+        QString  SignoutusrName = recValue["usrName"].toString();
+        m_returnDataToClient = groupChat(recValue);
+        m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+        m_tcpSocket->write(m_sendData);
+        break;
+    }
+
 
     default:
          break;
@@ -149,7 +162,6 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
 
         MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
        
-
     } else {
         qDebug() << "此用户未注册!";
     }
@@ -159,9 +171,59 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     return outResponse;
 }
 
-QTcpSocket *Worker::recSocket(QTcpSocket *socket)
+QVariantMap Worker::groupChat(QVariantMap& recValue)
 {
-    m_socket =  socket;
+    qDebug()<<"privateChat thread:"<<QThread::currentThreadId();
+    qDebug()<< "privateChat fun ";
+    QVariantMap sendData;
+    QVariantMap returnData;
+
+    QString sendUsrName = recValue["sendUsrName"].toString();
+    QString Msg = recValue["Msg"].toString();
+    int msgType = recValue["msgType"].toInt();
+    QByteArray message= Msg.toLatin1().data();
+
+    QList<QTcpSocket*> socketList = m_userSocket.values();
+    if(socketList.isEmpty()){
+
+    sendData.insert("Type",9);
+    sendData.insert("sendUsrName",sendUsrName);
+    sendData.insert("Msg",Msg);
+    sendData.insert("msgType",0);
+    m_sendData= m_dataParse->paserMapData(sendData);
+    for (int i = 0;i<socketList.length();i++) {
+        QMetaObject::invokeMethod(socketList.at(i),std::bind( static_cast< qint64(QTcpSocket::*)(const QByteArray &) >( &QTcpSocket::write ), socketList.at(i),m_sendData));
+        //跨线程tcp通信
+    }
+
+    returnData.insert("Type",4);
+    returnData.insert("result",true);
+    } else {
+     qDebug()<<"fail:";
+     returnData.insert("Type",4);
+     returnData.insert("result",false);
+    }
+    return  returnData;
+}
+
+void Worker::recSocketDescriptor(qintptr socketDescriptor)
+{
+    m_tcpSocket = new QTcpSocket();
+
+   //run()函数中创建的栈对象保证了可靠的销毁。注意这个变量的依附性，当前线程变量仅在调用它的线程中有效。
+    if (!m_tcpSocket->setSocketDescriptor(socketDescriptor)) { // 相当于tcpSocket的初始化，参数是为了保证不会为同一个客户端创建多个QTcpSocket对象
+        //emit error(m_tcpSocket.error());
+        return;
+    }
+
+        connect(m_tcpSocket, &QTcpSocket::readyRead, [ = ]() {
+            m_recData = m_tcpSocket->readAll();
+            qDebug() << "m_recData :" << m_recData;
+            qDebug() << "run thread:" << QThread::currentThreadId();
+            doWork(m_recData);
+        });
+
+
 }
 
 QVariantMap Worker::registe(QStringList &registerInfo)
@@ -191,14 +253,14 @@ QVariantMap Worker::registe(QStringList &registerInfo)
    if( !MySql::getInstance()->userList().contains(username)){
             MySql::getInstance()->MyInsert(userinfo);
             qDebug()<< "注册成功";
-            responMessage.insert("Type","2");
+            responMessage.insert("Type",2);
             responMessage.insert("responMsg",0);
             return responMessage ;
         }
 
         else {
             qDebug()<< "注册失败";
-            responMessage.insert("Type","2");
+            responMessage.insert("Type",2);
             responMessage.insert("responMsg",1);
             return responMessage ;
         }
@@ -210,6 +272,7 @@ QVariantMap  Worker:: updateUserList()
     qDebug()<< "updateUserList fun ";
     QStringList userList = MySql::getInstance()->userList();
     QVariantMap userLists;
+    userLists.insert("Type",8);
     userLists.insert("userList",userList);
     return userLists;
 
@@ -253,13 +316,7 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 
 }
 
-void Worker::createTable()
-{
 
-    qDebug()<< "mysql :"<< MySql::getInstance();
-    MySql::getInstance()->CreateConnection();
-
-}
 
 
 QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
@@ -332,10 +389,7 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
     return re;
 }
 
-void Worker::sendReturnData(QByteArray & returnData)
-{
-    emit sendInfo(returnData);
-}
+
 
 QVariantMap Worker::loginIn(QStringList &userInfoList)
 {
@@ -359,16 +413,19 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
         QStringList usNameList = userInfoList[u_name].toStringList(); //该用户所有信息
             if(usNameList.contains(u_pwd)) {
                 loginResponse.insert("loginMsg", 0);
+
                 QString online_status = "true";
                 MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
                 loginResponse.insert("onlineStatus", true);
                 QVariantMap userMessage = MySql::getInstance()->userStatus();
                 loginResponse.insert("result", userMessage);
+                qDebug() << "loginMsg" << " 成功" ;
             } else {
                 loginResponse.insert("loginMsg", 2);
             }
     } else {
         loginResponse.insert("loginMsg", 1);
+         qDebug() << "loginMsg" << " 失败" ;
     }
     loginResponse.insert("Type", 3);
     return loginResponse;

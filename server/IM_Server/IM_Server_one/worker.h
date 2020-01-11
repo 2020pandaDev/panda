@@ -18,27 +18,26 @@ public:
     static QMap<QString, QTcpSocket *> m_userSocket;
 
 signals:
-    void createDB();
-    void sendInfo(QByteArray&);
 
 
 public slots:
-    void dowork(QByteArray& message);
+    void doWork(QByteArray& message);
     QVariantMap registe(QStringList & registerInfo);
     QVariantMap updateUserList();
     QVariantMap loginIn(QStringList & userInfoList);
     QVariantMap privateChat(QVariantMap&);
-	void createTable();
     QVariantMap doingCAPTCHA(QStringList &CAPTCHAInfo);
     QVariantMap helpingOther(QStringList &HelpingInfo);
-    void sendReturnData(QByteArray&);////给客户端发送消息
+
     QVariantMap Signout(QStringList &SignoutInfo);
-    QTcpSocket* recSocket(QTcpSocket*);
+    QVariantMap groupChat(QVariantMap &groupChatInfo);
+    void recSocketDescriptor(qintptr);
 
 private:
     QMap<QString ,QString> userinfo;
     QMap<QString ,QString> userVerification;
-    QTcpSocket* m_socket = nullptr;
+    QTcpSocket* m_tcpSocket = nullptr;
+    QByteArray m_recData;
 
 
 };
