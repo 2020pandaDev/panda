@@ -22,6 +22,7 @@
 #include "login.h"
 #include "unit.h"
 #include "myapp.h"
+#include "userinterface.h"
 #include <QDebug>
 #include <QMessageBox>
 
@@ -30,7 +31,6 @@ LoginWindow::LoginWindow(QWidget *parent) : DMainWindow(parent)
 {
     m_pLoginReg = new m_loginregister;
     m_pSystemSet = new SystemSetting;
-    m_pUserInterface = new UserInterface;
     initUI();
     /////////////
     DTitlebar *titlebar = this->titlebar();
@@ -73,8 +73,8 @@ LoginWindow::LoginWindow(QWidget *parent) : DMainWindow(parent)
         // 构建 Json 对象
         QJsonObject json;
         json.insert("Type", Login);
-        json.insert("name", strUserID);
-        json.insert("passwd", strPwd);
+        json.insert("usrName", strUserID);
+        json.insert("password", strPwd);
 
         m_tcpSocket->SltSendMessage(Login, json);
     });
@@ -143,6 +143,7 @@ void LoginWindow::initUI()
 
 void LoginWindow::changeCurrentPage(CLabel *label)
 {
+    m_pLoginReg->SetSocket(m_tcpSocket);
     m_pLoginReg->show();
     m_pLoginReg->setWindowFlags( m_pLoginReg->windowFlags() & ~Qt::WindowMaximizeButtonHint);
 }
@@ -176,7 +177,7 @@ void LoginWindow::SltTcpStatus(const quint8 &state)
     case LoginSuccess:
     {
         qDebug()<<"登录成功";
-       // disconnect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
+        disconnect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
 
        // QMessageBox::information(this, "Panda客户端", "登录成功；!");
 
@@ -185,8 +186,12 @@ void LoginWindow::SltTcpStatus(const quint8 &state)
         MyApp::m_strPassword = m_password_lineEdit->text();
         MyApp::SaveConfig();
         //显示聊天框
+        UserInterface *m_pUserInterface = new UserInterface;
+        qDebug()<<"login socket"<<m_tcpSocket;
+        m_pUserInterface->SetSocket(m_tcpSocket, MyApp::m_strUserName);
         m_pUserInterface->show();
         this->close();
+
 
         // 显示主界面
 //        MainWindow *mainWindow = new MainWindow();
@@ -243,36 +248,47 @@ bool LoginWindow::checkUserAndPwd()
         QMessageBox::information(this,"登录信息","用户名不能为空!");
         return false;
     }
-    if(nickName.size() > 10)
-    {
-        QMessageBox::information(this,"登录信息","用户名长度超过10位!");
-        return false;
-    }
+//    if(nickName.size() > 10)
+//    {
+//        QMessageBox::information(this,"登录信息","用户名长度超过10位!");
+//        return false;
+//    }
 
-    rx.setPatternSyntax(QRegExp::RegExp);
-    //对大小写字母敏感，即区分大小写
-    rx.setCaseSensitivity(Qt::CaseSensitive);
-    //匹配格式为所有大小写字母和数字组成的字符串，位数不限
-    rx.setPattern(QString("[a-zA-Z0-9!@#%^&*()_]{6,18}$"));
-    if(firstPassWrd.isEmpty())  //检测密码输入框是不是为空
-    {
-        QMessageBox::information(this,"登录信息","密码不能为空!");
-        return false;
-    }
-    else if(!rx.exactMatch(firstPassWrd))
-    {
-        QMessageBox::information(this,"登录信息","密码只能是数字或字母!");
-       return false;
+//    rx.setPatternSyntax(QRegExp::RegExp);
+//    //对大小写字母敏感，即区分大小写
+//    rx.setCaseSensitivity(Qt::CaseSensitive);
+//    //匹配格式为所有大小写字母和数字组成的字符串，位数不限
+//    rx.setPattern(QString("[a-zA-Z0-9!@#%^&*()_]{6,18}$"));
+//    if(firstPassWrd.isEmpty())  //检测密码输入框是不是为空
+//    {
+//        QMessageBox::information(this,"登录信息","密码不能为空!");
+//        return false;
+//    }
+//    else if(!rx.exactMatch(firstPassWrd))
+//    {
+//        QMessageBox::information(this,"登录信息","密码只能是数字或字母!");
+//       return false;
 
-    }
-    else if(firstPassWrd.size()<6 || firstPassWrd.size()>18)
-    {
-        QMessageBox::information(this,"登录信息","密码长度范围必须是[6,18]!");
-        return false;
+//    }
+//    else if(firstPassWrd.size()<6 || firstPassWrd.size()>18)
+//    {
+//        QMessageBox::information(this,"登录信息","密码长度范围必须是[6,18]!");
+//        return false;
 
-    }
+//    }
 
     return true;
+}
+// 记住密码
+void LoginWindow::on_checkBoxPasswd_clicked(bool checked)
+{
+    if (!checked) m_forgetPassword_CheckBox->setChecked(false);
+}
+
+// 自动登陆
+void LoginWindow::on_checkBoxAutoLogin_clicked(bool checked)
+{
+    if (checked) m_autoLogin_CheckBox->setChecked(true);
 }
 
 

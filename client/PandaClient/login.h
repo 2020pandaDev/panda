@@ -34,7 +34,6 @@
 #include "m_loginregister.h"
 #include "systemsetting.h"
 #include "clientsocket.h"
-#include "userinterface.h"
 
 
 
@@ -70,7 +69,6 @@ public:
 private:
     m_loginregister *m_pLoginReg;
     SystemSetting *m_pSystemSet;
-    UserInterface *m_pUserInterface;
 
 private:
     bool m_bConnected;
@@ -85,6 +83,10 @@ private slots:
     void changeCurrentPage(CLabel *label);
     // 服务器信息返回处理
     void SltTcpStatus(const quint8 &state);
+
+    void on_checkBoxPasswd_clicked(bool checked);
+
+    void on_checkBoxAutoLogin_clicked(bool checked);
 
 
 };
