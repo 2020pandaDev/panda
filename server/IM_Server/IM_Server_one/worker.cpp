@@ -39,6 +39,7 @@ void Worker::doWork(QByteArray& message)
         m_returnDataToClient =registe(registeinfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
     break;
     }
     case 3://登录
@@ -56,6 +57,7 @@ void Worker::doWork(QByteArray& message)
         m_returnDataToClient =loginIn(loginIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
     break;
     }
 
@@ -65,6 +67,7 @@ void Worker::doWork(QByteArray& message)
         m_returnDataToClient =privateChat(recValue);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
         break;
     }
 
@@ -79,6 +82,7 @@ void Worker::doWork(QByteArray& message)
         m_returnDataToClient = doingCAPTCHA(helpIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
         break;
     }
 
@@ -95,6 +99,7 @@ void Worker::doWork(QByteArray& message)
         m_returnDataToClient = helpingOther(helpIninfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
         break;
     }
 
@@ -107,6 +112,7 @@ void Worker::doWork(QByteArray& message)
         m_returnDataToClient = Signout(usrOutInfo);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
         if (m_userSocket.contains(SignoutusrName)) {
             m_userSocket.remove(SignoutusrName);
         } else {
@@ -121,15 +127,16 @@ void Worker::doWork(QByteArray& message)
         m_returnDataToClient = updateUserList();
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
         break;
     }
 
     case 9:{//群聊
 
-        QString  SignoutusrName = recValue["usrName"].toString();
         m_returnDataToClient = groupChat(recValue);
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
+        m_tcpSocket->flush();
         break;
     }
 
@@ -184,7 +191,7 @@ QVariantMap Worker::groupChat(QVariantMap& recValue)
     QByteArray message= Msg.toLatin1().data();
 
     QList<QTcpSocket*> socketList = m_userSocket.values();
-    if(socketList.isEmpty()){
+    if(!socketList.isEmpty()){
 
     sendData.insert("Type",9);
     sendData.insert("sendUsrName",sendUsrName);
@@ -198,10 +205,12 @@ QVariantMap Worker::groupChat(QVariantMap& recValue)
 
     returnData.insert("Type",45);
     returnData.insert("result",true);
+	qDebug()<< "群聊成功";
     } else {
      qDebug()<<"fail:";
      returnData.insert("Type",45);
      returnData.insert("result",false);
+	 qDebug()<< "群聊失败";
     }
     return  returnData;
 }
@@ -309,10 +318,12 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 
     returnData.insert("Type",44);
     returnData.insert("result",true);
+    qDebug()<< "聊天成功";
     } else {
      qDebug()<<"fail:";
      returnData.insert("Type",44);
      returnData.insert("result","user no login");
+     qDebug()<< "聊天失败";
     }
     return  returnData;
 
