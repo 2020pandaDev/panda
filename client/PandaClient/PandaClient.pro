@@ -37,7 +37,7 @@ SOURCES += main.cpp\
            systemsetting.cpp\
            myapp.cpp \  
            clientsocket.cpp\
-           tcpclient.cpp \
+           #tcpclient.cpp \
            userinterface.cpp \
            personaldialog.cpp
 
@@ -48,7 +48,7 @@ HEADERS  += m_loginregister.h\
             myapp.h\
             clientsocket.h\
             unit.h\
-            tcpclient.h \
+            #tcpclient.h \
             userinterface.h \
             personaldialog.h\
             global.h

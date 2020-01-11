@@ -169,11 +169,9 @@ void ClientSocket::SltReadyRead()
         // JSON 文档为对象
         if (doucment.isObject()) {
             // 转化为对象
-            QJsonObject jsonObj = doucment.object();
-            int dataVal = jsonObj.value("loginMsg").toInt();
-
-            int nType = jsonObj.value("Type").toInt();
-            qDebug()<<"from server data"<<nType<<dataVal;
+            QJsonObject dataVal = doucment.object();
+            int nType = dataVal.value("Type").toInt();
+            qDebug()<<"from server Type"<<nType;
             // 根据消息类型解析服务器消息
             switch (nType) {
             case Register:
@@ -183,7 +181,7 @@ void ClientSocket::SltReadyRead()
                 break;
             case Login:
             {
-                qDebug()<<"11111111";
+//                qDebug()<<"11111111";
                 ParseLogin(dataVal);
             }
                 break;
@@ -254,6 +252,12 @@ void ClientSocket::SltReadyRead()
                 Q_EMIT signalMessage(RefreshGroups, dataVal);
             }
                 break;
+            case FriendsList:
+            {
+                qDebug()<<"FriendsList"<<FriendsList;
+                Q_EMIT signalMessage(FriendsList, dataVal);
+            }
+                break;
             case SendMsg:
             {
                 Q_EMIT signalMessage(SendMsg, dataVal);
@@ -286,7 +290,7 @@ void ClientSocket::SltReadyRead()
  * 解析登录信息
  * @param reply
  */
-void ClientSocket::ParseLogin(const int &dataVal)
+void ClientSocket::ParseLogin(const QJsonObject &dataObject)
 {
     // data 的 value 是对象
 //    if (dataVal.isObject()) {
@@ -310,16 +314,18 @@ void ClientSocket::ParseLogin(const int &dataVal)
 //            Q_EMIT signalStatus(LoginRepeat);
 //        }
 //loginMsg:0：登录成功；1.登录失败；2.用户不存在；3.密码错误4；重复登录
-    qDebug()<<"PareLogin"<<dataVal;
-       if (dataVal == 2) {
+
+    int n_loginMsg = dataObject.value("loginMsg").toInt();
+    qDebug()<<"PareLogin"<<n_loginMsg;
+       if (n_loginMsg == 0) {
             Q_EMIT signalStatus(LoginSuccess);
         }
-       else if (dataVal == 1) {
+       else if (n_loginMsg == 1) {
            Q_EMIT signalStatus(UserNotFind);
        }
-       else if(dataVal == 3) {
+       else if(n_loginMsg == 2) {
            Q_EMIT signalStatus(LoginPasswdError);
-       }else if(dataVal == 4) {
+       }else if(n_loginMsg == 3) {
            Q_EMIT signalStatus(LoginRepeat);
        }
 }
@@ -334,9 +340,9 @@ void ClientSocket::ParseReister(const QJsonValue &dataVal)
     // data 的 value 是对象
     if (dataVal.isObject()) {
         QJsonObject dataObj = dataVal.toObject();
-        m_nId = dataObj.value("id").toInt();
+        int n_regType = dataObj.value("loginMsg").toInt();
 
-        if (-1 != m_nId) {
+        if (0 == n_regType) {
             Q_EMIT signalStatus(RegisterOk);
         }
         else {

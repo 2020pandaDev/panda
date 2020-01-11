@@ -2,7 +2,7 @@
 #define USERINTERFACE_H
 
 #include <QMainWindow>
-#include <QTcpSocket>
+#include "clientsocket.h"
 #include "personaldialog.h"
 #include <QMap>
 #include<QColor>
@@ -17,8 +17,14 @@ class UserInterface : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit UserInterface(QWidget *parent = 0,QTcpSocket *pTcpSocket=0,QString _name="");
+    explicit UserInterface(QWidget *parent = 0);
     ~UserInterface();
+    /**
+     * @brief MainWindow::SetSocket
+     * @param tcpSocket
+     * @param name
+     */
+    void SetSocket(ClientSocket *tcpSocket, const QString &m_name);
 
 private slots:
     void readMessages();
@@ -39,15 +45,36 @@ private slots:
 
     void on_toolButton_4_clicked();
 
+  ////////////////////////////
+    // 用户接受处理
+    //void SltReadMessages(const QJsonObject &json);
+
+    // 状态，上线下线状态
+    void SltTcpStatus(const quint8 &state);
+    // 解析Socket的消息
+    void SltTcpReply(const quint8 &type, const QJsonObject &dataVal);
+
+private:
+    void ParseFriendListReply(const QJsonObject &dataVal);
+    // 消息处理
+    void ParseFriendMessageReply(const QJsonObject &dataVal);
+
+
 private:
     Ui::UserInterface *ui;
-    QTcpSocket *tcpSocket;
+  //  QTcpSocket *tcpSocket;
     QString name;
     QStringList onlineUser;
     QColor color;
     QTimer *freshentime;
     //PersonalDialog *PD;
     QMap<QString,PersonalDialog*> pdList;
+private:
+    // socket通信类
+    ClientSocket    *m_tcpSocket;
+
+    // 主动退出操作时不进行断线匹配
+    bool            m_bQuit;
 };
 
 #endif // USERINTERFACE_H

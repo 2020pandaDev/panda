@@ -26,7 +26,7 @@ public:
     void ConnectToHost(const QString &host, const int &port);
     void ConnectToHost(const QHostAddress &host, const int &port);
 signals:
-    void signalMessage(const quint8 &type, const QJsonValue &dataVal);
+    void signalMessage(const quint8 &type, const QJsonObject &dataVal);
     void signalStatus(const quint8 &state);
 public slots:
     // socket消息发送封装
@@ -49,7 +49,7 @@ private slots:
 
 private:
     // 解析登陆返回信息
-    void ParseLogin(const int &dataVal);
+    void ParseLogin(const QJsonObject &dataObject);
     // 解析注册返回信息
     void ParseReister(const QJsonValue &dataVal);
 };
