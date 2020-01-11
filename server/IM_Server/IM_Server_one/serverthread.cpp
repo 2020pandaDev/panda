@@ -4,9 +4,6 @@
 #include <QMap>
 #include <QStringList>
 
-QMutex ServerThread::m_Mutex;
-QMap<QString, QString> ServerThread::user;
-
 ServerThread::ServerThread(qintptr socketDescriptor)
 {
     m_socketDescriptor = socketDescriptor;
