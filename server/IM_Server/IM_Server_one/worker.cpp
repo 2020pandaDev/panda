@@ -163,17 +163,26 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
     userinfo.insert("user_name", u_name);
     userinfo.insert("online_status", online_status);
 
-    if (MySql::getInstance()->MySelect(userinfo)) {
-        qDebug() << "用户退出!";
+    QVariantMap userInfoList = MySql::getInstance()->selectDataFromBase();//返回所有用户信息
 
-        MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
-       
+    if (MySql::getInstance()->MySelect(userinfo)) {
+        QStringList usNameList = userInfoList[u_name].toStringList(); //该用户所有信息
+        QString onlin_true = usNameList.at(5);//获取该用户的在线状态
+        if(onlin_true == "true"){
+            qDebug() << "用户退出!";
+            MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
+            outResponse.insert("signOutMessage", 0);
+        }
+        else {
+            qDebug()<<"用户存在，离线状态";
+            outResponse.insert("signOutMessage", 1);
+        }
+
     } else {
         qDebug() << "此用户未注册!";
+        outResponse.insert("signOutMessage", 2);
     }
-
     outResponse.insert("Type", 7);
-    outResponse.insert("online_status", online_status);
     return outResponse;
 }
 
