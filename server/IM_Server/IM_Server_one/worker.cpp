@@ -324,9 +324,6 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
 
 }
 
-
-
-
 QVariantMap Worker::doingCAPTCHA(QStringList &CAPTCHAInfo)
 {
     qDebug()<<"doingCAPTCHA thread:"<<QThread::currentThreadId();
@@ -384,9 +381,13 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
     if (captcha == capt) {
         isSim = true;
         qDebug() << "此刻可以进行帮助!";
+        MySql::getInstance()->MyUpdateUserStatus(2, username, "true");
+        MySql::getInstance()->MyUpdateUserStatus(2, helper, "true");
     } else {
         isSim = false;
         qDebug() << "验证码不一致!";
+        MySql::getInstance()->MyUpdateUserStatus(2, username, "false");
+        MySql::getInstance()->MyUpdateUserStatus(2, helper, "false");
     }
 
     re.insert("Type", 6);
