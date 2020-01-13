@@ -11,13 +11,12 @@ m_loginregister::m_loginregister(DWidget* parent) :
 {
     registerwidget = new QWidget;
     glayout = new QGridLayout(this);
-    m_tcpSocket = new ClientSocket();
+//    m_tcpSocket = new ClientSocket();
     textLabel = new DLabel;
 
     m_bConnected = false;
     textLabel->setText(tr(""));
-    m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
-    connect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
+//    m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
 
     //用户名框
     m_namelineedit = new QLineEdit;
@@ -79,17 +78,18 @@ m_loginregister::m_loginregister(DWidget* parent) :
                 if (!m_bConnected) {
                     qDebug()<<"111111"<<MyApp::m_strHostAddr<<MyApp::m_nMsgPort;
                     m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
-                    QMessageBox msgBox;
-                      msgBox.setText("未连接服务器，请等待！");
-                      msgBox.exec();
+//                    QMessageBox msgBox;
+//                      msgBox.setText("未连接服务器，请等待！");
+//                      msgBox.exec();
+                    qDebug()<<"未连接服务器，请等待！";
                       //DMessageBox::infomation(this,"服务器连接情况", "未连接服务器，请等待");
                     return;
                 }
                 // 构建 Json 对象
                 QJsonObject json;
                 json.insert("Type", Register);
-                json.insert("name", m_namelineedit->text());
-                json.insert("passwd", m_passwordlineedit->text());
+                json.insert("usrName", m_namelineedit->text());
+                json.insert("password", m_passwordlineedit->text());
 
                 m_tcpSocket->SltSendMessage(Register, json);
         }
@@ -107,6 +107,14 @@ m_loginregister::~m_loginregister()
 {
 
 }
+
+void m_loginregister::SetSocket(ClientSocket *tcpSocket)
+{
+    m_tcpSocket = tcpSocket;
+
+connect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
+}
+
 
 /**
  * @brief LoginWidget::SltTcpStatus

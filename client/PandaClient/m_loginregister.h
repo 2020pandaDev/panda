@@ -28,6 +28,7 @@ class m_loginregister: public DMainWindow
 public:
     m_loginregister(DWidget* parent = nullptr);
     ~m_loginregister();
+    void SetSocket(ClientSocket *tcpSocket);
 private slots:
     // 服务器信息返回处理
     void SltTcpStatus(const quint8 &state);

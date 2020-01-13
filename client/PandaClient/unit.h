@@ -1,3 +1,4 @@
+#ifndef UNIT
 #define UNIT
 
 #include <stdint.h>
@@ -112,8 +113,8 @@ typedef enum {
     Unknow,
     Register            = 0x02,     // 用户注册
     Login               =0x03,      // 用户登录
-    Logout,                         // 用户注销
-    //LoginRepeat,                    // 重复登录
+    Logout              =0x11,                         // 用户注销
+  //  LoginRepeat,                    // 重复登录
 
     UserOnLine          = 0x15,     // 用户上线通知
     UserOffLine,                    // 用户下线通知
@@ -133,7 +134,8 @@ typedef enum {
     RefreshFriends      = 0x35,     // 刷新好友状态
     RefreshGroups,                  // 刷新群组成员状态
 
-    SendMsg             = 0x40,     // 发送消息
+    SendMsg             = 0x04,     // 发送消息
+    FriendsList         = 0x08,     // 获得在线好友
     SendGroupMsg,                   // 发送群组消息
     SendFile,                       // 发送文件
     SendPicture,                    // 发送图片
@@ -170,3 +172,5 @@ typedef enum {
     AddFriendOk,
     AddFriendFailed,
 } E_STATUS;
+
+#endif // UNIT

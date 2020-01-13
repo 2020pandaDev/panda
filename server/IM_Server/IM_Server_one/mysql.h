@@ -40,9 +40,9 @@ public:
 
 
 
-    bool CreateConnection();      //创建数据库需先调用连接//
+    bool CreateConnection();      //创建数据库连接//
     void closeDb();               //关闭数据库//
-    bool createTable();            //初次使用必须调用建表的方法
+    bool createTable();            //建表的方法
     bool MyInsert(const QMap<QString,QString>& InputUserInfo);        //插入//
 //    bool MyInsertDataBase(const QMap<QString,QString>& userInfo);
 
