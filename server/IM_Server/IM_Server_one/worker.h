@@ -39,7 +39,6 @@ private:
     QMap<QString ,QString> userVerification;
     QTcpSocket* m_tcpSocket = nullptr;
     QByteArray m_recData;
-    QTimer *timer;
 
 
 };
