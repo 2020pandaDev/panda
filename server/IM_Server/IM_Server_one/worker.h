@@ -18,6 +18,7 @@ public:
     static QMap<QString, QTcpSocket *> m_userSocket;
 
 signals:
+    void finish();
 
 
 public slots:
