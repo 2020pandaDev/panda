@@ -165,13 +165,13 @@ void SystemSetting::on_btnSaveSetting_clicked()
 
     int nMsgPort = lineEditHostMsgPort->text().toInt();
     if (nMsgPort > 65535 || nMsgPort < 100) {
-        QMessageBox::information(this, "配置", "端口设置有误!");
+        QMessageBox::information(this, "配置", "端口设置有误(端口范围为[100-65535])");
         return;
     }
 
     int nFilePort =lineEditHostFilePort->text().toInt();
     if (nFilePort > 65535 || nFilePort < 100) {
-        QMessageBox::information(this, "配置", "端口设置有误!");
+        QMessageBox::information(this, "配置", "端口设置有误!(端口范围为[100-65535])");
         return;
     }
 

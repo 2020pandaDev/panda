@@ -144,8 +144,8 @@ void LoginWindow::initUI()
 void LoginWindow::changeCurrentPage(CLabel *label)
 {
     m_pLoginReg->SetSocket(m_tcpSocket);
-    m_pLoginReg->show();
     m_pLoginReg->setWindowFlags( m_pLoginReg->windowFlags() & ~Qt::WindowMaximizeButtonHint);
+    m_pLoginReg->show();
 }
 
 void LoginWindow::menuItemInvoked(QAction *action)
@@ -248,34 +248,34 @@ bool LoginWindow::checkUserAndPwd()
         QMessageBox::information(this,"登录信息","用户名不能为空!");
         return false;
     }
-//    if(nickName.size() > 10)
-//    {
-//        QMessageBox::information(this,"登录信息","用户名长度超过10位!");
-//        return false;
-//    }
+    if(nickName.size() > 10)
+    {
+        QMessageBox::information(this,"登录信息","用户名长度超过10位!");
+        return false;
+    }
 
-//    rx.setPatternSyntax(QRegExp::RegExp);
-//    //对大小写字母敏感，即区分大小写
-//    rx.setCaseSensitivity(Qt::CaseSensitive);
-//    //匹配格式为所有大小写字母和数字组成的字符串，位数不限
-//    rx.setPattern(QString("[a-zA-Z0-9!@#%^&*()_]{6,18}$"));
-//    if(firstPassWrd.isEmpty())  //检测密码输入框是不是为空
-//    {
-//        QMessageBox::information(this,"登录信息","密码不能为空!");
-//        return false;
-//    }
-//    else if(!rx.exactMatch(firstPassWrd))
-//    {
-//        QMessageBox::information(this,"登录信息","密码只能是数字或字母!");
-//       return false;
+    rx.setPatternSyntax(QRegExp::RegExp);
+    //对大小写字母敏感，即区分大小写
+    rx.setCaseSensitivity(Qt::CaseSensitive);
+    //匹配格式为所有大小写字母和数字组成的字符串，位数不限
+    rx.setPattern(QString("[a-zA-Z0-9!@#%^&*()_]{6,18}$"));
+    if(firstPassWrd.isEmpty())  //检测密码输入框是不是为空
+    {
+        QMessageBox::information(this,"登录信息","密码不能为空!");
+        return false;
+    }
+    else if(!rx.exactMatch(firstPassWrd))
+    {
+        QMessageBox::information(this,"登录信息","密码位数为6-18位!");
+       return false;
 
-//    }
-//    else if(firstPassWrd.size()<6 || firstPassWrd.size()>18)
-//    {
-//        QMessageBox::information(this,"登录信息","密码长度范围必须是[6,18]!");
-//        return false;
+    }
+    else if(firstPassWrd.size()<6 || firstPassWrd.size()>18)
+    {
+        QMessageBox::information(this,"登录信息","密码长度范围必须是[6,18]!");
+        return false;
 
-//    }
+    }
 
     return true;
 }

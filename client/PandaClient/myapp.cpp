@@ -23,10 +23,10 @@ QString MyApp::m_strIniFile         = "config.ini";
 
 #if 0
 // 服务器相关配置
-QString MyApp::m_strHostAddr        = "183.230.8.172";
-int     MyApp::m_nMsgPort           = 32101;
-int     MyApp::m_nFilePort          = 32102;
-int     MyApp::m_nGroupPort         = 32103;
+QString MyApp::m_strHostAddr        = "10.61.11.143";
+int     MyApp::m_nMsgPort           = 6565;
+int     MyApp::m_nFilePort          = 60002;
+int     MyApp::m_nGroupPort         = 60003;
 #else
 // 服务器相关配置
 QString MyApp::m_strHostAddr        = "10.61.11.143";
@@ -115,10 +115,10 @@ void MyApp::ReadSettingFile()
 
 
     settings.beginGroup("Server");
-    m_strHostAddr = settings.value("HostAddr", "183.230.8.172").toString();
-    m_nMsgPort    = settings.value("MsgPort", 32101)  .toInt();
-    m_nFilePort   = settings.value("FilePort", 32102)  .toInt();
-    m_nGroupPort  = settings.value("GroupPort", 32103)  .toInt();
+    m_strHostAddr = settings.value("HostAddr", "10.61.11.143").toString();
+    m_nMsgPort    = settings.value("MsgPort", 6565)  .toInt();
+    m_nFilePort   = settings.value("FilePort", 60002)  .toInt();
+    m_nGroupPort  = settings.value("GroupPort", 60003)  .toInt();
     settings.endGroup();
 }
 
