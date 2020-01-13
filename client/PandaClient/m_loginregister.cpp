@@ -138,6 +138,8 @@ void m_loginregister::SltTcpStatus(const quint8 &state)
     case RegisterOk:
     {
         QMessageBox::information(this, "注册信息", "该账号注册成功！请点击登录！");
+        this->close();
+        //return;
     }
         break;
     case RegisterFailed:
@@ -183,7 +185,7 @@ bool m_loginregister::CheckPwd()
     }
     else if(!rx.exactMatch(firstPassWrd))
     {
-        QMessageBox::information(this,"注册信息","密码只能是数字或字母!");
+        QMessageBox::information(this,"注册信息","密码位数为6-18位!");
        return false;
 
     }
