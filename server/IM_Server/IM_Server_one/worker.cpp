@@ -8,8 +8,7 @@
 QMap<QString, QTcpSocket *> Worker::m_userSocket;
 Worker::Worker(QObject *parent) : QObject(parent)
 {
-    m_dataParse = new Dataparsing ();
-
+    m_dataParse = new Dataparsing (this);
 }
 
 void Worker::doWork(QByteArray& message)
@@ -217,7 +216,7 @@ QVariantMap Worker::groupChat(QVariantMap& recValue)
 
 void Worker::recSocketDescriptor(qintptr socketDescriptor)
 {
-    m_tcpSocket = new QTcpSocket();
+    m_tcpSocket = new QTcpSocket(this);
 
    //run()函数中创建的栈对象保证了可靠的销毁。注意这个变量的依附性，当前线程变量仅在调用它的线程中有效。
     if (!m_tcpSocket->setSocketDescriptor(socketDescriptor)) { // 相当于tcpSocket的初始化，参数是为了保证不会为同一个客户端创建多个QTcpSocket对象
@@ -231,7 +230,6 @@ void Worker::recSocketDescriptor(qintptr socketDescriptor)
             qDebug() << "run thread:" << QThread::currentThreadId();
             doWork(m_recData);
         });
-
 
 }
 
@@ -300,9 +298,7 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     int msgType = chatMessage["msgType"].toInt();
     QByteArray message= Msg.toLatin1().data();
 
-
     QTcpSocket* socket = m_userSocket[recvUsrName];
-
 
     if(socket){
     sendData.insert("Type",4);
@@ -315,7 +311,6 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     QMetaObject::invokeMethod(socket,std::bind( static_cast< qint64(QTcpSocket::*)(const QByteArray &) >( &QTcpSocket::write ), socket,m_sendData));
 //跨线程tcp通信
 
-
     returnData.insert("Type",44);
     returnData.insert("result",true);
     qDebug()<< "聊天成功";
@@ -326,7 +321,6 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
      qDebug()<< "聊天失败";
     }
     return  returnData;
-
 
 }
 
