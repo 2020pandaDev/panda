@@ -12,11 +12,13 @@ void Server::incomingConnection(qintptr socketDescriptor)
 {
 
     ServerThread* thread = new ServerThread(socketDescriptor);
-    Worker* worker = new Worker (thread);
+    Worker* worker = new Worker ();
     worker->moveToThread(thread);
 
     //信号与槽函数在同一个线程，则用直连方式Qt::DirectConnection，若信号是跨线程的，则使用排队连接方式
-    QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::DirectConnection);
+    QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::DirectConnection);//
+    connect(worker, &Worker::finish, worker, &Worker::deleteLater);
+    connect(worker, &Worker::destroyed, thread, &ServerThread::quit);
     connect(thread, &ServerThread::sendSocketDescriptor, worker, &Worker::recSocketDescriptor, Qt::DirectConnection);
     thread->start();
 }

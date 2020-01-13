@@ -12,20 +12,12 @@ class Server : public QObject
     Q_OBJECT
 public:
     explicit Server(QObject *parent = nullptr);
-
-    void getNewSocket();
-    ServerThread* createUserThread(QTcpSocket*);
     void incomingConnection(qintptr socketDescriptor);
    /*******************/
    CTcpSv* m_ctcpsv = nullptr;
 
-
-
-
 signals:
-
 public slots:
-
 
 };
 
