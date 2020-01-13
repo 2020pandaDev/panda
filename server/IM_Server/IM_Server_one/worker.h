@@ -15,7 +15,7 @@ public:
     Dataparsing* m_dataParse = nullptr;
     QVariantMap m_returnDataToClient;
     QByteArray m_sendData;
-    static QMap<QString, QTcpSocket *> m_userSocket;
+    static QMap<QString, QTcpSocket *> m_userSocket;//socket 列表
 
 signals:
     void finish();
@@ -32,7 +32,7 @@ public slots:
 
     QVariantMap Signout(QStringList &SignoutInfo);
     QVariantMap groupChat(QVariantMap &groupChatInfo);
-    void recSocketDescriptor(qintptr);
+    void recSocketDescriptor(qintptr);//接受socket 描述符号
 
 private:
     QMap<QString ,QString> userinfo;
