@@ -356,7 +356,7 @@ void UserInterface::ParseFriendListReply(const QJsonObject &dataVal)
 
     ui->listWidget->clear();
     onlineUser.clear();
-    for(int i=1;i<list.size();i++)
+    for(int i=0;i<list.size();i++)
     {
         if(list[i]==name)
             continue;
@@ -414,5 +414,14 @@ void UserInterface::ParseFriendMessageReply(const QJsonObject &dataVal)
 //            temp->show();
 //    }
     pdList[strFromName]->getMessage(strFromName,strMsg);
+}
+
+void UserInterface::closeEvent (QCloseEvent * e)
+{
+    QJsonObject json;
+    json.insert("Type", Logout);
+    json.insert("usrName", name);
+
+    m_tcpSocket->SltSendMessage(Logout, json);
 }
 

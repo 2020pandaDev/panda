@@ -113,7 +113,7 @@ typedef enum {
     Unknow,
     Register            = 0x02,     // 用户注册
     Login               =0x03,      // 用户登录
-    Logout              =0x11,                         // 用户注销
+    Logout              =0x07,                         // 用户注销
   //  LoginRepeat,                    // 重复登录
 
     UserOnLine          = 0x15,     // 用户上线通知

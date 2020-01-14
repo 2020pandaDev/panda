@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QFile>
+#include <QTimer>
 
 /////////////////////////////////////////////////////////////////////////
 /// \brief The ClientSocket class
@@ -52,6 +53,9 @@ private:
     void ParseLogin(const QJsonObject &dataObject);
     // 解析注册返回信息
     void ParseReister(const QJsonValue &dataVal);
+
+private:
+    QTimer *m_pTimer;
 };
 
 

@@ -38,9 +38,9 @@ int main(int argc, char *argv[])
     a.setOrganizationName("deepin");
     a.setApplicationName("Panda");
     a.setApplicationVersion("1.0");
-    a.setProductIcon(QIcon(":/image/logo.svg"));
+    a.setProductIcon(QIcon(":/image/panda.png"));
     a.setProductName("Panda");
-    a.setApplicationDescription("This is a Remote Assist application.");
+    a.setApplicationDescription("This is a Panda application.");
     a.loadTranslator();
     MyApp::InitApp(a.applicationDirPath());
     //myHelper::setStyle("default");
