@@ -8,7 +8,9 @@
 QMap<QString, QTcpSocket *> Worker::m_userSocket;
 Worker::Worker(QObject *parent) : QObject(parent)
 {
-    m_dataParse = new Dataparsing (this);
+    m_dataParse = new Dataparsing(this);
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, &Worker::abnormalHeartBeat);
 }
 
 void Worker::doWork(QByteArray& message)
@@ -139,6 +141,10 @@ void Worker::doWork(QByteArray& message)
         break;
     }
 
+    case 10: { //心跳
+        m_returnDataToClient = normalHeartBeat();
+        break;
+    }
 
     default:
          break;
@@ -172,9 +178,9 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
             qDebug() << "用户退出!";
             MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
             outResponse.insert("signOutMessage", 0);
-        }
-        else {
-            qDebug()<<"用户存在，离线状态";
+            m_userName = "";
+        } else {
+            qDebug() << "用户存在，离线状态";
             outResponse.insert("signOutMessage", 1);
         }
 
@@ -201,15 +207,15 @@ QVariantMap Worker::groupChat(QVariantMap& recValue)
     QList<QTcpSocket*> socketList = m_userSocket.values();
     if(!socketList.isEmpty()){
 
-    sendData.insert("Type",9);
-    sendData.insert("sendUsrName",sendUsrName);
-    sendData.insert("Msg",Msg);
-    sendData.insert("msgType",0);
-    m_sendData= m_dataParse->paserMapData(sendData);
-    for (int i = 0;i<socketList.length();i++) {
-        QMetaObject::invokeMethod(socketList.at(i),std::bind( static_cast< qint64(QTcpSocket::*)(const QByteArray &) >( &QTcpSocket::write ), socketList.at(i),m_sendData));
-        //跨线程tcp通信
-    }
+        sendData.insert("Type", 9);
+        sendData.insert("sendUsrName", sendUsrName);
+        sendData.insert("Msg", Msg);
+        sendData.insert("msgType", 0);
+        m_sendData = m_dataParse->paserMapData(sendData);
+        for (int i = 0; i < socketList.length(); i++) {
+            QMetaObject::invokeMethod(socketList.at(i), std::bind(static_cast< qint64(QTcpSocket::*)(const QByteArray &) >(&QTcpSocket::write), socketList.at(i), m_recData));
+            //跨线程tcp通信
+        }
 
     returnData.insert("Type",45);
     returnData.insert("result",true);
@@ -317,8 +323,8 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     sendData.insert("msgType",0);
     m_sendData= m_dataParse->paserMapData(sendData);
 
-    QMetaObject::invokeMethod(socket,std::bind( static_cast< qint64(QTcpSocket::*)(const QByteArray &) >( &QTcpSocket::write ), socket,m_sendData));
-//跨线程tcp通信
+        QMetaObject::invokeMethod(socket, std::bind(static_cast< qint64(QTcpSocket::*)(const QByteArray &) >(&QTcpSocket::write), socket, m_recData));
+//跨线程tcp通信;
 
     returnData.insert("Type",44);
     returnData.insert("result",true);
@@ -407,6 +413,46 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
     return re;
 }
 
+QVariantMap Worker::normalHeartBeat()
+{
+    qDebug() << "normalHeartBeat thread:" << QThread::currentThreadId();
+    m_timer->stop();
+    m_timer->start(5000);
+    QVariantMap heartBeatinfo;
+    heartBeatinfo.insert("Type", 10);
+    heartBeatinfo.insert("Msg", "OK");
+    return heartBeatinfo;
+}
+
+void Worker::abnormalHeartBeat()
+{
+
+    m_count++;
+    qDebug() << "abnormalHeartBeat thread:" << QThread::currentThreadId();
+    if (m_count > 2) {
+        m_timer->stop();
+        QVariantMap heartBeatinfo;
+        qDebug() << "m_userName :"<<m_userName;
+        bool flag = m_userName.compare("");
+        if (flag) {
+            QStringList SignoutInfo;
+            SignoutInfo.append(m_userName);
+            m_returnDataToClient = Signout(SignoutInfo);
+            m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+            m_tcpSocket->write(m_sendData);
+            m_tcpSocket->flush();
+        } else {
+            qDebug() << "用户未登录已退出";
+            heartBeatinfo.insert("Type", 10);
+            heartBeatinfo.insert("Msg", "fail");
+            m_sendData = m_dataParse->paserMapData(heartBeatinfo);
+            m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
+            m_tcpSocket->write(m_sendData);
+            m_tcpSocket->flush();
+        }
+    }
+
+}
 
 
 QVariantMap Worker::loginIn(QStringList &userInfoList)
@@ -445,6 +491,11 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
             loginResponse.insert("onlineStatus", true);
             QVariantMap userMessage = MySql::getInstance()->userStatus();
             loginResponse.insert("result", userMessage);
+
+            this->m_userName =u_name;
+
+
+            qDebug() << "m_userName 1:"<<m_userName;
         } else {
             loginResponse.insert("loginMsg", 2);
         }
