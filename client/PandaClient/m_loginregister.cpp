@@ -28,6 +28,7 @@ m_loginregister::m_loginregister(DWidget* parent) :
     m_namelineedit->setFont(ft1);
     QRegExp regx("[a-zA-Z0-9]{1,10}");
     m_namelineedit->setValidator(new QRegExpValidator(regx,this));
+    m_namelineedit->setClearButtonEnabled(true);
 
     //密码框
     m_passwordlineedit = new QLineEdit;
@@ -38,6 +39,7 @@ m_loginregister::m_loginregister(DWidget* parent) :
     QRegExp rx("[a-zA-Z0-9!,;:=+?@#%^&*]{6,18}$");
     m_passwordlineedit->setValidator(new QRegExpValidator(rx,this));
     m_passwordlineedit->setEchoMode(QLineEdit::Password);
+    m_passwordlineedit->setClearButtonEnabled(true);
 
     m_try_pwdlineedit = new QLineEdit;
     m_try_pwdlineedit->setPlaceholderText("请确认密码");
@@ -46,6 +48,7 @@ m_loginregister::m_loginregister(DWidget* parent) :
     m_try_pwdlineedit->setFont(ft1);
     m_try_pwdlineedit->setValidator(new QRegExpValidator(rx,this));
     m_try_pwdlineedit->setEchoMode(QLineEdit::Password);
+    m_try_pwdlineedit->setClearButtonEnabled(true);
 
     //两个按钮
     m_okbutton = new DSuggestButton(this);
@@ -74,22 +77,11 @@ m_loginregister::m_loginregister(DWidget* parent) :
             [=]() {
         if(CheckPwd())
         {
-            // 如果没有链接上服务器，此时进行一次链接
-                if (!m_bConnected) {
-                    qDebug()<<"111111"<<MyApp::m_strHostAddr<<MyApp::m_nMsgPort;
-                    m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
-//                    QMessageBox msgBox;
-//                      msgBox.setText("未连接服务器，请等待！");
-//                      msgBox.exec();
-                    qDebug()<<"未连接服务器，请等待！";
-                      //DMessageBox::infomation(this,"服务器连接情况", "未连接服务器，请等待");
-                    return;
-                }
-                // 构建 Json 对象
-                QJsonObject json;
-                json.insert("Type", Register);
-                json.insert("usrName", m_namelineedit->text());
-                json.insert("password", m_passwordlineedit->text());
+            // 构建 Json 对象
+            QJsonObject json;
+            json.insert("Type", Register);
+            json.insert("usrName", m_namelineedit->text());
+            json.insert("password", m_passwordlineedit->text());
 
                 m_tcpSocket->SltSendMessage(Register, json);
         }
@@ -213,6 +205,9 @@ bool m_loginregister::CheckPwd()
 void m_loginregister::setheadtitle(const QString &Lefticon, const QString &Righticon)
 {
     tit = this->titlebar();
+    if (tit) {
+        tit->setMenuVisible(false);
+    }
     image = new QImage;
     lefticon = new DLabel(this);
     lefticon->setPixmap(QPixmap::fromImage(*image));

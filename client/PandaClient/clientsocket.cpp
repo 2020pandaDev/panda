@@ -13,6 +13,8 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
+#define TIMER_TIMEOUT   (1*1000)
+
 ClientSocket::ClientSocket(QObject *parent) :
     QObject(parent)
 {
@@ -23,11 +25,29 @@ ClientSocket::ClientSocket(QObject *parent) :
     connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(SltReadyRead()));
     connect(m_tcpSocket, SIGNAL(connected()), this, SLOT(SltConnected()));
     connect(m_tcpSocket, SIGNAL(disconnected()), this, SLOT(SltDisconnected()));
+    m_pTimer = new QTimer(this);
+    m_pTimer->setInterval(TIMER_TIMEOUT);
+    m_pTimer->setSingleShot(false);
+   // m_pTimer->start();
+    connect(m_pTimer, &QTimer::timeout, this,
+            [=]()
+    {
+        qDebug()<<"Enter timeout processing function";
+        QJsonObject json;
+        json.insert("Type", 10);
+        // 构建 Json 文档
+        QJsonDocument document;
+        document.setObject(json);
+        m_tcpSocket->write(document.toJson(QJsonDocument::Compact));
+    });
 }
 
 ClientSocket::~ClientSocket()
 {
+    qDebug()<<"handleTimeout";
     SltSendOffline();
+//    if(m_pTimer->isActive())
+//        m_pTimer->stop();
 }
 
 /**
@@ -117,7 +137,9 @@ void ClientSocket::SltSendMessage(const quint8 &type, const QJsonObject &dataVal
     QJsonDocument document;
     document.setObject(dataVal);
     qDebug()<<"to server data"<<dataVal;
-    m_tcpSocket->write(document.toJson(QJsonDocument::Compact));
+    QByteArray ss = document.toJson(QJsonDocument::Compact);
+    qDebug()<<"ss "<<ss;
+    m_tcpSocket->write(ss);
 }
 
 /**
@@ -340,7 +362,7 @@ void ClientSocket::ParseReister(const QJsonValue &dataVal)
     // data 的 value 是对象
     if (dataVal.isObject()) {
         QJsonObject dataObj = dataVal.toObject();
-        int n_regType = dataObj.value("loginMsg").toInt();
+        int n_regType = dataObj.value("responMsg").toInt();
 
         if (0 == n_regType) {
             Q_EMIT signalStatus(RegisterOk);

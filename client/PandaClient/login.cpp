@@ -66,7 +66,7 @@ LoginWindow::LoginWindow(QWidget *parent) : DMainWindow(parent)
             return;
         if (!m_bConnected) {
             m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
-            QMessageBox::information(this, "未连接服务器，请等待！", "111");
+            QMessageBox::information(this, "Panda客户端", "未连接服务器，请等待！");
             return;
         }
 
@@ -124,7 +124,10 @@ void LoginWindow::initUI()
     m_findPassword_label->setStyleSheet("font-size:15px;color:blue");
     m_forgetPassword_CheckBox->setText("记住密码");
     m_autoLogin_CheckBox->setText("自动登陆");
-    m_login_suggestButton->setText("登陆");
+    m_login_suggestButton->setText("登录");
+
+    m_usrName_lineEdit->setClearButtonEnabled(true);
+    m_password_lineEdit->setClearButtonEnabled(true);
 
     m_gridLayout->addWidget(m_userPng_label, 0, 0, 3, 1);
     m_gridLayout->addWidget(m_usrName_lineEdit, 0, 1, 1, 2);

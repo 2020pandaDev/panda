@@ -119,6 +119,9 @@ SystemSetting::SystemSetting(DWidget* parent) :
 void SystemSetting::setheadtitle(const QString &Lefticon, const QString &Righticon)
 {
     tit = this->titlebar();
+    if (tit) {
+        tit->setMenuVisible(false);
+    }
     image = new QImage;
     lefticon = new DLabel(this);
     lefticon->setPixmap(QPixmap::fromImage(*image));

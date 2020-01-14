@@ -59,6 +59,9 @@ private:
     // 消息处理
     void ParseFriendMessageReply(const QJsonObject &dataVal);
 
+protected:
+    void closeEvent (QCloseEvent * e);
+
 
 private:
     Ui::UserInterface *ui;
