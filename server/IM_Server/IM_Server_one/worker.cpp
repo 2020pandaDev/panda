@@ -385,7 +385,7 @@ QVariantMap Worker::helpingOther(QStringList &HelpingInfo)
         return re;
     }
 
-    QString capt = MySql::getInstance()->userMessage(username, 7);
+    QString capt = MySql::getInstance()->userMessage(helper, 7);
 
     if (captcha == capt) {
         isSim = true;
