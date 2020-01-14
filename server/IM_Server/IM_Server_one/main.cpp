@@ -12,15 +12,21 @@ int main(int argc, char *argv[])
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setTheme("light");
     a.setOrganizationName("deepin");
-    a.setApplicationName("dtk application");
+    a.setApplicationName("服务器已启动");
     a.setApplicationVersion("1.0");
     a.setProductIcon(QIcon(":/images/logo.svg"));
-    a.setProductName("Dtk Application");
-    a.setApplicationDescription("This is a dtk template application.");
+    a.setProductName("panda Application");
+    a.setApplicationDescription("This is a panda server application.");
+
 
     Server ser;
     DMainWindow w;
     w.setMinimumSize(500, 500);
+    DLabel *label = new DLabel(&w);
+    label->setFrameStyle(QFrame::NoFrame | QFrame::Raised);
+    label->setPixmap(QPixmap(":/images/pd.jpeg"));
+    label->setGeometry(w.width()/7,w.height()/5,500,400);
+    label->adjustSize();
     w.show();
 
 
