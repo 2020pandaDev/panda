@@ -12,8 +12,7 @@ MySql::MySql(const QString &pathAndDataBaseName, const QString &driver_Name, con
     connectionName = connection_Name;
     driverName = driver_Name;
     db = QSqlDatabase::contains("qt_sql_default_connection") ? QSqlDatabase::database("qt_sql_default_connection") : QSqlDatabase::addDatabase(driver_Name, connectionName);  //创建一个SQLite数据库连接//
-    if (!CreateConnection())
-        {
+    if (!CreateConnection()){
 
             return;
         }
@@ -32,8 +31,7 @@ MySql::~MySql()
 
 void MySql::closeDb()
 {
-    if (db.isOpen())
-    {
+    if (db.isOpen()){
         db.close();
     }
 }
@@ -46,8 +44,7 @@ bool MySql::CreateConnection()
 
     //     //本地数据库文件名//
     db.setDatabaseName(dbDir);                                //数据库连接命名//
-    if (!db.open())                                            //如果.db文件不存在，自动新建.db文件并打开//
-    {
+    if (!db.open()){
         qDebug() << QString(QObject::tr("无法建立数据库连接"));
         return false;
     }
@@ -68,13 +65,10 @@ bool MySql::createTable()
                              " user_name text, user_password text, user_ip text, "
                              "user_port text, user_online text, user_link text,user_verification text);");   //新建一张表，访问已有.bd时，执行该语句也不受影响//
 
-    if(success)
-    {
+    if(success){
         qDebug() << QObject::tr("数据库表创建成功！\n");
         return true;
-    }
-    else
-    {
+    }else{
         qDebug() << QObject::tr("数据库表创建失败！\n");
         return false;
     }
@@ -82,7 +76,7 @@ bool MySql::createTable()
 }
 
 
-bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)
+bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)//插入用户数据
 {
 
     qDebug() << "mysql thread:" <<QThread::currentThreadId();
@@ -104,8 +98,7 @@ bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)
 
 
     bool success=query.exec();
-    if(!success)
-    {
+    if(!success){
         QSqlError lastError = query.lastError();
         qDebug() << lastError.driverText() << QString(QObject::tr("插入失败"));
         return false;
@@ -159,7 +152,7 @@ QString MySql::userMessage(const QString userName,int UserFieldNumber)//获取�
         QStringList userMessageList =  selectDataFromBase()[userName].toStringList();
         record= userMessageList.at(UserFieldNumber);
     }else {
-        qDebug() << "not exit user";
+        qDebug() << "not exsits user";
     }
     return  record;
 }
@@ -287,8 +280,7 @@ bool MySql::MySelect(const QMap<QString,QString>& OutputUserInfo)
     query.prepare("select * from t_user where user_name = :name;");
     query.bindValue(":name",OutputUserInfo["user_name"]);
     bool success=query.exec();
-    if(!success)
-    {
+    if(!success){
         QSqlError lastError = query.lastError();
         qDebug() << lastError.driverText() << QString(QObject::tr("查询失败"));
         return false;
@@ -307,8 +299,7 @@ bool MySql::MyDelete(const QMap<QString,QString>& InputUserInfo)
     QSqlQuery query(db);
     query.prepare("delete from t_user where user_name = :name");
     query.bindValue(":name",InputUserInfo["user_name"]);
-    if (!query.exec())
-    {
+    if (!query.exec()){
         qDebug() << QString(QObject::tr("删除失败"));
         return false;
     }
@@ -321,12 +312,10 @@ bool MySql::MyUpdate(const QMap<QString,QString>& InputUserInfo)
 {
 
 
-    if (!MyDelete(InputUserInfo))
-    {
+    if (!MyDelete(InputUserInfo)){
         return false;
     }
-    if (!MyInsert(InputUserInfo))
-    {
+    if (!MyInsert(InputUserInfo)){
         return false;
     }
 
@@ -353,8 +342,7 @@ bool MySql::MyUpdateUserInfo(const QMap<QString,QString>& InputUserInfo)
 //    query.prepare("update t_user set user_password = :password where user_name = :findName");
 
     bool success=query.exec();
-    if(!success)
-    {
+    if(!success){
         QSqlError lastError = query.lastError();
         qDebug() << lastError.driverText() << QString(QObject::tr("更新失败"));
         return false;
@@ -374,8 +362,7 @@ bool MySql::MyUpdateUserStatus(const QString& UserName,const QString& OnLineStat
 
 
     bool success=query.exec();
-    if(!success)
-    {
+    if(!success){
         QSqlError lastError = query.lastError();
         qDebug() << lastError.driverText() << QString(QObject::tr("更新失败"));
         return false;
@@ -403,8 +390,7 @@ bool MySql::MyUpdateUserStatus(int Choose,const QString& UserName,const QString&
     }
 
     bool success=query.exec();
-    if(!success)
-    {
+    if(!success){
         QSqlError lastError = query.lastError();
         qDebug() << lastError.driverText() << QString(QObject::tr("更新失败"));
         return false;
@@ -428,8 +414,7 @@ bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
     query.bindValue(":findName",InputUserInfo["user_name"]);
 
     bool success=query.exec();
-    if(!success)
-    {
+    if(!success){
         QSqlError lastError = query.lastError();
         qDebug() << lastError.driverText() << QString(QObject::tr("更新失败"));
         return false;
@@ -442,12 +427,10 @@ bool MySql::MyUpdateVerification(const QMap<QString,QString>& InputUserInfo)
 
 MySql *MySql::getInstance()
 {
-    if (m_pInstance == nullptr)
-    {
+    if (m_pInstance == nullptr){
 
         QMutexLocker mlocker(&m_Mutex);  //双检索，支持多线程
-        if (m_pInstance == nullptr)
-        {
+        if (m_pInstance == nullptr){
             m_pInstance = new MySql("./user.db","QSQLITE","t_user");
 
         }
