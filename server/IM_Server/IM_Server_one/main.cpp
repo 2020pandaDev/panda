@@ -1,6 +1,7 @@
 #include <DApplication>
 #include <DMainWindow>
 #include <DWidgetUtil>
+#include <DLabel>
 #include "mysql.h"
 #include "server.h"
 DWIDGET_USE_NAMESPACE
