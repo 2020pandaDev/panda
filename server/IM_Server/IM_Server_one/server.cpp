@@ -15,6 +15,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     Worker* worker = new Worker ();//线程工作类
     worker->moveToThread(thread);//线程工作类移动到子线程下
 
+
     //信号与槽函数在同一个线程，则用直连方式Qt::DirectConnection，若信号是跨线程的，则使用排队连接方式
     QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::DirectConnection);//
     connect(worker, &Worker::finish, worker, &Worker::deleteLater);
