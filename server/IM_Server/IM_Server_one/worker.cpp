@@ -518,6 +518,7 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
 
             this->m_userName = u_name;
             userNameList.append(u_name);
+            userNameList.removeDuplicates ();//去重
             broadCastUserList(userNameList);
             qDebug() << "m_userName 1:" << m_userName;
         } else {

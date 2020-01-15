@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
     QFont* m_font = new QFont ();
     m_font->setPointSize(20);
     DPalette* m_pe = new DPalette();
+    m_pe->setColor(DPalette::WindowText, Qt::red);
     DSpinner* m_spinner = new DSpinner ();
 
     m_centralLayout->setContentsMargins(0, 10, 0, 100);
@@ -44,6 +45,7 @@ int main(int argc, char *argv[])
 
     m_wordLabel->setWordWrap(true);
     m_wordLabel->setFont(*m_font);
+    m_wordLabel->setPalette(*m_pe);
     m_wordLabel->setText("服务器已启动");
     m_wordLabel->setAlignment(Qt::AlignHCenter);
     m_wordLabel->setMinimumSize(320,50);
