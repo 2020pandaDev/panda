@@ -20,7 +20,10 @@ PersonalDialog::PersonalDialog(QWidget *parent,ClientSocket *_tcp,QString _oppos
     this->setWindowTitle(tr("私人聊天..."));
     ui->textEdit->setReadOnly(true);
     ui->textEdit_2->installEventFilter(this);
+	ui->lineEdit_name->setReadOnly(true);
    // ui->textEdit_2->setFocus();
+    ui->fontComboBox->setEditable(false);
+    ui->comboBox->setEditable(false);
 }
 
 PersonalDialog::~PersonalDialog()
@@ -61,6 +64,12 @@ void PersonalDialog::keyPressEvent(QKeyEvent *event)
 
     QWidget::keyPressEvent(event);
 }
+
+void PersonalDialog::closeEvent(QCloseEvent *event)
+{
+    emit signalClose(oppositeName);
+}
+
 
 bool PersonalDialog::eventFilter(QObject *watched, QEvent *event)
 {
@@ -155,7 +164,7 @@ void PersonalDialog::on_toolButton_clicked(bool checked)
 
 void PersonalDialog::on_toolButton_2_clicked(bool checked)
 {
-    ui->textEdit_2->setFontUnderline(checked);
+    ui->textEdit_2->setFontItalic(checked);
     ui->textEdit_2->setFocus();
 }
 

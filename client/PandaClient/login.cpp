@@ -66,7 +66,8 @@ LoginWindow::LoginWindow(QWidget *parent) : DMainWindow(parent)
             return;
         if (!m_bConnected) {
             m_tcpSocket->ConnectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
-            QMessageBox::information(this, "Panda客户端", "未连接服务器，请等待！");
+            //QMessageBox::information(this, "Panda客户端", "未连接服务器，请等待！");
+            qDebug()<<"未连接服务器，请等待!";
             return;
         }
 
@@ -192,28 +193,9 @@ void LoginWindow::SltTcpStatus(const quint8 &state)
         //显示聊天框
         UserInterface *m_pUserInterface = new UserInterface;
         qDebug()<<"login socket"<<m_tcpSocket;
-        m_pUserInterface->SetSocket(m_tcpSocket, MyApp::m_strUserName);
-        m_pUserInterface->show();
         this->close();
-
-
-        // 显示主界面
-//        MainWindow *mainWindow = new MainWindow();
-//        if (!QFile::exists(MyApp::m_strHeadFile)) {
-//            myHelper::Sleep(100);
-//            QJsonObject jsonObj;
-//            jsonObj.insert("from", MyApp::m_nId);
-//            jsonObj.insert("id",  -2);
-//            jsonObj.insert("msg", myHelper::GetFileNameWithExtension(MyApp::m_strHeadFile));
-//            m_tcpSocket->SltSendMessage(GetFile, jsonObj);
-//            myHelper::Sleep(100);
-//        }
-
-        // 居中显示
-       // myHelper::FormInCenter(mainWindow);
-     //  mainWindow->SetSocket(m_tcpSocket, MyApp::m_strUserName);
-     //   mainWindow->show();
-      //  this->close();
+        m_pUserInterface->show();
+        m_pUserInterface->SetSocket(m_tcpSocket, MyApp::m_strUserName);
     }
         break;
     case LoginPasswdError:
