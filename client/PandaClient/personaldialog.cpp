@@ -19,11 +19,8 @@ PersonalDialog::PersonalDialog(QWidget *parent,ClientSocket *_tcp,QString _oppos
     ui->setupUi(this);
     this->setWindowTitle(tr("私人聊天..."));
     ui->textEdit->setReadOnly(true);
-
-    //connect(ui->textEdit_2, SIGNAL(returnPressed()),ui->pushButton_send,SIGNAL(clicked()),Qt::UniqueConnection);
-
-//    connect(tcp, SIGNAL(signalMessage(quint8,QJsonValue)), this, SLOT(SltTcpReply(quint8,QJsonValue)));
-
+    ui->textEdit_2->installEventFilter(this);
+   // ui->textEdit_2->setFocus();
 }
 
 PersonalDialog::~PersonalDialog()
@@ -53,7 +50,6 @@ void PersonalDialog::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     {
-        qDebug()<<"0000000";
         if (Qt::ControlModifier == event->modifiers()) {
             on_pushButton_send_clicked();
         }
@@ -66,28 +62,46 @@ void PersonalDialog::keyPressEvent(QKeyEvent *event)
     QWidget::keyPressEvent(event);
 }
 
+bool PersonalDialog::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == ui->textEdit_2) {
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+                on_pushButton_send_clicked();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
 void PersonalDialog::on_pushButton_send_clicked()
 {
     QString text = ui->textEdit_2->toPlainText() ;
+
+   // QString data2="d#"+selfName+"#"+oppositeName+"#"+data1;
+   // tcp->write(data2.toLocal8Bit());
+    // 把最后一个回车换行符删掉
+    while (text.endsWith("\n")) {
+        text.remove(text.length() - 2, 2);
+    }
+
+    // 判断消息是否为空
+    qDebug()<<"text"<<text;
+    if (text.isEmpty()) {
+        QDialog *widgetMsg = new QDialog;
+        QPoint point = widgetMsg->mapToGlobal(ui->pushButton_send->pos());
+
+        QToolTip::showText(point, tr("不能发送空白信息！"));
+        return;
+    }
+
     // 清除输入框
     ui->textEdit_2->clear();
     ui->textEdit->append(selfName);
     ui->textEdit->append(text);
-   // QString data2="d#"+selfName+"#"+oppositeName+"#"+data1;
-   // tcp->write(data2.toLocal8Bit());
-    // 把最后一个回车换行符删掉
-//    while (text.endsWith("\n")) {
-//        text.remove(text.length() - 2, 2);
-//    }
-
-    // 判断消息是否为空
-//    if (text.isEmpty()) {
-       // QDialog *widgetMsg = new QDialog;
-       // QPoint point = ui->widgetMsg->mapToGlobal(ui->pushButton_send->pos());
-
-       // QToolTip::showText(point, tr("发送消息内容不能为空，请重新输入！"));
-//        return;
-   // }
     // 构建json数据
     QJsonObject json;
     json.insert("Type", SendMsg);

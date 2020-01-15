@@ -108,8 +108,11 @@ SystemSetting::SystemSetting(DWidget* parent) :
             [=]() {
             on_btnSaveSetting_clicked();
     });
-    connect(m_cancelbutton,&DSuggestButton::pressed,this,
+    connect(m_cancelbutton,&DSuggestButton::clicked,this,
             [=]() {
+            lineEditHostAddr->setText(MyApp::m_strHostAddr);
+            lineEditHostMsgPort->setText(QString::number(MyApp::m_nMsgPort));
+            lineEditHostFilePort->setText(QString::number(MyApp::m_nFilePort));
             this->close();
     });
 

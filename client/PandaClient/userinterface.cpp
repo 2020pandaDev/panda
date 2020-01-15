@@ -30,6 +30,10 @@ void UserInterface::SetSocket(ClientSocket *tcpSocket, const QString &m_name)
         connect(m_tcpSocket, SIGNAL(signalMessage(quint8,QJsonObject)), this, SLOT(SltTcpReply(quint8,QJsonObject)));
 
         connect(m_tcpSocket, SIGNAL(signalStatus(quint8)), this, SLOT(SltTcpStatus(quint8)));
+
+        QJsonObject json;
+        json.insert("Type", FriendsList);
+        m_tcpSocket->SltSendMessage(FriendsList, json);
     }
     name = m_name;
 
@@ -86,19 +90,18 @@ void UserInterface::on_pushButton_clicked() //发字
 //    ui->textEdit_2->clear();
 }
 
-//刷新槽函数
-void UserInterface::on_refreshBtn_clicked()
+void UserInterface::sendGetFriends()
 {
-   // QString message="e#getUserList";
-    //tcpSocket->write(message.toLocal8Bit());
-    // 构建json数据
-    QJsonObject json;
-    json.insert("Type", FriendsList);
-//    json.insert("sendUsrName", selfName);
-//    json.insert("recvUsrName", oppositeName);
-//    json.insert("msgType", Text);//wenzixiaoxi
-//    json.insert("Msg", text);
-    m_tcpSocket->SltSendMessage(FriendsList, json);
+    // QString message="e#getUserList";
+     //tcpSocket->write(message.toLocal8Bit());
+     // 构建json数据
+     QJsonObject json;
+     json.insert("Type", FriendsList);
+ //    json.insert("sendUsrName", selfName);
+ //    json.insert("recvUsrName", oppositeName);
+ //    json.insert("msgType", Text);//wenzixiaoxi
+ //    json.insert("Msg", text);
+     m_tcpSocket->SltSendMessage(FriendsList, json);
 }
 
 void UserInterface::on_listWidget_doubleClicked(const QModelIndex &index)
