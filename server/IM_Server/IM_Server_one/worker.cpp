@@ -52,10 +52,8 @@ void Worker::doWork(QByteArray& message)
         QStringList loginIninfo;
         loginIninfo.append(loginInusrName);
         loginIninfo.append(loginInpassword);
-
-        m_userSocket.insert(loginInusrName,m_tcpSocket);//绑定用户和socket
-
-        m_returnDataToClient =loginIn(loginIninfo);
+        m_returnDataToClient = loginIn(loginIninfo);
+        m_userSocket.insert(loginInusrName, m_tcpSocket); //绑定用户和socket
         m_sendData = m_dataParse->paserMapData(m_returnDataToClient);
         m_tcpSocket->write(m_sendData);
         m_tcpSocket->flush();
@@ -246,6 +244,29 @@ void Worker::recSocketDescriptor(qintptr socketDescriptor)
             doWork(m_recData);
         });
 
+
+}
+
+void Worker::broadCastUserList(QStringList &userList)
+{
+    qDebug() << "broadCastUserList fun ";
+
+    QVariantMap sendData;
+    QList<QTcpSocket *> socketList = m_userSocket.values();
+    if (!socketList.isEmpty()) {
+        qDebug() <<"userList :"<< userList.at(0);
+
+        sendData.insert("Type", 8);
+        sendData.insert("userList", userList);
+        m_sendData = m_dataParse->paserMapData(sendData);
+        for (int i = 0; i < socketList.length(); i++) {
+            QMetaObject::invokeMethod(socketList.at(i), std::bind(static_cast< qint64(QTcpSocket::*)(const QByteArray &) >(&QTcpSocket::write), socketList.at(i), m_sendData));
+            //跨线程tcp通信
+        }
+         qDebug() << "广播成功";
+    }else {
+         qDebug() << "广播失败";
+    }
 }
 
 QVariantMap Worker::registe(QStringList &registerInfo)
@@ -492,10 +513,10 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
             QVariantMap userMessage = MySql::getInstance()->userStatus();
             loginResponse.insert("result", userMessage);
 
-            this->m_userName =u_name;
-
-
-            qDebug() << "m_userName 1:"<<m_userName;
+            this->m_userName = u_name;
+            userNameList.append(u_name);
+            broadCastUserList(userNameList);
+            qDebug() << "m_userName 1:" << m_userName;
         } else {
             loginResponse.insert("loginMsg", 2);
         }
