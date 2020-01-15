@@ -147,7 +147,8 @@ void LoginWindow::initUI()
 void LoginWindow::changeCurrentPage(CLabel *label)
 {
     m_pLoginReg->SetSocket(m_tcpSocket);
-    m_pLoginReg->setWindowFlags( m_pLoginReg->windowFlags() & ~Qt::WindowMaximizeButtonHint);
+   // m_pLoginReg->setWindowFlags( m_pLoginReg->windowFlags() & ~Qt::WindowMaximizeButtonHint);
+    m_pLoginReg->setFixedSize(440, 340);
     m_pLoginReg->show();
 }
 

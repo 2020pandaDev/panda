@@ -60,19 +60,6 @@
      <string>在线用户：</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="refreshBtn">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>460</y>
-      <width>101</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>刷新在线用户</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>

@@ -26,11 +26,12 @@ public:
      */
     void SetSocket(ClientSocket *tcpSocket, const QString &m_name);
 
+    void sendGetFriends();
+
 private slots:
     void readMessages();
     void on_pushButton_clicked();
 
-    void on_refreshBtn_clicked();
     void on_listWidget_doubleClicked(const QModelIndex &index);
 
     void on_fontComboBox_currentFontChanged(const QFont &f);

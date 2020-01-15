@@ -35,6 +35,7 @@ signals:
 protected:
     void changeEvent(QEvent *e);
     void keyPressEvent(QKeyEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
  private slots:
      void on_pushButton_send_clicked();
 
