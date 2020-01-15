@@ -38,6 +38,7 @@ public slots:
     QVariantMap Signout(QStringList &SignoutInfo);//退出函数
     QVariantMap groupChat(QVariantMap &groupChatInfo);//群聊函数
     void recSocketDescriptor(qintptr);//接受socket 描述符号
+    void broadCastUserList(QStringList &);//用户登录广播用户列表
 
 private:
     QMap<QString ,QString> userinfo;
