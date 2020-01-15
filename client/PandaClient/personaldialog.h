@@ -29,13 +29,16 @@ public:
      // 接受服务器转发过来的信息
      void AddMessage(const QJsonValue &json);
 signals:
-    void signalClose();
+//    void signalClose();
+    void signalClose(QString r_name);
     // 发送给服务器的消息
     void signalSendMessage(const quint8 &type, const QJsonValue &json);
 protected:
     void changeEvent(QEvent *e);
     void keyPressEvent(QKeyEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
+    void closeEvent(QCloseEvent *event);
+
  private slots:
      void on_pushButton_send_clicked();
 

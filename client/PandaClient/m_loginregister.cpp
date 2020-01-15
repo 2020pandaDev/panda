@@ -90,6 +90,9 @@ m_loginregister::m_loginregister(DWidget* parent) :
     // * 关闭槽函数
     connect(m_cancelbutton,&DSuggestButton::clicked,this,
             [=]() {
+            m_namelineedit->setText("");
+            m_passwordlineedit->setText("");
+            m_try_pwdlineedit->setText("");
             this->close();
     });
   }

@@ -13,7 +13,8 @@ UserInterface::UserInterface(QWidget *parent) :
     this->setWindowTitle("Chat Room");
     ui->textEdit->setReadOnly(true);
    // connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readMessages()));
-
+    ui->fontComboBox->setEditable(false);
+    ui->comboBox->setEditable(false);
 }
 
 UserInterface::~UserInterface()
@@ -108,12 +109,19 @@ void UserInterface::on_listWidget_doubleClicked(const QModelIndex &index)
 {
     QString str=onlineUser.at(index.row());  //获得用户名
     qDebug()<<"my friends name"<<str<<"my name is"<<name;
-    PersonalDialog *temp=new PersonalDialog(this,m_tcpSocket,str,name);
-    pdList.insert(str,temp);
+    if(!pdList.contains(str))
+    {
+        tempDialog=new PersonalDialog(this,m_tcpSocket,str,name);
+        pdList.insert(str,tempDialog);
+        pdList[str]->setFixedSize(604,447);
+        pdList[str]->show();
+        connect(tempDialog,&PersonalDialog::signalClose,this,&UserInterface::SltFriendChatWindowClose);
+    }
+    
    // if(pdList[str]->exec())
     //    return;
 
-    pdList[str]->show();
+    
     pdList[str]->setNameText(str);
 }
 
@@ -406,16 +414,12 @@ void UserInterface::ParseFriendMessageReply(const QJsonObject &dataVal)
     if(!pdList.contains(strFromName))
     {
         qDebug()<<strFromName<<name;
-        PersonalDialog *temp=new PersonalDialog(this,m_tcpSocket,strFromName,name);
-        pdList.insert(strFromName,temp);
-        temp->show();
+        tempDialog=new PersonalDialog(this,m_tcpSocket,strFromName,name);
+        connect(tempDialog,&PersonalDialog::signalClose,this,&UserInterface::SltFriendChatWindowClose);
+        pdList.insert(strFromName,tempDialog);
+        tempDialog->setFixedSize(604,447);
+        tempDialog->show();
     }
-//    if(pdList.value(strFromName)->close())
-//    {
-//            PersonalDialog *temp=new PersonalDialog(this,m_tcpSocket,strFromName,name);
-//            pdList.insert(strFromName,temp);
-//            temp->show();
-//    }
     pdList[strFromName]->getMessage(strFromName,strMsg);
 }
 
@@ -428,3 +432,7 @@ void UserInterface::closeEvent (QCloseEvent * e)
     m_tcpSocket->SltSendMessage(Logout, json);
 }
 
+void UserInterface::SltFriendChatWindowClose(QString re_name)
+{
+    pdList.remove(re_name);
+}

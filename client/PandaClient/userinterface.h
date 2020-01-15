@@ -45,6 +45,8 @@ private slots:
     void on_toolButton_clicked(bool checked);
 
     void on_toolButton_4_clicked();
+    
+    void SltFriendChatWindowClose(QString re_name);
 
   ////////////////////////////
     // 用户接受处理
@@ -72,6 +74,7 @@ private:
     QColor color;
     QTimer *freshentime;
     //PersonalDialog *PD;
+    PersonalDialog *tempDialog = nullptr;
     QMap<QString,PersonalDialog*> pdList;
 private:
     // socket通信类
