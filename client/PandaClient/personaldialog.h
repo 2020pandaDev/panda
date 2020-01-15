@@ -38,6 +38,7 @@ protected:
     void keyPressEvent(QKeyEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     void closeEvent(QCloseEvent *event);
+
  private slots:
      void on_pushButton_send_clicked();
 

@@ -20,8 +20,7 @@ PersonalDialog::PersonalDialog(QWidget *parent,ClientSocket *_tcp,QString _oppos
     this->setWindowTitle(tr("私人聊天..."));
     ui->textEdit->setReadOnly(true);
     ui->textEdit_2->installEventFilter(this);
-	ui->lineEdit_name->setReadOnly(true);
-   // ui->textEdit_2->setFocus();
+  	ui->lineEdit_name->setReadOnly(true);
     ui->fontComboBox->setEditable(false);
     ui->comboBox->setEditable(false);
 }
@@ -70,7 +69,6 @@ void PersonalDialog::closeEvent(QCloseEvent *event)
     emit signalClose(oppositeName);
 }
 
-
 bool PersonalDialog::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == ui->textEdit_2) {
@@ -106,7 +104,6 @@ void PersonalDialog::on_pushButton_send_clicked()
         QToolTip::showText(point, tr("不能发送空白信息！"));
         return;
     }
-
     // 清除输入框
     ui->textEdit_2->clear();
     ui->textEdit->append(selfName);
