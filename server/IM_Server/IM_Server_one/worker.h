@@ -18,6 +18,7 @@ public:
     QByteArray m_sendData;
     static QMap<QString, QTcpSocket *> m_userSocket;//socket 列表
     QTimer* m_timer = nullptr;
+    static QStringList userNameList;
 
 
 signals:

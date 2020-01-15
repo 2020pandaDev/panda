@@ -6,6 +6,7 @@
 #include <QTime>
 #include <QMetaObject>
 QMap<QString, QTcpSocket *> Worker::m_userSocket;
+QStringList Worker::userNameList;
 Worker::Worker(QObject *parent) : QObject(parent)
 {
     m_dataParse = new Dataparsing(this);
@@ -21,6 +22,7 @@ void Worker::doWork(QByteArray& message)
     QVariantMap recValue  = m_dataParse->paserByteData(recMessage);
 
     int  messType = recValue["Type"].toInt();
+    qDebug() << "messType :" << messType;
     switch (messType) {
     case 1:
 
@@ -177,6 +179,9 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
             MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
             outResponse.insert("signOutMessage", 0);
             m_userName = "";
+            userNameList.removeOne(u_name);
+            broadCastUserList(userNameList);//用户退出广播用户列表
+
         } else {
             qDebug() << "用户存在，离线状态";
             outResponse.insert("signOutMessage", 1);
@@ -254,8 +259,6 @@ void Worker::broadCastUserList(QStringList &userList)
     QVariantMap sendData;
     QList<QTcpSocket *> socketList = m_userSocket.values();
     if (!socketList.isEmpty()) {
-        qDebug() <<"userList :"<< userList.at(0);
-
         sendData.insert("Type", 8);
         sendData.insert("userList", userList);
         m_sendData = m_dataParse->paserMapData(sendData);
@@ -489,7 +492,7 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
 
     QMap<QString, QString> usinfo;
     usinfo.insert("user_name", u_name);
-    QStringList userNameList = MySql::getInstance()->userList();
+    userNameList = MySql::getInstance()->userList();
 
 
     if (!MySql::getInstance()->CreateConnection()) {
