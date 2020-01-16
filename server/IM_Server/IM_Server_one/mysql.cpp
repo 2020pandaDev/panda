@@ -123,7 +123,6 @@ QStringList MySql::getAllOnLineUsers()
     return userNameList;
 }
 
-
 QStringList MySql::getAllUserOnLineStatus()
 {
     QStringList userIsOnLineList =  selectNameDataFromBase()["user_online"].toStringList();
