@@ -6,7 +6,7 @@
 #include <QTime>
 #include <QMetaObject>
 QMap<QString, QTcpSocket *> Worker::m_userSocket;
-QStringList Worker::userNameList;
+QStringList Worker::userOnlineList;
 Worker::Worker(QObject *parent) : QObject(parent)
 {
     m_dataParse = new Dataparsing(this);
@@ -179,8 +179,8 @@ QVariantMap Worker::Signout(QStringList &SignoutInfo)//退出
             MySql::getInstance()->MyUpdateUserStatus(u_name, online_status);
             outResponse.insert("signOutMessage", 0);
             m_userName = "";
-            userNameList.removeOne(u_name);
-            broadCastUserList(userNameList);//用户退出广播用户列表
+            userOnlineList.removeOne(u_name);
+            broadCastUserList(userOnlineList);//用户退出广播用户列表
 
         } else {
             qDebug() << "用户存在，离线状态";
@@ -316,11 +316,10 @@ QVariantMap  Worker:: updateUserList()
 {
     qDebug()<<"updateUserList thread:"<<QThread::currentThreadId();
     qDebug()<< "updateUserList fun ";
-    QStringList userList = MySql::getInstance()->userList();
-    QVariantMap userLists;
-    userLists.insert("Type",8);
-    userLists.insert("userList",userList);
-    return userLists;
+    QVariantMap userOnlineLists;
+    userOnlineLists.insert("Type",8);
+    userOnlineLists.insert("userList",userOnlineList);
+    return userOnlineLists;
 
 }
 
@@ -347,7 +346,7 @@ QVariantMap Worker::privateChat(QVariantMap& chatMessage)
     sendData.insert("msgType",0);
     m_sendData= m_dataParse->paserMapData(sendData);
 
-        QMetaObject::invokeMethod(socket, std::bind(static_cast< qint64(QTcpSocket::*)(const QByteArray &) >(&QTcpSocket::write), socket, m_recData));
+    QMetaObject::invokeMethod(socket, std::bind(static_cast< qint64(QTcpSocket::*)(const QByteArray &) >(&QTcpSocket::write), socket, m_recData));
 //跨线程tcp通信;
 
     returnData.insert("Type",44);
@@ -492,8 +491,8 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
 
     QMap<QString, QString> usinfo;
     usinfo.insert("user_name", u_name);
-    userNameList = MySql::getInstance()->userList();
-
+    userOnlineList = MySql::getInstance()->getAllOnLineUsers();
+    QStringList userNameList =  MySql::getInstance()->userList();
 
     if (!MySql::getInstance()->CreateConnection()) {
         qDebug() << "数据库连接失败!";
@@ -517,9 +516,9 @@ QVariantMap Worker::loginIn(QStringList &userInfoList)
             loginResponse.insert("result", userMessage);
 
             this->m_userName = u_name;
-            userNameList.append(u_name);
-            userNameList.removeDuplicates ();//去重
-            broadCastUserList(userNameList);
+            userOnlineList.append(u_name);
+            userOnlineList.removeDuplicates ();//去重
+            broadCastUserList(userOnlineList);
             qDebug() << "m_userName 1:" << m_userName;
         } else {
             loginResponse.insert("loginMsg", 2);
