@@ -45,7 +45,7 @@ public:
     bool createTable();            //建表的方法
     bool MyInsert(const QMap<QString,QString>& InputUserInfo);        //插入
 //    bool MyInsertDataBase(const QMap<QString,QString>& userInfo);
-
+    QStringList getAllOnLineUsers();
     QStringList getAllUserOnLineStatus();
     QVariantMap userStatus();       //获取用户的在线，链接，验证码的状态
     QStringList userList();         //获取用户列表
