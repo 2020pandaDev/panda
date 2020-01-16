@@ -109,6 +109,13 @@ bool MySql::MyInsert(const QMap<QString,QString>& InputUserInfo)//插入用户�
 }
 
 
+QStringList MySql::getAllUserOnLineStatus()
+{
+    QStringList userIsOnLineList =  selectNameDataFromBase()["user_online"].toStringList();
+
+    return  userIsOnLineList ;
+}
+
 QVariantMap MySql::userStatus()//获取用户的用户名／在线状态／链接状态
 {
 
